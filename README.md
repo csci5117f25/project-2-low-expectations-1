@@ -10,8 +10,11 @@ CSCI 5117, Fall 2025, [assignment description](https://canvas.umn.edu/courses/51
 
 ### Students
 
-* First Last, x500@umn.edu
-* ...
+* Vy Bui Nguyen, buing004@umn.edu
+* Quenton Ni, ni000100@umn.edu
+* Mary Duong, duong220@umn.edu
+* Brenen Olson, ols00175@umn.edu
+* Cheston Opsasnick, opsas002@umn.edu
 
 
 ## Key Features
@@ -35,7 +38,8 @@ Which (if any) progressive web app feature(s) does your app support?
 
 **[Add images/photos that show your mockup](https://stackoverflow.com/questions/10189356/how-to-add-screenshot-to-readmes-in-github-repository) along with a very brief caption:**
 
-![](https://media.giphy.com/media/26ufnwz3wDUli7GU0/giphy.gif)
+![](prototype/Project2LowFidelityMockUp.png)
+*Low-fidelity prototype of CasinoTracker highlighting the landing page, listings interface, and various users' own visit details.*
 
 
 ## Testing Notes
