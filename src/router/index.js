@@ -10,17 +10,19 @@ const router = createRouter({
       path: '/',
       name: 'splashpage',
       component: SplashPage,
-      // meta: {loggedIn: true}
+      meta: {loggedIn: true}
     },
     {
       path: '/dashboard',
       name: 'dashboard',
       component: DashboardView,
+      meta: { requiresAuth: true }
     },
     {
       path: '/rating',
       name: 'rating',
       component: RateView,
+      meta: { requiresAuth: true }
     }
   ],
 })

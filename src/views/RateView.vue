@@ -30,7 +30,7 @@ watch(rating, async (newVal) => {
 })
 
 const goBack = () => {
-  router.push({ name: 'dashboard' }) 
+  router.push({ name: 'dashboard' })
 }
 </script>
 
@@ -42,11 +42,11 @@ const goBack = () => {
         <p>Record your rating and notes</p>
       </header>
       <div class="back-btn-container">
-        <Button 
-            label="← Back to Dashboard" 
-            severity="secondary" 
-            outlined 
-            @click="goBack" 
+        <Button
+            label="← Back to Dashboard"
+            severity="secondary"
+            outlined
+            @click="goBack"
         />
         </div>
 
