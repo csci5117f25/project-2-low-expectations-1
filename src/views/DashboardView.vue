@@ -24,7 +24,7 @@
           :label="tab.name"
           :severity="activeTab === tab.name ? 'primary' : 'secondary'"
           :outlined="activeTab !== tab.name"
-          @click="activeTab = tab.name"
+          @click="handleTabClick(tab)"
           class="tab-button"
         >
           <template #icon>
@@ -211,21 +211,34 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 import Message from 'primevue/message';
 import Divider from 'primevue/divider';
 import Skeleton from 'primevue/skeleton';
 
+const router = useRouter();
+
 const tabs = [
   { name: 'Dashboard', icon: 'chart-arc' },
   { name: 'All My Visits', icon: 'clock' },
   { name: 'Fun Spin', icon: 'dice' },
-  { name: 'Map', icon: 'map' }
+  { name: 'Map', icon: 'map' },
+  { name: 'Rating', icon: 'star', routeName: 'rating'}
 ];
 
 const activeTab = ref('Dashboard');
 const chartPeriod = ref('m');
+
+const handleTabClick = (tab) => {
+  activeTab.value = tab.name;
+  if (tab.routeName) {
+    router.push({ name: tab.routeName });
+  } else if (tab.route) {
+    router.push(tab.route);
+  }
+};
 </script>
 
 <style scoped>
