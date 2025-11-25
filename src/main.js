@@ -8,6 +8,7 @@ import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
 import ToastService from 'primevue/toastservice';
 import 'primeicons/primeicons.css'
+import './assets/main.css'
 
 
 const app = createApp(App)

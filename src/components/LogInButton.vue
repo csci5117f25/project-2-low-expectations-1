@@ -30,7 +30,7 @@
       } else {
         console.log("User already exists")
       }
-      router.push('/')//Push to homepage later
+      router.push('/dashboard')
     } catch {
       alert("login failed")
     }

@@ -13,19 +13,41 @@ import LogInButton from '@/components/LogInButton.vue';
     </div>
   </div>
 </template>
-<style scoped>
-  .container {
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+
+.container {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 1rem;
-  font-family: var(--font-family);
+  min-height: 100vh;
+}
+
+.container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url('/casino-bg.jpg') center/cover no-repeat;
+  filter: blur(8px);
+  z-index: -1;
 }
 
 .content {
   text-align: center;
   max-width: 400px;
   width: 100%;
+  background: #282828d2;
+  padding: 40px;
+  border-radius: 20px;
+}
+
+.title{
+  margin-top: 0px;
 }
 
 .subtitle {
