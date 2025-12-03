@@ -39,6 +39,22 @@
 </script>
 
 <template>
-  <Button label="Log in with Google" icon="pi pi-google" @click="login"></Button>
+  <Button class="log-in-btn" label="Log in with Google" icon="pi pi-google" @click="login"></Button>
 </template>
 
+<style scoped> 
+.log-in-btn.p-button {
+  background: #3d1053;
+  color: var(--text-color-secondary);
+  border: 1px solid whitesmoke;
+  padding: 12px 20px;
+  border-radius: 10px;
+}
+
+.log-in-btn.p-button:hover {
+  background: var(--primary-color);
+  border: 1px solid whitesmoke;
+  color: var(--text-color-secondary);
+  padding: 14px 22px;
+}
+</style>
