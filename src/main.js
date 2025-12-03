@@ -52,7 +52,7 @@ router.beforeEach(async (to) => {
     const currentUser = await getCurrentUser()
     if (currentUser) {
       return {
-        path: '/',//change this path to home view!!!
+        path: '/dashboard',//change this path to home view!!!
         query: {
           // we keep the current path in the query so we can
           // redirect to it after login with

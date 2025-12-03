@@ -1,5 +1,3 @@
-
-
 <template>
   <div class="dashboard-container">
     <div class="dashboard-content">
@@ -13,7 +11,8 @@
         </div>
         <div class="header-right">
           <Button label="+ Log Visit" severity="secondary" />
-          <Button label="Log out" severity="secondary" outlined />
+          <!-- <Button label="Log out" severity="secondary" outlined /> -->
+          <LogOutButton></LogOutButton>
         </div>
       </header>
 
@@ -90,10 +89,10 @@
                   <text x="10" y="85" class="axis-label">$0</text>
                   <text x="10" y="120" class="axis-label">-$50</text>
                   <text x="10" y="155" class="axis-label">-$100</text>
-                  
+
                   <!-- Zero line -->
                   <line x1="40" y1="85" x2="400" y2="85" stroke="#666" stroke-width="1" stroke-dasharray="4,4" />
-                  
+
                   <!-- Chart line -->
                   <polyline
                     points="40,75 120,95 200,70 280,90 360,110 400,115"
@@ -101,7 +100,7 @@
                     stroke="var(--primary-color)"
                     stroke-width="2"
                   />
-                  
+
                   <!-- Data points -->
                   <circle cx="40" cy="75" r="3" fill="var(--primary-color)" />
                   <circle cx="120" cy="95" r="3" fill="var(--primary-color)" />
@@ -110,7 +109,7 @@
                   <circle cx="360" cy="110" r="3" fill="var(--primary-color)" />
                   <circle cx="400" cy="115" r="3" fill="var(--primary-color)" />
                 </svg>
-                
+
                 <!-- X-axis labels -->
                 <div class="x-axis-labels">
                   <span>10/23</span>
@@ -119,7 +118,7 @@
                   <span>10/30</span>
                   <span>10/31</span>
                 </div>
-                
+
                 <!-- Tooltip -->
                 <div class="chart-tooltip">
                   <p class="tooltip-date">Date: 10/28</p>
@@ -131,7 +130,7 @@
         </div>
 
         <div class="grid-2col">
-    
+
           <!-- Break-Even Probability -->
           <Card>
             <template #title>
@@ -217,6 +216,7 @@ import Card from 'primevue/card';
 import Message from 'primevue/message';
 import Divider from 'primevue/divider';
 import Skeleton from 'primevue/skeleton';
+import LogOutButton from '@/components/LogOutButton.vue';
 
 const router = useRouter();
 
@@ -537,13 +537,13 @@ const handleTabClick = (tab) => {
   .grid-2col {
     grid-template-columns: 1fr;
   }
-  
+
   .header {
     flex-direction: column;
     gap: 1rem;
     align-items: flex-start;
   }
-  
+
   .nav-tabs {
     overflow-x: auto;
   }
