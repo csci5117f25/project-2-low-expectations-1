@@ -24,7 +24,7 @@ app.use(VueFire, {
 
 app.use(PrimeVue, {
     theme: {
-        preset: Aura
+        preset: Aura,
     }
 });
 

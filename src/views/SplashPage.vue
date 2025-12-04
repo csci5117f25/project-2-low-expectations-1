@@ -26,12 +26,12 @@ import Tag from 'primevue/tag';
       <LogInButton/>
     </section>
     <section class="card-grid">
-      <FeatureCard icon="📈" title="Net Results" description="Track wins/losses and cumulative totals."/>
-      <FeatureCard icon="📊" title="Time-Series Charts" description="See your performance over time."/>
-      <FeatureCard icon="📍" title="Casino Mapping" description="Pin and view casinos you’ve visited."/>
-      <FeatureCard icon="⭐" title="Casino Wishlist" description="Track casinos you want to visit."/>
-      <FeatureCard icon="💭" title="Mood Tracking" description="Log your mood during sessions."/>
-      <FeatureCard icon="📘" title="Journal Entries" description="Write down any thoughts or notes about your visit." />
+      <FeatureCard icon="pi pi-chart-line" title="Net Results" description="Track wins/losses and cumulative totals."/>
+      <FeatureCard icon="pi pi-chart-scatter" title="Time-Series Charts" description="See your performance over time."/>
+      <FeatureCard icon="pi pi-map" title="Casino Mapping" description="Pin and view casinos you’ve visited."/>
+      <FeatureCard icon="pi pi-list-check" title="Casino Wishlist" description="Track casinos you want to visit."/>
+      <FeatureCard icon="pi pi-face-smile" title="Mood Tracking" description="Log your mood during sessions."/>
+      <FeatureCard icon="pi pi-clipboard" title="Journal Entries" description="Write down any thoughts or notes about your visit." />
     </section>
   </div>
 </template>

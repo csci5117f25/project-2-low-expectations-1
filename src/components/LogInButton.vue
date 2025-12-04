@@ -55,6 +55,5 @@
   background: var(--primary-color);
   border: 1px solid whitesmoke;
   color: var(--text-color-secondary);
-  padding: 14px 22px;
 }
 </style>

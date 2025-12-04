@@ -10,7 +10,7 @@ defineProps({
     <Card class="card">
         <template #header>
             <div class="icon">
-                {{ icon }}
+                <i :class="icon"></i>
             </div>
         </template>
         <template #title>
@@ -35,8 +35,7 @@ defineProps({
     color: var(--primary-color);
 }
 .icon {
-    font-size: 32px;
-    margin-bottom: 5px;
+    font-size: 20px;
 }
 .title {
     font-family: 'Oswald', sans-serif;
