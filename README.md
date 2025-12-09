@@ -66,6 +66,11 @@ along with a very brief caption:**
 **Document integrations with 3rd Party code or services here.
 Please do not document required libraries (e.g., VUE, Firebase, vuefire).**
 
+Three.js
+```bash
+npm install three
+```
+
 * Library or service name: description of use
 * ...
 
