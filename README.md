@@ -74,6 +74,9 @@ npm install three
 Slot Machine - deepakyhr
 [https://skfb.ly/poJNB]
 
+Gameready Casino scene - Katydid
+[https://skfb.ly/pC86Y]
+
 * Library or service name: description of use
 * ...
 

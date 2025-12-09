@@ -67,9 +67,9 @@ const spinning = ref(false);
 const leverPulling = ref(false);
 
 // Three.js variables
-let scene, camera, renderer, slotMachine, loadedModel, leverModel;
+let scene, camera, renderer, slotMachine, loadedModel, leverModel, casino;
 let reels = [];
-const symbols = ['🍒', '🍋', '🍊', '🔔', '⭐'];
+const symbols = ['🍒', '7️⃣', '🔔', '🍊', '🍇'];
 let modelLoaded = false;
 let leverLoaded = false;
 
@@ -180,39 +180,38 @@ function initThreeJS() {
 }
 
 function createCasinoEnvironment() {
-  // Floor
-  const floorGeometry = new THREE.PlaneGeometry(50, 50);
-  const floorMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0x2a1a1a,
-    roughness: 0.8
-  });
-  const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-  floor.rotation.x = -Math.PI / 2;
-  floor.position.y = -5;
-  scene.add(floor);
-  
-  // Back wall
-  const wallGeometry = new THREE.PlaneGeometry(50, 20);
-  const wallMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0x1a0505
-  });
-  const wall = new THREE.Mesh(wallGeometry, wallMaterial);
-  wall.position.z = -10;
-  scene.add(wall);
-  
-  // Decorative lights
-  for (let i = 0; i < 10; i++) {
-    const lightBulb = new THREE.Mesh(
-      new THREE.SphereGeometry(0.2, 16, 16),
-      new THREE.MeshBasicMaterial({ color: Math.random() > 0.5 ? 0xff0000 : 0xffff00 })
-    );
-    lightBulb.position.set(
-      (Math.random() - 0.5) * 20,
-      5 + Math.random() * 3,
-      -9
-    );
-    scene.add(lightBulb);
-  }
+  // Casino Scene
+  const loader = new GLTFLoader();
+
+  console.log('Loading casino scene from /models/gameready_casino_scene.glb...');
+
+  loader.load(
+    '/models/gameready_casino_scene.glb',
+    (gltf) => {
+      loadedModel = gltf.scene;
+      casino = new THREE.Group();
+      
+      // Add the loaded model to the Casino group
+      casino.add(loadedModel);
+      
+      // Adjust scale and position
+      casino.scale.set(.2, .2, .2);
+      casino.position.set(0, -7, 5);
+      casino.rotation.y = Math.PI/2; // Rotate 180 degrees to face camera
+      
+      scene.add(casino);
+      modelLoaded = true;
+      
+      console.log('✅ Casino loaded successfully!');
+    },
+    (xhr) => {
+      const percent = (xhr.loaded / xhr.total * 100).toFixed(0);
+      console.log(`Loading model: ${percent}%`);
+    },
+    (error) => {
+      console.error('❌ Error loading GLB model:', error);
+    }
+  );
 }
 
 function loadSlotMachineGLB() {
@@ -251,8 +250,6 @@ function loadSlotMachineGLB() {
     },
     (error) => {
       console.error('❌ Error loading GLB model:', error);
-      console.log('Falling back to placeholder slot machine');
-      createFallbackSlotMachine();
     }
   );
 }
@@ -286,33 +283,8 @@ function loadLever() {
     },
     (error) => {
       console.error('❌ Error loading lever:', error);
-      createFallbackLever();
     }
   );
-}
-
-function createFallbackLever() {
-  const leverGroup = new THREE.Group();
-  leverGroup.name = 'lever';
-  
-  const handleGeometry = new THREE.CylinderGeometry(0.02, 0.02, 0.3);
-  const handleMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
-  const handle = new THREE.Mesh(handleGeometry, handleMaterial);
-  leverGroup.add(handle);
-  
-  const ballGeometry = new THREE.SphereGeometry(0.04);
-  const ball = new THREE.Mesh(ballGeometry, handleMaterial);
-  ball.position.y = 0.15;
-  leverGroup.add(ball);
-  
-  leverGroup.position.set(0.5, 0.3, 0);
-  leverRestRotation = leverGroup.rotation.x;
-  
-  slotMachine.add(leverGroup);
-  leverModel = leverGroup;
-  leverLoaded = true;
-  
-  console.log('✅ Fallback lever created');
 }
 
 function createOverlayReels() {
@@ -350,50 +322,6 @@ function createOverlayReels() {
       }
     );
   }
-}
-
-function createFallbackSlotMachine() {
-  slotMachine = new THREE.Group();
-  
-  // Machine body
-  const bodyGeometry = new THREE.BoxGeometry(8, 10, 3);
-  const bodyMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0xcc0000,
-    metalness: 0.6,
-    roughness: 0.4
-  });
-  const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
-  slotMachine.add(body);
-  
-  // Screen area
-  const screenGeometry = new THREE.BoxGeometry(7, 4, 0.5);
-  const screenMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0x000000,
-    emissive: 0x001100
-  });
-  const screen = new THREE.Mesh(screenGeometry, screenMaterial);
-  screen.position.set(0, 1, 1.6);
-  slotMachine.add(screen);
-  
-  // Create 4 reels as children
-  for (let i = 0; i < 4; i++) {
-    const reel = createReel((i - 1.5) * 2.2);
-    slotMachine.add(reel);
-    reels.push({
-      group: reel,
-      targetRotation: 0,
-      currentRotation: 0,
-      symbolIndex: 0,
-      spinning: false
-    });
-  }
-  
-  slotMachine.position.set(0, -8, 3);
-  slotMachine.scale.set(10, 10, 10);
-  scene.add(slotMachine);
-  modelLoaded = true;
-  
-  createFallbackLever();
 }
 
 function createReel(xPosition) {
@@ -583,11 +511,6 @@ function animate() {
       }
     }
   });
-  
-  // Gentle machine wobble
-  if (slotMachine && modelLoaded) {
-    slotMachine.rotation.y = Math.sin(Date.now() * 0.0005) * 0.02;
-  }
   
   renderer.render(scene, camera);
 }
