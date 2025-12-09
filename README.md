@@ -71,6 +71,9 @@ Three.js
 npm install three
 ```
 
+Slot Machine - deepakyhr
+[https://skfb.ly/poJNB]
+
 * Library or service name: description of use
 * ...
 

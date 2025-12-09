@@ -18,22 +18,17 @@
         </div>
         
         <div class="bet-controls">
-          <Button label="-" @click="decreaseBet" :disabled="spinning" />
+          <Button label="-" @click="decreaseBet" :disabled="spinning || leverPulling" />
           <div class="bet-amount">
             <span class="label">Bet:</span>
             <span class="amount">${{ currentBet.toFixed(2) }}</span>
           </div>
-          <Button label="+" @click="increaseBet" :disabled="spinning" />
+          <Button label="+" @click="increaseBet" :disabled="spinning || leverPulling" />
         </div>
 
-        <Button 
-          :label="spinning ? 'SPINNING...' : 'SPIN'" 
-          @click="spin" 
-          :disabled="spinning || balance < currentBet"
-          severity="danger"
-          size="large"
-          class="spin-button"
-        />
+        <div class="lever-instruction" v-if="!spinning && !leverPulling">
+          <span class="instruction-text">👆 Pull the lever to spin!</span>
+        </div>
 
         <div class="last-win" v-if="lastWin > 0">
           <span class="win-label">Last Win:</span>
@@ -69,12 +64,27 @@ const balance = ref(100.00);
 const currentBet = ref(1.00);
 const lastWin = ref(0);
 const spinning = ref(false);
+const leverPulling = ref(false);
 
 // Three.js variables
-let scene, camera, renderer, slotMachine, loadedModel;
+let scene, camera, renderer, slotMachine, loadedModel, leverModel;
 let reels = [];
-const symbols = ['🍒', '🍋', '🍊', '🔔', '⭐', '7️⃣'];
+const symbols = ['🍒', '🍋', '🍊', '🔔', '⭐'];
 let modelLoaded = false;
+let leverLoaded = false;
+
+// Lever interaction
+let isDraggingLever = false;
+let leverPullProgress = 0;
+let leverRestRotation = 0;
+const maxLeverRotation = Math.PI / 3; // 60 degrees pull
+
+// Camera positions
+const cameraZoomedOut = { x: 0, y: 2, z: 25 };
+const cameraZoomedIn = { x: 0, y: 0, z: 15 };
+
+// Raycaster for lever interaction
+let raycaster, mouse;
 
 onMounted(() => {
   // Start curtain animation
@@ -92,6 +102,12 @@ onUnmounted(() => {
     renderer.dispose();
   }
   window.removeEventListener('resize', onWindowResize);
+  window.removeEventListener('mousedown', onMouseDown);
+  window.removeEventListener('mousemove', onMouseMove);
+  window.removeEventListener('mouseup', onMouseUp);
+  window.removeEventListener('touchstart', onTouchStart);
+  window.removeEventListener('touchmove', onTouchMove);
+  window.removeEventListener('touchend', onTouchEnd);
 });
 
 function initThreeJS() {
@@ -99,19 +115,24 @@ function initThreeJS() {
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x1a0a0a);
   
-  // Camera
+  // Camera - start zoomed out
   camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
     0.1,
     1000
   );
-  camera.position.set(0, 0, 15);
+  camera.position.set(cameraZoomedOut.x, cameraZoomedOut.y, cameraZoomedOut.z);
+  camera.lookAt(0, 0, 0);
   
   // Renderer
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   canvasContainer.value.appendChild(renderer.domElement);
+  
+  // Raycaster for mouse interaction
+  raycaster = new THREE.Raycaster();
+  mouse = new THREE.Vector2();
   
   // Lighting
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
@@ -143,11 +164,16 @@ function initThreeJS() {
   // Load 3D slot machine model
   loadSlotMachineGLB();
   
-  // Camera animation - zoom into slot machine
-  animateCamera();
-  
   // Window resize handler
   window.addEventListener('resize', onWindowResize);
+  
+  // Mouse/touch event listeners
+  window.addEventListener('mousedown', onMouseDown);
+  window.addEventListener('mousemove', onMouseMove);
+  window.addEventListener('mouseup', onMouseUp);
+  window.addEventListener('touchstart', onTouchStart);
+  window.addEventListener('touchmove', onTouchMove);
+  window.addEventListener('touchend', onTouchEnd);
   
   // Start animation loop
   animate();
@@ -203,7 +229,7 @@ function loadSlotMachineGLB() {
       // Add the loaded model to the slot machine group
       slotMachine.add(loadedModel);
       
-      // Adjust scale and position - tweak these based on your model
+      // Adjust scale and position
       slotMachine.scale.set(10, 10, 10);
       slotMachine.position.set(0, -8, 3);
       slotMachine.rotation.y = 0;
@@ -211,16 +237,12 @@ function loadSlotMachineGLB() {
       scene.add(slotMachine);
       modelLoaded = true;
       
-      // Log model structure
       console.log('✅ Slot machine loaded successfully!');
-      console.log('Model structure:');
-      loadedModel.traverse((child) => {
-        if (child.name) {
-          console.log(`  - ${child.name} (${child.type})`);
-        }
-      });
       
-      // Create overlay reels for spinning functionality
+      // Load lever
+      loadLever();
+      
+      // Create overlay reels as children of slot machine
       createOverlayReels();
     },
     (xhr) => {
@@ -235,6 +257,64 @@ function loadSlotMachineGLB() {
   );
 }
 
+function loadLever() {
+  const loader = new GLTFLoader();
+  
+  console.log('Loading lever from /models/lever.glb...');
+  
+  loader.load(
+    '/models/lever.glb',
+    (gltf) => {
+      leverModel = gltf.scene;
+      leverModel.name = 'lever';
+      
+      // Position and scale lever relative to slot machine
+      leverModel.scale.set(1, 1, 1);
+      leverModel.position.set(0.56, .8, 0); // Adjust based on your model
+      
+      // Store the initial rotation
+      leverRestRotation = leverModel.rotation.x;
+      
+      // Add lever as child of slot machine so it moves with it
+      slotMachine.add(leverModel);
+      leverLoaded = true;
+      
+      console.log('✅ Lever loaded successfully!');
+    },
+    (xhr) => {
+      console.log(`Lever: ${(xhr.loaded / xhr.total * 100).toFixed(0)}%`);
+    },
+    (error) => {
+      console.error('❌ Error loading lever:', error);
+      createFallbackLever();
+    }
+  );
+}
+
+function createFallbackLever() {
+  const leverGroup = new THREE.Group();
+  leverGroup.name = 'lever';
+  
+  const handleGeometry = new THREE.CylinderGeometry(0.02, 0.02, 0.3);
+  const handleMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+  const handle = new THREE.Mesh(handleGeometry, handleMaterial);
+  leverGroup.add(handle);
+  
+  const ballGeometry = new THREE.SphereGeometry(0.04);
+  const ball = new THREE.Mesh(ballGeometry, handleMaterial);
+  ball.position.y = 0.15;
+  leverGroup.add(ball);
+  
+  leverGroup.position.set(0.5, 0.3, 0);
+  leverRestRotation = leverGroup.rotation.x;
+  
+  slotMachine.add(leverGroup);
+  leverModel = leverGroup;
+  leverLoaded = true;
+  
+  console.log('✅ Fallback lever created');
+}
+
 function createOverlayReels() {
   console.log('Creating individual spinning slot reels...');
   
@@ -246,12 +326,13 @@ function createOverlayReels() {
       (gltf) => {
         const slotReel = gltf.scene.clone();
         
-        // Position the 4 slots side by side
-        // Adjust these values based on your model's size and desired spacing
-        slotReel.position.set((i - 1.45) * 1.5, .5, 5);
-        slotReel.scale.set(10, 10, 10);
+        // Position the 4 slots as children of slot machine (in local space)
+        // Since slotMachine has scale of 10, we need to compensate in local coordinates
+        slotReel.position.set((i - 1.45) * .15, .85, .2);
+        slotReel.scale.set(1, 1, 1);
         
-        scene.add(slotReel);
+        // Add as child of slot machine so they move together
+        slotMachine.add(slotReel);
         
         reels.push({
           group: slotReel,
@@ -261,29 +342,14 @@ function createOverlayReels() {
           spinning: false
         });
         
-        console.log(`✅ Slot reel ${i + 1} loaded`);
+        console.log(`✅ Slot reel ${i + 1} loaded at position:`, slotReel.position);
       },
-      (xhr) => {
-        console.log(`Slot ${i + 1}: ${(xhr.loaded / xhr.total * 100).toFixed(0)}%`);
-      },
+      undefined,
       (error) => {
         console.error(`Error loading slot ${i + 1}:`, error);
-        // Fallback to overlay reel if slot.glb fails
-        const fallbackReel = createReel(i - 1.5);
-        fallbackReel.position.set((i - 1.5) * 2.2, 1, 5);
-        scene.add(fallbackReel);
-        reels.push({
-          group: fallbackReel,
-          targetRotation: 0,
-          currentRotation: 0,
-          symbolIndex: 0,
-          spinning: false
-        });
       }
     );
   }
-  
-  console.log('✅ Loading 4 individual slot reels...');
 }
 
 function createFallbackSlotMachine() {
@@ -309,9 +375,9 @@ function createFallbackSlotMachine() {
   screen.position.set(0, 1, 1.6);
   slotMachine.add(screen);
   
-  // Create 3 reels
-  for (let i = 0; i < 3; i++) {
-    const reel = createReel(i - 1);
+  // Create 4 reels as children
+  for (let i = 0; i < 4; i++) {
+    const reel = createReel((i - 1.5) * 2.2);
     slotMachine.add(reel);
     reels.push({
       group: reel,
@@ -322,42 +388,17 @@ function createFallbackSlotMachine() {
     });
   }
   
-  // Top decoration
-  const topGeometry = new THREE.BoxGeometry(8.5, 1, 3.5);
-  const topMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0xffd700,
-    metalness: 0.8,
-    roughness: 0.2
-  });
-  const top = new THREE.Mesh(topGeometry, topMaterial);
-  top.position.y = 5.5;
-  slotMachine.add(top);
-  
-  // Lever
-  const leverGroup = new THREE.Group();
-  const handleGeometry = new THREE.CylinderGeometry(0.2, 0.2, 3);
-  const handleMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
-  const handle = new THREE.Mesh(handleGeometry, handleMaterial);
-  leverGroup.add(handle);
-  
-  const ballGeometry = new THREE.SphereGeometry(0.4);
-  const ball = new THREE.Mesh(ballGeometry, handleMaterial);
-  ball.position.y = 1.5;
-  leverGroup.add(ball);
-  
-  leverGroup.position.set(4.5, 2, 0);
-  leverGroup.rotation.z = -Math.PI / 6;
-  slotMachine.add(leverGroup);
-  
-  slotMachine.position.y = 0;
+  slotMachine.position.set(0, -8, 3);
+  slotMachine.scale.set(10, 10, 10);
   scene.add(slotMachine);
   modelLoaded = true;
+  
+  createFallbackLever();
 }
 
 function createReel(xPosition) {
   const reelGroup = new THREE.Group();
   
-  // Reel cylinder
   const cylinderGeometry = new THREE.CylinderGeometry(0.8, 0.8, 3, 32);
   const cylinderMaterial = new THREE.MeshStandardMaterial({ 
     color: 0xffffff,
@@ -368,7 +409,6 @@ function createReel(xPosition) {
   cylinder.rotation.z = Math.PI / 2;
   reelGroup.add(cylinder);
   
-  // Add symbols around the cylinder
   const numSymbols = symbols.length;
   for (let i = 0; i < numSymbols; i++) {
     const angle = (i / numSymbols) * Math.PI * 2;
@@ -382,7 +422,7 @@ function createReel(xPosition) {
     reelGroup.add(symbolMesh);
   }
   
-  reelGroup.position.set(xPosition * 2.2, 1, 1.8);
+  reelGroup.position.set(xPosition, 1, 1.8);
   return reelGroup;
 }
 
@@ -405,20 +445,113 @@ function createSymbolMesh(symbol) {
   return new THREE.Mesh(geometry, material);
 }
 
-function animateCamera() {
-  const startPos = { x: 0, y: 5, z: 30 };
-  const endPos = { x: 0, y: 0, z: 15 };
-  const duration = 2000;
+function onMouseDown(event) {
+  if (spinning.value || !leverLoaded) return;
+  
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObject(leverModel, true);
+  
+  if (intersects.length > 0) {
+    isDraggingLever = true;
+    leverPulling.value = true;
+  }
+}
+
+function onMouseMove(event) {
+  if (!isDraggingLever) return;
+  
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  leverPullProgress = Math.max(0, Math.min(1, -mouse.y));
+}
+
+function onMouseUp() {
+  if (isDraggingLever && leverPullProgress > 0.7) {
+    activateSpin();
+  }
+  isDraggingLever = false;
+  resetLever();
+}
+
+function onTouchStart(event) {
+  if (spinning.value || !leverLoaded || event.touches.length === 0) return;
+  
+  const touch = event.touches[0];
+  mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
+  
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObject(leverModel, true);
+  
+  if (intersects.length > 0) {
+    isDraggingLever = true;
+    leverPulling.value = true;
+  }
+}
+
+function onTouchMove(event) {
+  if (!isDraggingLever || event.touches.length === 0) return;
+  
+  const touch = event.touches[0];
+  mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
+  leverPullProgress = Math.max(0, Math.min(1, -mouse.y));
+}
+
+function onTouchEnd() {
+  if (isDraggingLever && leverPullProgress > 0.7) {
+    activateSpin();
+  }
+  isDraggingLever = false;
+  resetLever();
+}
+
+function resetLever() {
+  const resetDuration = 500;
+  const startProgress = leverPullProgress;
+  const startTime = Date.now();
+  
+  function animateReset() {
+    const elapsed = Date.now() - startTime;
+    const progress = Math.min(elapsed / resetDuration, 1);
+    leverPullProgress = startProgress * (1 - progress);
+    
+    if (progress < 1) {
+      requestAnimationFrame(animateReset);
+    } else {
+      leverPulling.value = false;
+    }
+  }
+  
+  animateReset();
+}
+
+function activateSpin() {
+  if (balance.value < currentBet.value) return;
+  
+  // Zoom camera in
+  animateCameraZoom();
+  
+  // Start spin after camera zoom
+  setTimeout(() => {
+    spin();
+  }, 1000);
+}
+
+function animateCameraZoom() {
+  const duration = 1000;
+  const startPos = { ...camera.position };
   const startTime = Date.now();
   
   function updateCamera() {
     const elapsed = Date.now() - startTime;
     const progress = Math.min(elapsed / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3); // ease out cubic
+    const eased = 1 - Math.pow(1 - progress, 3);
     
-    camera.position.x = startPos.x + (endPos.x - startPos.x) * eased;
-    camera.position.y = startPos.y + (endPos.y - startPos.y) * eased;
-    camera.position.z = startPos.z + (endPos.z - startPos.z) * eased;
+    camera.position.x = startPos.x + (cameraZoomedIn.x - startPos.x) * eased;
+    camera.position.y = startPos.y + (cameraZoomedIn.y - startPos.y) * eased;
+    camera.position.z = startPos.z + (cameraZoomedIn.z - startPos.z) * eased;
     camera.lookAt(0, 0, 0);
     
     if (progress < 1) {
@@ -431,6 +564,11 @@ function animateCamera() {
 
 function animate() {
   requestAnimationFrame(animate);
+  
+  // Update lever rotation based on pull progress
+  if (leverModel && leverLoaded) {
+    leverModel.rotation.x = leverRestRotation + (leverPullProgress * maxLeverRotation);
+  }
   
   // Update spinning reels
   reels.forEach(reel => {
@@ -479,12 +617,13 @@ function spin() {
   balance.value -= currentBet.value;
   lastWin.value = 0;
   
-  // Spin each reel with different speeds (now 4 reels)
+  // Spin each reel - land on one of 5 evenly split symbols
   reels.forEach((reel, index) => {
     const spins = 5 + index;
     const randomSymbol = Math.floor(Math.random() * symbols.length);
     const anglePerSymbol = (Math.PI * 2) / symbols.length;
     
+    // Calculate exact landing position for chosen symbol
     reel.targetRotation = reel.currentRotation + (spins * Math.PI * 2) + (randomSymbol * anglePerSymbol);
     reel.symbolIndex = randomSymbol;
     reel.spinning = true;
@@ -494,32 +633,72 @@ function spin() {
   setTimeout(() => {
     checkWin();
     spinning.value = false;
+    
+    // Zoom camera back out
+    zoomCameraOut();
   }, 3000 + (reels.length * 300));
+}
+
+function zoomCameraOut() {
+  const duration = 1000;
+  const startPos = { ...camera.position };
+  const startTime = Date.now();
+  
+  function updateCamera() {
+    const elapsed = Date.now() - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    
+    camera.position.x = startPos.x + (cameraZoomedOut.x - startPos.x) * eased;
+    camera.position.y = startPos.y + (cameraZoomedOut.y - startPos.y) * eased;
+    camera.position.z = startPos.z + (cameraZoomedOut.z - startPos.z) * eased;
+    camera.lookAt(0, 0, 0);
+    
+    if (progress < 1) {
+      requestAnimationFrame(updateCamera);
+    }
+  }
+  
+  updateCamera();
 }
 
 function checkWin() {
   const results = reels.map(r => r.symbolIndex);
+  const resultSymbols = results.map(i => symbols[i]);
+  
+  // Console log what each wheel landed on
+  console.log('🎰 SPIN RESULTS:');
+  reels.forEach((reel, index) => {
+    console.log(`  Wheel ${index + 1}: ${symbols[reel.symbolIndex]} (index: ${reel.symbolIndex})`);
+  });
+  console.log(`  Full result: [${resultSymbols.join(', ')}]`);
   
   // Check for matches with 4 reels
   if (results[0] === results[1] && results[1] === results[2] && results[2] === results[3]) {
     // Four of a kind - JACKPOT!
-    const multiplier = results[0] === 5 ? 100 : results[0] === 4 ? 50 : 25; // 7s, stars, bells
+    const multiplier = results[0] === 4 ? 100 : results[0] === 3 ? 50 : 25;
     lastWin.value = currentBet.value * multiplier;
     balance.value += lastWin.value;
+    console.log(`🎉 FOUR OF A KIND! Win: $${lastWin.value.toFixed(2)}`);
   } else if (results[0] === results[1] && results[1] === results[2]) {
-    // Three of a kind
-    const multiplier = results[0] === 5 ? 50 : results[0] === 4 ? 20 : 10;
+    // Three of a kind (first three)
+    const multiplier = results[0] === 4 ? 50 : results[0] === 3 ? 20 : 10;
     lastWin.value = currentBet.value * multiplier;
     balance.value += lastWin.value;
+    console.log(`🎊 THREE OF A KIND! Win: $${lastWin.value.toFixed(2)}`);
   } else if (results[1] === results[2] && results[2] === results[3]) {
     // Three of a kind (last three)
-    const multiplier = results[1] === 5 ? 50 : results[1] === 4 ? 20 : 10;
+    const multiplier = results[1] === 4 ? 50 : results[1] === 3 ? 20 : 10;
     lastWin.value = currentBet.value * multiplier;
     balance.value += lastWin.value;
+    console.log(`🎊 THREE OF A KIND! Win: $${lastWin.value.toFixed(2)}`);
   } else if (results[0] === results[1] || results[1] === results[2] || results[2] === results[3]) {
     // Two of a kind
     lastWin.value = currentBet.value * 2;
     balance.value += lastWin.value;
+    console.log(`💰 TWO OF A KIND! Win: $${lastWin.value.toFixed(2)}`);
+  } else {
+    console.log('❌ No win this time');
   }
 }
 
@@ -580,6 +759,7 @@ function exitPractice() {
 .canvas-container {
   width: 100%;
   height: 100%;
+  cursor: pointer;
 }
 
 .slot-ui {
@@ -590,6 +770,11 @@ function exitPractice() {
   padding: 2rem;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
   z-index: 10;
+  pointer-events: none;
+}
+
+.slot-ui > * {
+  pointer-events: auto;
 }
 
 .slot-controls {
@@ -598,6 +783,7 @@ function exitPractice() {
   align-items: center;
   gap: 2rem;
   margin-bottom: 1rem;
+  flex-wrap: wrap;
 }
 
 .balance-display,
@@ -628,11 +814,27 @@ function exitPractice() {
   gap: 1rem;
 }
 
-.spin-button {
-  font-size: 1.5rem;
-  padding: 1rem 3rem;
+.lever-instruction {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 2rem;
+  background: rgba(255, 215, 0, 0.2);
+  border: 2px solid #ffd700;
+  border-radius: 8px;
+}
+
+.instruction-text {
+  font-size: 1.25rem;
   font-weight: bold;
-  letter-spacing: 2px;
+  color: #ffd700;
+  text-align: center;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
 }
 
 .win-label {
@@ -660,8 +862,8 @@ function exitPractice() {
     gap: 1rem;
   }
   
-  .spin-button {
-    width: 100%;
+  .instruction-text {
+    font-size: 1rem;
   }
 }
 </style>
