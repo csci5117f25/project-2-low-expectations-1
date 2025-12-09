@@ -271,8 +271,8 @@ const handleTabClick = (tab) => {
 }
 
 .logo {
-  width: 60px;
-  height: 60px;
+  width: 45px;
+  height: 45px;
 }
 
 .header-title h1 {
