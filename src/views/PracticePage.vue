@@ -1,15 +1,12 @@
 <template>
   <div class="practice-container">
-    <!-- Curtains Overlay -->
     <div class="curtains" :class="{ 'open': curtainsOpen }">
       <div class="curtain curtain-left"></div>
       <div class="curtain curtain-right"></div>
     </div>
 
-    <!-- 3D Canvas -->
     <div ref="canvasContainer" class="canvas-container"></div>
 
-    <!-- Slot Machine UI Overlay -->
     <div class="slot-ui" v-if="showUI">
       <div class="slot-controls">
         <div class="balance-display">
@@ -18,26 +15,36 @@
         </div>
         
         <div class="bet-controls">
-          <Button label="-" @click="decreaseBet" :disabled="spinning || leverPulling" />
+          <Button icon="pi pi-minus" @click="decreaseBet" :disabled="spinning || leverPulling" />
           <div class="bet-amount">
             <span class="label">Bet:</span>
             <span class="amount">${{ currentBet.toFixed(2) }}</span>
           </div>
-          <Button label="+" @click="increaseBet" :disabled="spinning || leverPulling" />
+          <Button icon="pi pi-plus" @click="increaseBet" :disabled="spinning || leverPulling" />
+          <Button label="ALL IN" @click="allIn" :disabled="spinning || leverPulling" severity="danger" />
         </div>
 
-        <div class="lever-instruction" v-if="!spinning && !leverPulling">
-          <span class="instruction-text">👆 Pull the lever to spin!</span>
+        <div class="lever-instruction" v-if="!spinning && !leverPulling && !winMessage && !bankruptMessage">
+          <span class="instruction-text"><i class="pi pi-hand-o-up"></i> Pull the lever to spin!</span>
         </div>
 
-        <div class="last-win" v-if="lastWin > 0">
-          <span class="win-label">Last Win:</span>
-          <span class="win-amount">${{ lastWin.toFixed(2) }}</span>
+        <div class="bankrupt-display" v-if="bankruptMessage">
+          <div class="bankrupt-message">{{ bankruptMessage }}</div>
+          <div class="bankrupt-subtext">Here's $100 to get back in the game!</div>
+        </div>
+
+        <div class="win-display" v-if="winMessage">
+          <div class="win-message">{{ winMessage }}</div>
+          <div class="last-win">
+            <span class="win-label">Won:</span>
+            <span class="win-amount">${{ lastWin.toFixed(2) }}</span>
+          </div>
         </div>
       </div>
 
       <Button 
-        label="← Back to Dashboard" 
+        icon="pi pi-arrow-left"
+        label="Back to Dashboard" 
         @click="exitPractice" 
         severity="secondary"
         outlined
@@ -59,43 +66,69 @@ const canvasContainer = ref(null);
 const curtainsOpen = ref(false);
 const showUI = ref(false);
 
-// Game state
 const balance = ref(100.00);
 const currentBet = ref(1.00);
 const lastWin = ref(0);
+const winMessage = ref('');
+const bankruptMessage = ref('');
 const spinning = ref(false);
 const leverPulling = ref(false);
 
-// Three.js variables
+const modelsLoaded = ref({
+  casino: false,
+  slotMachine: false,
+  lever: false,
+  reelsNeeded: 4,
+  reelsLoaded: 0
+});
+
 let scene, camera, renderer, slotMachine, loadedModel, leverModel, casino;
 let reels = [];
-const symbols = ['🍒', '7️⃣', '🔔', '🍊', '🍇'];
+const symbols = ['🍊', '🍇', '🍒', '7️⃣', '🔔'];
+const symbolIcons = ['pi-sun', 'pi-circle', 'pi-heart', 'pi-star', 'pi-bolt'];
 let modelLoaded = false;
 let leverLoaded = false;
 
-// Lever interaction
 let isDraggingLever = false;
 let leverPullProgress = 0;
 let leverRestRotation = 0;
-const maxLeverRotation = Math.PI / 3; // 60 degrees pull
+const maxLeverRotation = Math.PI / 3;
 
-// Camera positions
 const cameraZoomedOut = { x: 0, y: 2, z: 25 };
 const cameraZoomedIn = { x: 0, y: 0, z: 15 };
 
-// Raycaster for lever interaction
 let raycaster, mouse;
 
+const bankruptMessages = [
+  "🎰 The house always wins... but not today! One more spin could change everything!",
+  "💸 You were SO close! The jackpot is practically calling your name!",
+  "🎲 Winners never quit! That big win is just around the corner!",
+  "🔥 This is it! Your luck is about to turn - I can feel it!",
+  "⚡ Statistics say you're DUE for a win! Keep spinning!",
+  "🌟 Every pro gambler went broke before they hit it big!",
+  "💰 Just one more try! What's $100 compared to the JACKPOT?",
+  "🎯 You've learned from your mistakes - now it's time to WIN!",
+];
+
 onMounted(() => {
-  // Start curtain animation
-  setTimeout(() => {
-    curtainsOpen.value = true;
-    setTimeout(() => {
-      initThreeJS();
-      showUI.value = true;
-    }, 1000);
-  }, 500);
+  initThreeJS();
 });
+
+function checkAllModelsLoaded() {
+  const allLoaded = modelsLoaded.value.casino && 
+                   modelsLoaded.value.slotMachine && 
+                   modelsLoaded.value.lever && 
+                   modelsLoaded.value.reelsLoaded >= modelsLoaded.value.reelsNeeded;
+  
+  if (allLoaded && !curtainsOpen.value) {
+    setTimeout(() => {
+      curtainsOpen.value = true;
+      setTimeout(() => {
+        showUI.value = true;
+      }, 1000);
+    }, 500);
+  }
+}
 
 onUnmounted(() => {
   if (renderer) {
@@ -111,11 +144,9 @@ onUnmounted(() => {
 });
 
 function initThreeJS() {
-  // Scene setup
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x1a0a0a);
   
-  // Camera - start zoomed out
   camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
@@ -125,16 +156,13 @@ function initThreeJS() {
   camera.position.set(cameraZoomedOut.x, cameraZoomedOut.y, cameraZoomedOut.z);
   camera.lookAt(0, 0, 0);
   
-  // Renderer
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   canvasContainer.value.appendChild(renderer.domElement);
   
-  // Raycaster for mouse interaction
   raycaster = new THREE.Raycaster();
   mouse = new THREE.Vector2();
   
-  // Lighting
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
   scene.add(ambientLight);
   
@@ -151,23 +179,16 @@ function initThreeJS() {
   pointLight2.position.set(5, 5, 5);
   scene.add(pointLight2);
   
-  // Front light to illuminate the machine
   const frontLight = new THREE.DirectionalLight(0xffffff, 1.2);
   frontLight.position.set(0, 5, 20);
   frontLight.target.position.set(0, 0, 0);
   scene.add(frontLight);
   scene.add(frontLight.target);
   
-  // Create casino environment
   createCasinoEnvironment();
-  
-  // Load 3D slot machine model
   loadSlotMachineGLB();
   
-  // Window resize handler
   window.addEventListener('resize', onWindowResize);
-  
-  // Mouse/touch event listeners
   window.addEventListener('mousedown', onMouseDown);
   window.addEventListener('mousemove', onMouseMove);
   window.addEventListener('mouseup', onMouseUp);
@@ -175,15 +196,11 @@ function initThreeJS() {
   window.addEventListener('touchmove', onTouchMove);
   window.addEventListener('touchend', onTouchEnd);
   
-  // Start animation loop
   animate();
 }
 
 function createCasinoEnvironment() {
-  // Casino Scene
   const loader = new GLTFLoader();
-
-  console.log('Loading casino scene from /models/gameready_casino_scene.glb...');
 
   loader.load(
     '/models/gameready_casino_scene.glb',
@@ -191,25 +208,20 @@ function createCasinoEnvironment() {
       loadedModel = gltf.scene;
       casino = new THREE.Group();
       
-      // Add the loaded model to the Casino group
       casino.add(loadedModel);
-      
-      // Adjust scale and position
       casino.scale.set(.2, .2, .2);
-      casino.position.set(0, -7, 5);
-      casino.rotation.y = Math.PI/2; // Rotate 180 degrees to face camera
+      casino.position.set(0, -7, -10);
+      casino.rotation.y = -Math.PI / 2;
       
       scene.add(casino);
       modelLoaded = true;
+      modelsLoaded.value.casino = true;
       
-      console.log('✅ Casino loaded successfully!');
+      checkAllModelsLoaded();
     },
-    (xhr) => {
-      const percent = (xhr.loaded / xhr.total * 100).toFixed(0);
-      console.log(`Loading model: ${percent}%`);
-    },
+    undefined,
     (error) => {
-      console.error('❌ Error loading GLB model:', error);
+      console.error('Error loading casino model:', error);
     }
   );
 }
@@ -217,39 +229,29 @@ function createCasinoEnvironment() {
 function loadSlotMachineGLB() {
   const loader = new GLTFLoader();
   
-  console.log('Loading slot machine model from /models/slot_machine.glb...');
-  
   loader.load(
     '/models/slot_machine.glb',
     (gltf) => {
       loadedModel = gltf.scene;
       slotMachine = new THREE.Group();
       
-      // Add the loaded model to the slot machine group
       slotMachine.add(loadedModel);
-      
-      // Adjust scale and position
       slotMachine.scale.set(10, 10, 10);
       slotMachine.position.set(0, -8, 3);
       slotMachine.rotation.y = 0;
       
       scene.add(slotMachine);
       modelLoaded = true;
+      modelsLoaded.value.slotMachine = true;
       
-      console.log('✅ Slot machine loaded successfully!');
+      checkAllModelsLoaded();
       
-      // Load lever
       loadLever();
-      
-      // Create overlay reels as children of slot machine
       createOverlayReels();
     },
-    (xhr) => {
-      const percent = (xhr.loaded / xhr.total * 100).toFixed(0);
-      console.log(`Loading model: ${percent}%`);
-    },
+    undefined,
     (error) => {
-      console.error('❌ Error loading GLB model:', error);
+      console.error('Error loading slot machine model:', error);
     }
   );
 }
@@ -257,40 +259,38 @@ function loadSlotMachineGLB() {
 function loadLever() {
   const loader = new GLTFLoader();
   
-  console.log('Loading lever from /models/lever.glb...');
-  
   loader.load(
     '/models/lever.glb',
     (gltf) => {
       leverModel = gltf.scene;
       leverModel.name = 'lever';
       
-      // Position and scale lever relative to slot machine
       leverModel.scale.set(1, 1, 1);
-      leverModel.position.set(0.56, .8, 0); // Adjust based on your model
+      leverModel.position.set(0.56, .8, 0);
       
-      // Store the initial rotation
       leverRestRotation = leverModel.rotation.x;
       
-      // Add lever as child of slot machine so it moves with it
       slotMachine.add(leverModel);
       leverLoaded = true;
+      modelsLoaded.value.lever = true;
       
-      console.log('✅ Lever loaded successfully!');
+      checkAllModelsLoaded();
     },
-    (xhr) => {
-      console.log(`Lever: ${(xhr.loaded / xhr.total * 100).toFixed(0)}%`);
-    },
+    undefined,
     (error) => {
-      console.error('❌ Error loading lever:', error);
+      console.error('Error loading lever:', error);
     }
   );
 }
 
 function createOverlayReels() {
-  console.log('Creating individual spinning slot reels...');
-  
   const slotLoader = new GLTFLoader();
+  const positions = [
+    (0 - 1.41) * .145,
+    (1 - 1.41) * .145,
+    (2 - 1.41) * .145,
+    (3 - 1.41) * .145
+  ];
   
   for (let i = 0; i < 4; i++) {
     slotLoader.load(
@@ -298,23 +298,22 @@ function createOverlayReels() {
       (gltf) => {
         const slotReel = gltf.scene.clone();
         
-        // Position the 4 slots as children of slot machine (in local space)
-        // Since slotMachine has scale of 10, we need to compensate in local coordinates
-        slotReel.position.set((i - 1.45) * .15, .85, .2);
+        slotReel.position.set(positions[i], .85, .2);
         slotReel.scale.set(1, 1, 1);
-        
-        // Add as child of slot machine so they move together
+                
         slotMachine.add(slotReel);
         
-        reels.push({
+        reels[i] = {
           group: slotReel,
           targetRotation: 0,
           currentRotation: 0,
           symbolIndex: 0,
-          spinning: false
-        });
+          spinning: false,
+          position: i
+        };
         
-        console.log(`✅ Slot reel ${i + 1} loaded at position:`, slotReel.position);
+        modelsLoaded.value.reelsLoaded++;
+        checkAllModelsLoaded();
       },
       undefined,
       (error) => {
@@ -322,55 +321,6 @@ function createOverlayReels() {
       }
     );
   }
-}
-
-function createReel(xPosition) {
-  const reelGroup = new THREE.Group();
-  
-  const cylinderGeometry = new THREE.CylinderGeometry(0.8, 0.8, 3, 32);
-  const cylinderMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0xffffff,
-    metalness: 0.3,
-    roughness: 0.7
-  });
-  const cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
-  cylinder.rotation.z = Math.PI / 2;
-  reelGroup.add(cylinder);
-  
-  const numSymbols = symbols.length;
-  for (let i = 0; i < numSymbols; i++) {
-    const angle = (i / numSymbols) * Math.PI * 2;
-    const symbolMesh = createSymbolMesh(symbols[i]);
-    symbolMesh.position.set(
-      Math.sin(angle) * 0.85,
-      0,
-      Math.cos(angle) * 0.85
-    );
-    symbolMesh.rotation.y = -angle;
-    reelGroup.add(symbolMesh);
-  }
-  
-  reelGroup.position.set(xPosition, 1, 1.8);
-  return reelGroup;
-}
-
-function createSymbolMesh(symbol) {
-  const canvas = document.createElement('canvas');
-  canvas.width = 128;
-  canvas.height = 128;
-  const ctx = canvas.getContext('2d');
-  ctx.font = 'bold 80px Arial';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(symbol, 64, 64);
-  
-  const texture = new THREE.CanvasTexture(canvas);
-  const material = new THREE.MeshBasicMaterial({ 
-    map: texture,
-    transparent: true
-  });
-  const geometry = new THREE.PlaneGeometry(0.8, 0.8);
-  return new THREE.Mesh(geometry, material);
 }
 
 function onMouseDown(event) {
@@ -456,12 +406,13 @@ function resetLever() {
 }
 
 function activateSpin() {
-  if (balance.value < currentBet.value) return;
+  if (balance.value <= 0) {
+    handleBankruptcy();
+    return;
+  }
   
-  // Zoom camera in
   animateCameraZoom();
   
-  // Start spin after camera zoom
   setTimeout(() => {
     spin();
   }, 1000);
@@ -493,16 +444,15 @@ function animateCameraZoom() {
 function animate() {
   requestAnimationFrame(animate);
   
-  // Update lever rotation based on pull progress
   if (leverModel && leverLoaded) {
     leverModel.rotation.x = leverRestRotation + (leverPullProgress * maxLeverRotation);
   }
   
-  // Update spinning reels
   reels.forEach(reel => {
-    if (reel.spinning) {
+    if (reel && reel.spinning) {
       reel.currentRotation += 0.3;
       reel.group.rotation.x = reel.currentRotation;
+      reel.group.rotation.z = 0;
       
       if (reel.currentRotation >= reel.targetRotation) {
         reel.spinning = false;
@@ -533,33 +483,75 @@ function decreaseBet() {
   }
 }
 
+function allIn() {
+  if (balance.value > 0) {
+    currentBet.value = balance.value;
+  }
+}
+
+function handleBankruptcy() {
+  const randomMessage = bankruptMessages[Math.floor(Math.random() * bankruptMessages.length)];
+  bankruptMessage.value = randomMessage;
+  
+  setTimeout(() => {
+    balance.value = 100.00;
+    currentBet.value = 1.00;
+    bankruptMessage.value = '';
+  }, 4000);
+}
+
 function spin() {
-  if (spinning.value || balance.value < currentBet.value) return;
+  if (spinning.value) return;
+  
+  if (balance.value <= 0) {
+    handleBankruptcy();
+    return;
+  }
+  
+  const actualBet = Math.min(currentBet.value, balance.value);
   
   spinning.value = true;
-  balance.value -= currentBet.value;
+  balance.value -= actualBet;
   lastWin.value = 0;
+  winMessage.value = '';
+  bankruptMessage.value = '';
   
-  // Spin each reel - land on one of 5 evenly split symbols
   reels.forEach((reel, index) => {
     const spins = 5 + index;
     const randomSymbol = Math.floor(Math.random() * symbols.length);
     const anglePerSymbol = (Math.PI * 2) / symbols.length;
     
-    // Calculate exact landing position for chosen symbol
     reel.targetRotation = reel.currentRotation + (spins * Math.PI * 2) + (randomSymbol * anglePerSymbol);
-    reel.symbolIndex = randomSymbol;
     reel.spinning = true;
   });
   
-  // Check results after all reels stop
+  const longestSpinTime = 3000 + (reels.length * 300);
+  
   setTimeout(() => {
-    checkWin();
+    const orderedReels = [...reels].sort((a, b) => a.position - b.position);
+    
+    orderedReels.forEach((reel) => {
+      const anglePerSymbol = (Math.PI * 2) / symbols.length;
+      
+      let normalizedRotation = reel.targetRotation % (Math.PI * 2);
+      
+      if (normalizedRotation < 0) {
+        normalizedRotation += Math.PI * 2;
+      }
+      
+      let symbolIndex = Math.round(normalizedRotation / anglePerSymbol + 0.001) % symbols.length;
+      
+      reel.symbolIndex = symbolIndex;
+    });
+    
+    const resultSymbols = orderedReels.map(r => symbols[r.symbolIndex]);
+    console.log('🎰 Results:', resultSymbols.join(' | '));
+    
+    checkWin(orderedReels, actualBet);
     spinning.value = false;
     
-    // Zoom camera back out
     zoomCameraOut();
-  }, 3000 + (reels.length * 300));
+  }, longestSpinTime);
 }
 
 function zoomCameraOut() {
@@ -585,43 +577,30 @@ function zoomCameraOut() {
   updateCamera();
 }
 
-function checkWin() {
-  const results = reels.map(r => r.symbolIndex);
-  const resultSymbols = results.map(i => symbols[i]);
+function checkWin(orderedReels, betAmount) {
+  const results = orderedReels.map(r => r.symbolIndex);
   
-  // Console log what each wheel landed on
-  console.log('🎰 SPIN RESULTS:');
-  reels.forEach((reel, index) => {
-    console.log(`  Wheel ${index + 1}: ${symbols[reel.symbolIndex]} (index: ${reel.symbolIndex})`);
-  });
-  console.log(`  Full result: [${resultSymbols.join(', ')}]`);
-  
-  // Check for matches with 4 reels
   if (results[0] === results[1] && results[1] === results[2] && results[2] === results[3]) {
-    // Four of a kind - JACKPOT!
     const multiplier = results[0] === 4 ? 100 : results[0] === 3 ? 50 : 25;
-    lastWin.value = currentBet.value * multiplier;
+    lastWin.value = betAmount * multiplier;
     balance.value += lastWin.value;
-    console.log(`🎉 FOUR OF A KIND! Win: $${lastWin.value.toFixed(2)}`);
+    winMessage.value = 'JACKPOT! Four of a kind!';
   } else if (results[0] === results[1] && results[1] === results[2]) {
-    // Three of a kind (first three)
     const multiplier = results[0] === 4 ? 50 : results[0] === 3 ? 20 : 10;
-    lastWin.value = currentBet.value * multiplier;
+    lastWin.value = betAmount * multiplier;
     balance.value += lastWin.value;
-    console.log(`🎊 THREE OF A KIND! Win: $${lastWin.value.toFixed(2)}`);
+    winMessage.value = 'Three in a row!';
   } else if (results[1] === results[2] && results[2] === results[3]) {
-    // Three of a kind (last three)
     const multiplier = results[1] === 4 ? 50 : results[1] === 3 ? 20 : 10;
-    lastWin.value = currentBet.value * multiplier;
+    lastWin.value = betAmount * multiplier;
     balance.value += lastWin.value;
-    console.log(`🎊 THREE OF A KIND! Win: $${lastWin.value.toFixed(2)}`);
+    winMessage.value = 'Three in a row!';
   } else if (results[0] === results[1] || results[1] === results[2] || results[2] === results[3]) {
-    // Two of a kind
-    lastWin.value = currentBet.value * 2;
+    lastWin.value = betAmount * 2;
     balance.value += lastWin.value;
-    console.log(`💰 TWO OF A KIND! Win: $${lastWin.value.toFixed(2)}`);
+    winMessage.value = 'Pair!';
   } else {
-    console.log('❌ No win this time');
+    winMessage.value = '';
   }
 }
 
@@ -710,8 +689,7 @@ function exitPractice() {
 }
 
 .balance-display,
-.bet-amount,
-.last-win {
+.bet-amount {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -753,11 +731,81 @@ function exitPractice() {
   color: #ffd700;
   text-align: center;
   animation: pulse 2s infinite;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.6; }
+}
+
+.bankrupt-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem 2.5rem;
+  background: rgba(255, 0, 0, 0.3);
+  border: 3px solid #ff0000;
+  border-radius: 8px;
+  animation: flash 0.5s ease-out;
+  max-width: 600px;
+}
+
+@keyframes flash {
+  0% { transform: scale(0.8); opacity: 0; background: rgba(255, 0, 0, 0.5); }
+  50% { transform: scale(1.15); background: rgba(255, 0, 0, 0.4); }
+  100% { transform: scale(1); opacity: 1; background: rgba(255, 0, 0, 0.3); }
+}
+
+.bankrupt-message {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ff6666;
+  text-shadow: 0 0 15px #ff0000;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.bankrupt-subtext {
+  font-size: 1.1rem;
+  color: #ffaa00;
+  text-shadow: 0 0 10px #ffaa00;
+  text-align: center;
+}
+
+.win-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background: rgba(0, 255, 0, 0.2);
+  border: 2px solid #00ff00;
+  border-radius: 8px;
+  animation: celebrate 0.5s ease-out;
+}
+
+@keyframes celebrate {
+  0% { transform: scale(0.8); opacity: 0; }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.win-message {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #00ff00;
+  text-shadow: 0 0 15px #00ff00;
+  text-align: center;
+}
+
+.last-win {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .win-label {
@@ -777,6 +825,18 @@ function exitPractice() {
   position: fixed;
   top: 2rem;
   left: 2rem;
+  background: rgba(0, 0, 0, 0.8) !important;
+  border: 2px solid #ffd700 !important;
+  color: #ffd700 !important;
+  padding: 0.75rem 1.5rem !important;
+  font-weight: bold !important;
+  backdrop-filter: blur(10px);
+}
+
+.back-button:hover {
+  background: rgba(255, 215, 0, 0.2) !important;
+  transform: translateX(-5px);
+  transition: all 0.3s ease;
 }
 
 @media (max-width: 768px) {
@@ -787,6 +847,18 @@ function exitPractice() {
   
   .instruction-text {
     font-size: 1rem;
+  }
+  
+  .win-message {
+    font-size: 1.25rem;
+  }
+
+  .bankrupt-message {
+    font-size: 1.2rem;
+  }
+
+  .bankrupt-subtext {
+    font-size: 0.95rem;
   }
 }
 </style>
