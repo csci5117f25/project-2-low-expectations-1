@@ -100,14 +100,14 @@ const cameraZoomedIn = { x: 0, y: 0, z: 15 };
 let raycaster, mouse;
 
 const bankruptMessages = [
-  "🎰 The house always wins... but not today! One more spin could change everything!",
-  "💸 You were SO close! The jackpot is practically calling your name!",
-  "🎲 Winners never quit! That big win is just around the corner!",
-  "🔥 This is it! Your luck is about to turn - I can feel it!",
-  "⚡ Statistics say you're DUE for a win! Keep spinning!",
-  "🌟 Every pro gambler went broke before they hit it big!",
-  "💰 Just one more try! What's $100 compared to the JACKPOT?",
-  "🎯 You've learned from your mistakes - now it's time to WIN!",
+  "The house always wins... but not today! One more spin could change everything!",
+  "You were SO close! The jackpot is practically calling your name!",
+  "Winners never quit! That big win is just around the corner!",
+  "This is it! Your luck is about to turn, I can feel it!",
+  "Statistics say you're DUE for a win! Keep spinning!",
+  "Every pro gambler went broke before they hit it big!",
+  "Just one more try! What's $100 compared to the JACKPOT?",
+  "You've learned from your mistakes, now it's time to WIN!",
 ];
 
 onMounted(() => {

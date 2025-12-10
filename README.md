@@ -71,10 +71,12 @@ Three.js
 npm install three
 ```
 
-Slot Machine - deepakyhr
+Slot Machine - licensed under CC Attribution
+deepakyhr
 [https://skfb.ly/poJNB]
 
-Gameready Casino scene - Katydid
+Gameready Casino scene - Free Standard License
+Katydid
 [https://skfb.ly/pC86Y]
 
 * Library or service name: description of use
