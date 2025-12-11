@@ -4,20 +4,38 @@
   --red-500: #f44336;
   --blue-500: #2196f3;
   --green-500: #4caf50;
+
   --surface-card: #121212;
   --primary-color: #5e157d;
   --text-color-secondary: #ffffff;
   --text-gray: #b5acac;
-}
-/* Font System
-Body Texts:
-font-family: 'Oswald', sans-serif;
-font-weight: 400; (400, 500, 600, 700)
-color: var(--text-color-secondary);
+  --comp-bg: #1b1b1b;
+  --comp-border: #5b5b5b;
 
-Heading Texts (title, h1, h2, h3, etc)
-font-family: 'Cinzel', serif;
-font-weight: 700; (400, 600, 700)
-letter-spacing: 2px;
-text-transform: uppercase;
-*/
+  --radius-med: 8px;
+  --radius-large: 12px;
+  --gap-small: 0.75rem;
+  --gap-med: 1.25rem;
+  --gap-large: 1.5rem;
+}
+
+/* Typography */
+body,
+input,
+textarea,
+label,
+button {
+  font-family: 'Oswald', sans-serif;
+  color: var(--text-color-secondary);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-color-secondary);
+}

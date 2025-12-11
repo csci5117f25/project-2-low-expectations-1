@@ -6,8 +6,8 @@ import { db } from '../firebase_conf'
 import { useRouter } from 'vue-router'
 
 import Rating from 'primevue/rating'
-import FloatLabel from "primevue/floatlabel"
-import Textarea from "primevue/textarea"
+import FloatLabel from 'primevue/floatlabel'
+import Textarea from 'primevue/textarea'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
 
@@ -18,15 +18,15 @@ const journal = ref('')
 const errors = ref({})
 
 watch(rating, async (newVal) => {
-    const currentUser = user.value
-    if (!currentUser) return
-    const userID = currentUser.uid
-    try {
-        const ratingDoc = doc(db, 'users', userID)
-        await setDoc(ratingDoc, { rating: newVal }, { merge: true })
-    } catch (err) {
-        console.error('Error saving rating:', err)
-    }
+  const currentUser = user.value
+  if (!currentUser) return
+  const userID = currentUser.uid
+  try {
+    const ratingDoc = doc(db, 'users', userID)
+    await setDoc(ratingDoc, { rating: newVal }, { merge: true })
+  } catch (err) {
+    console.error('Error saving rating:', err)
+  }
 })
 
 const goBack = () => {
@@ -42,13 +42,8 @@ const goBack = () => {
         <p>Record your rating and notes</p>
       </header>
       <div class="back-btn-container">
-        <Button
-            label="← Back to Dashboard"
-            severity="secondary"
-            outlined
-            @click="goBack"
-        />
-        </div>
+        <Button label="← Back to Dashboard" severity="secondary" outlined @click="goBack" />
+      </div>
 
       <main class="main-cards">
         <!-- Rating Card -->
@@ -57,13 +52,23 @@ const goBack = () => {
           <div class="card-content">
             <Rating v-model="rating" class="rating">
               <template #onicon>
-                <img src="https://primefaces.org/cdn/primevue/images/rating/custom-onicon.png" height="32" width="32" />
+                <img
+                  src="https://primefaces.org/cdn/primevue/images/rating/custom-onicon.png"
+                  height="32"
+                  width="32"
+                />
               </template>
               <template #officon>
-                <img src="https://primefaces.org/cdn/primevue/images/rating/custom-officon.png" height="32" width="32" />
+                <img
+                  src="https://primefaces.org/cdn/primevue/images/rating/custom-officon.png"
+                  height="32"
+                  width="32"
+                />
               </template>
             </Rating>
-            <Message v-if="errors.rating" severity="error" size="small">{{ errors.rating }}</Message>
+            <Message v-if="errors.rating" severity="error" size="small">{{
+              errors.rating
+            }}</Message>
           </div>
         </div>
 
@@ -80,7 +85,9 @@ const goBack = () => {
               />
               <label>Write your thoughts...</label>
             </FloatLabel>
-            <Message v-if="errors.journal" severity="error" size="small">{{ errors.journal }}</Message>
+            <Message v-if="errors.journal" severity="error" size="small">{{
+              errors.journal
+            }}</Message>
             <Button label="Submit" class="submit-btn" @click="onFormSubmit" />
           </div>
         </div>
@@ -131,7 +138,7 @@ const goBack = () => {
 .card {
   background: var(--surface-card);
   border-radius: 1rem;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
@@ -155,7 +162,6 @@ const goBack = () => {
   width: 100%;
 }
 
-
 .rating img {
   width: 32px;
   height: 32px;
@@ -172,7 +178,9 @@ const goBack = () => {
   font-weight: bold;
   border-radius: 0.75rem;
   padding: 0.75rem 1rem;
-  transition: background-color 0.2s, transform 0.2s;
+  transition:
+    background-color 0.2s,
+    transform 0.2s;
 }
 .submit-btn:hover {
   background-color: var(--primary-color-hover, #2563eb);

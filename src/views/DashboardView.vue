@@ -3,16 +3,17 @@
     <div class="dashboard-content">
       <header class="header">
         <div class="header-left">
-          <img src="/public/playing-cards.png" class="logo" alt="Playing cards logo">
+          <img src="/public/playing-cards.png" class="logo" alt="Playing cards logo" />
           <div class="header-title">
             <h1>Casino Tracker</h1>
             <p>Track your gambling habits responsibly</p>
           </div>
         </div>
         <div class="header-right">
-          <Button label="+ Log Visit" severity="secondary" />
+          <Button label="+ Log Visit" severity="secondary" @click="logVisitFormRef = true" />
           <!-- <Button label="Log out" severity="secondary" outlined /> -->
-          <LogOutButton></LogOutButton>
+          <LogOutButton />
+          <LogVisitForm v-model:visible="logVisitFormRef" />
         </div>
       </header>
 
@@ -27,18 +28,21 @@
           class="tab-button"
         >
           <template #icon>
-            <img :src="`https://api.iconify.design/mdi/${tab.icon}.svg?color=%23fff`" class="tab-icon" :alt="tab.name">
+            <img
+              :src="`https://api.iconify.design/mdi/${tab.icon}.svg?color=%23fff`"
+              class="tab-icon"
+              :alt="tab.name"
+            />
           </template>
         </Button>
       </nav>
 
       <main class="main-content">
-        <Message severity="info" :closable="false" style="margin-bottom:24px;">
+        <Message severity="info" :closable="false" style="margin-bottom: 24px">
           <p>Placeholder for AI quotes or comments to be later implemented?</p>
         </Message>
 
         <div class="grid-2col">
-
           <!-- Net Result Card -->
           <Card>
             <template #title>$ Net Result</template>
@@ -82,7 +86,6 @@
             <template #content>
               <div class="chart-container">
                 <svg class="chart" viewBox="0 0 400 160" preserveAspectRatio="none">
-
                   <!-- Y-axis labels -->
                   <text x="10" y="15" class="axis-label">$100</text>
                   <text x="10" y="50" class="axis-label">$50</text>
@@ -91,7 +94,15 @@
                   <text x="10" y="155" class="axis-label">-$100</text>
 
                   <!-- Zero line -->
-                  <line x1="40" y1="85" x2="400" y2="85" stroke="#666" stroke-width="1" stroke-dasharray="4,4" />
+                  <line
+                    x1="40"
+                    y1="85"
+                    x2="400"
+                    y2="85"
+                    stroke="#666"
+                    stroke-width="1"
+                    stroke-dasharray="4,4"
+                  />
 
                   <!-- Chart line -->
                   <polyline
@@ -130,12 +141,15 @@
         </div>
 
         <div class="grid-2col">
-
           <!-- Break-Even Probability -->
           <Card>
             <template #title>
-              <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <img src="https://api.iconify.design/mdi/chart-bar.svg?color=%23fff" class="title-icon" alt="Chart">
+              <div style="display: flex; align-items: center; gap: 0.5rem">
+                <img
+                  src="https://api.iconify.design/mdi/chart-bar.svg?color=%23fff"
+                  class="title-icon"
+                  alt="Chart"
+                />
                 Break-Even Probability
               </div>
             </template>
@@ -146,8 +160,12 @@
                   <p class="breakeven-sessions">2 more sessions averaging $37.50</p>
                 </Message>
                 <div class="breakeven-details">
-                  <p>Recent Loss of <strong>$160.00</strong> would take 4 winning sessions to recover</p>
-                  <p>Based on your average win of <strong>$37.50</strong> from 3 winning sessions</p>
+                  <p>
+                    Recent Loss of <strong>$160.00</strong> would take 4 winning sessions to recover
+                  </p>
+                  <p>
+                    Based on your average win of <strong>$37.50</strong> from 3 winning sessions
+                  </p>
                 </div>
               </div>
             </template>
@@ -156,8 +174,12 @@
           <!-- Casino Locations Map -->
           <Card>
             <template #title>
-              <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <img src="https://api.iconify.design/mdi/map-marker.svg?color=%23fff" class="title-icon" alt="Location">
+              <div style="display: flex; align-items: center; gap: 0.5rem">
+                <img
+                  src="https://api.iconify.design/mdi/map-marker.svg?color=%23fff"
+                  class="title-icon"
+                  alt="Location"
+                />
                 Casino Locations
               </div>
             </template>
@@ -165,8 +187,8 @@
               <div class="map-container">
                 <div class="map-placeholder">
                   <span class="map-text">Map</span>
-                  <div class="map-pin winning-pin" style="top: 20%; left: 25%;"></div>
-                  <div class="map-pin losing-pin" style="bottom: 20%; right: 25%;"></div>
+                  <div class="map-pin winning-pin" style="top: 20%; left: 25%"></div>
+                  <div class="map-pin losing-pin" style="bottom: 20%; right: 25%"></div>
                 </div>
               </div>
               <div class="map-legend">
@@ -186,13 +208,19 @@
         <!-- What You Could've Had -->
         <Card class="full-width">
           <template #title>
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-              <img src="https://api.iconify.design/mdi/lightbulb-on.svg?color=%23fff" class="title-icon" alt="Idea">
+            <div style="display: flex; align-items: center; gap: 0.5rem">
+              <img
+                src="https://api.iconify.design/mdi/lightbulb-on.svg?color=%23fff"
+                class="title-icon"
+                alt="Idea"
+              />
               What You Could've Had Instead
             </div>
           </template>
           <template #content>
-            <p class="couldve-intro">Your net loss of <strong class="negative">105.00</strong> could've been...</p>
+            <p class="couldve-intro">
+              Your net loss of <strong class="negative">105.00</strong> could've been...
+            </p>
             <div class="grid-2col">
               <div class="couldve-items">
                 <Skeleton v-for="i in 3" :key="i" height="48px" />
@@ -209,36 +237,39 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import Button from 'primevue/button';
-import Card from 'primevue/card';
-import Message from 'primevue/message';
-import Divider from 'primevue/divider';
-import Skeleton from 'primevue/skeleton';
-import LogOutButton from '@/components/LogOutButton.vue';
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import Button from 'primevue/button'
+import Card from 'primevue/card'
+import Message from 'primevue/message'
+import Divider from 'primevue/divider'
+import Skeleton from 'primevue/skeleton'
+import LogOutButton from '@/components/LogOutButton.vue'
+import LogVisitForm from '@/components/LogVisitForm.vue'
 
-const router = useRouter();
+const router = useRouter()
 
 const tabs = [
   { name: 'Dashboard', icon: 'chart-arc' },
   { name: 'All My Visits', icon: 'clock' },
   { name: 'Fun Spin', icon: 'dice' },
   { name: 'Map', icon: 'map' },
-  { name: 'Rating', icon: 'star', routeName: 'rating'}
-];
+  { name: 'Rating', icon: 'star', routeName: 'rating' },
+]
 
-const activeTab = ref('Dashboard');
-const chartPeriod = ref('m');
+const activeTab = ref('Dashboard')
+const chartPeriod = ref('m')
 
 const handleTabClick = (tab) => {
-  activeTab.value = tab.name;
+  activeTab.value = tab.name
   if (tab.routeName) {
-    router.push({ name: tab.routeName });
+    router.push({ name: tab.routeName })
   } else if (tab.route) {
-    router.push(tab.route);
+    router.push(tab.route)
   }
-};
+}
+
+const logVisitFormRef = ref(false)
 </script>
 
 <style scoped>
@@ -527,7 +558,8 @@ const handleTabClick = (tab) => {
   color: var(--red-500);
 }
 
-.couldve-items, .couldve-quotes {
+.couldve-items,
+.couldve-quotes {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
