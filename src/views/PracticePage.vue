@@ -210,7 +210,7 @@ function createCasinoEnvironment() {
       
       casino.add(loadedModel);
       casino.scale.set(.2, .2, .2);
-      casino.position.set(0, -7, -10);
+      casino.position.set(0, -7, -15);
       casino.rotation.y = -Math.PI / 2;
       
       scene.add(casino);
@@ -346,6 +346,7 @@ function onMouseMove(event) {
 }
 
 function onMouseUp() {
+  // only activate if lever is pulled enough
   if (isDraggingLever && leverPullProgress > 0.7) {
     activateSpin();
   }
