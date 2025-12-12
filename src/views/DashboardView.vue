@@ -225,7 +225,8 @@ const tabs = [
   { name: 'All My Visits', icon: 'clock' },
   { name: 'Fun Spin', icon: 'dice' },
   { name: 'Map', icon: 'map' },
-  { name: 'Rating', icon: 'star', routeName: 'rating'}
+  { name: 'Rating', icon: 'star', routeName: 'rating'},
+  { name: 'Practice Mode', icon: 'slot-machine', routeName: 'practice' }
 ];
 
 const activeTab = ref('Dashboard');
