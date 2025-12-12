@@ -3,7 +3,7 @@
     <div class="dashboard-content">
       <header class="header">
         <div class="header-left">
-          <img src="/public/playing-cards.png" class="logo" alt="Playing cards logo" />
+          <img src="/playing-cards.png" class="logo" alt="Playing cards logo" />
           <div class="header-title">
             <h1>Casino Tracker</h1>
             <p>Track your gambling habits responsibly</p>

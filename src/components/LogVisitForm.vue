@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { db } from '@/firebase_conf.js'
+import { db, auth } from '@/firebase_conf.js'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
@@ -20,8 +20,9 @@ const logVisit = async () => {
   const initial = Number(initialAmount.value) || 0
   const cashout = Number(cashOutAmount.value) || 0
   const profit = cashout - initial
+  const user = auth.currentUser
   try {
-    await addDoc(collection(db, 'casinoVisits'), {
+    await addDoc(collection(db, 'users', user.uid, 'casinoVisits'), {
       casinoName: casinoName.value,
       visitDate: visitDate.value,
       initialAmount: initial,
@@ -75,7 +76,7 @@ const logVisit = async () => {
       </div>
       <div class="form-field">
         <label for="mood">Mood: </label>
-        <Rating rounded id="mood" v-model="mood" :stars="5" cancel />
+        <Rating id="mood" v-model="mood" :stars="5" cancel />
       </div>
       <div class="form-field">
         <label for="notes">Notes: </label>
