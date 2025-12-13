@@ -204,6 +204,7 @@
           </template>
         </Card>
         <MoodMoney></MoodMoney>
+        <RecentHistory></RecentHistory>
       </main>
     </div>
   </div>
@@ -219,6 +220,7 @@ import Divider from 'primevue/divider';
 import Skeleton from 'primevue/skeleton';
 import LogOutButton from '@/components/LogOutButton.vue';
 import MoodMoney from '@/components/MoodMoney.vue';
+import RecentHistory from '@/components/RecentHistory.vue';
 
 const router = useRouter();
 
