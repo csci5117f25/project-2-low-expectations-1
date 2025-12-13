@@ -203,6 +203,7 @@
             </div>
           </template>
         </Card>
+        <MoodMoney></MoodMoney>
       </main>
     </div>
   </div>
@@ -217,6 +218,7 @@ import Message from 'primevue/message';
 import Divider from 'primevue/divider';
 import Skeleton from 'primevue/skeleton';
 import LogOutButton from '@/components/LogOutButton.vue';
+import MoodMoney from '@/components/MoodMoney.vue';
 
 const router = useRouter();
 
