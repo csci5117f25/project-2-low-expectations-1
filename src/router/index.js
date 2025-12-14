@@ -3,6 +3,7 @@ import SplashPage from '@/views/SplashPage.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import RateView from '@/views/RateView.vue'
 import SpeechToText from '@/components/SpeechToText.vue'
+import PracticePage from '@/views/PracticePage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -11,13 +12,13 @@ const router = createRouter({
       path: '/',
       name: 'splashpage',
       component: SplashPage,
-      meta: {loggedIn: true}
+      meta: { loggedIn: true },
     },
     {
       path: '/dashboard',
       name: 'dashboard',
       component: DashboardView,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true },
     },
     {
       path: '/rating',
@@ -29,6 +30,12 @@ const router = createRouter({
       path: '/test',
       name: 'test',
       component: SpeechToText
+    },
+    {
+      path: '/practice',
+      name: 'practice',
+      component: PracticePage,
+      meta: { requiresAuth: true }
     }
   ],
 
