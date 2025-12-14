@@ -11,13 +11,13 @@ const router = createRouter({
       path: '/',
       name: 'splashpage',
       component: SplashPage,
-      meta: {loggedIn: true}
+      meta: { loggedIn: true },
     },
     {
       path: '/dashboard',
       name: 'dashboard',
       component: DashboardView,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true },
     },
     {
       path: '/rating',
