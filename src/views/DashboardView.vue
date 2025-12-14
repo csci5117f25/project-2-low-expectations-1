@@ -231,6 +231,8 @@
             </div>
           </template>
         </Card>
+        <MoodMoney></MoodMoney>
+        <RecentHistory></RecentHistory>
       </main>
     </div>
   </div>
@@ -238,24 +240,27 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Message from 'primevue/message'
 import Divider from 'primevue/divider'
 import Skeleton from 'primevue/skeleton'
-import LogOutButton from '@/components/LogOutButton.vue'
 import LogVisitForm from '@/components/LogVisitForm.vue'
+import { useRouter } from 'vue-router';
+import LogOutButton from '@/components/LogOutButton.vue';
+import MoodMoney from '@/components/MoodMoney.vue';
+import RecentHistory from '@/components/RecentHistory.vue';
 
-const router = useRouter()
+const router = useRouter();
 
 const tabs = [
   { name: 'Dashboard', icon: 'chart-arc' },
   { name: 'All My Visits', icon: 'clock' },
   { name: 'Fun Spin', icon: 'dice' },
   { name: 'Map', icon: 'map' },
-  { name: 'Rating', icon: 'star', routeName: 'rating' },
-]
+  { name: 'Rating', icon: 'star', routeName: 'rating'},
+  { name: 'Practice Mode', icon: 'slot-machine', routeName: 'practice' }
+];
 
 const activeTab = ref('Dashboard')
 const chartPeriod = ref('m')
@@ -302,8 +307,8 @@ const logVisitFormRef = ref(false)
 }
 
 .logo {
-  width: 60px;
-  height: 60px;
+  width: 45px;
+  height: 45px;
 }
 
 .header-title h1 {
