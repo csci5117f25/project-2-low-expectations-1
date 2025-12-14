@@ -4,9 +4,11 @@
   import { ref } from 'vue';
   import { getFunctions, httpsCallable } from 'firebase/functions';
 
+
+  const text = defineModel({type: String, default:''})
+
   const isRecording = ref(false)
   const isProcessing = ref(false)
-  const transcribedText = ref('');
   let mediaRecorder = null;
   let audioChunks = [];
 
@@ -17,7 +19,6 @@
     mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
     audioChunks = [];
 
-    // Collect audio data as it comes in
     mediaRecorder.ondataavailable = (event) => {
       if (event.data.size > 0) {
         audioChunks.push(event.data);
@@ -72,7 +73,9 @@ const sendToBackend = async (base64String) => {
 
   try {
     const result = await transcribeAudio({ audio: base64String });
-    transcribedText.value = result.data.text;
+    text.value = text.value
+      ? text.value + ' ' + result.data.text
+      : result.data.text
   } catch (error) {
     console.error("Firebase Error:", error);
     alert("Failed to transcribe audio.");
@@ -85,7 +88,7 @@ const sendToBackend = async (base64String) => {
 
 <template>
 
-<Textarea v-model="transcribedText"></Textarea>
+<Textarea v-model="text"></Textarea>
 <Button v-if="!isRecording && !isProcessing" icon="pi pi-microphone" @click="startRecording" label="Click to start recording"></Button>
 <Button v-else-if="isRecording" @click="stopRecording" label="Stop and transcribe" icon="pi pi-stop"></Button>
 <Button v-else label="Processing..." icon="pi pi-spinner pi-spin" disabled></Button>

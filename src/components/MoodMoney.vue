@@ -48,7 +48,7 @@ const chartOptions = ref({
 async function loadData(logs) {
   const trackNetResult = [0, 0, 0, 0, 0]
   const moodCounter = [0, 0, 0, 0, 0]
-  
+
   //keep track of each mood's net result
   for (let i = 0; i < logs.length; i++) {
     const mood = Number(logs[i].mood)
