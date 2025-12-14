@@ -8,7 +8,12 @@ import InputText from 'primevue/inputtext'
 import DatePicker from 'primevue/calendar'
 import Rating from 'primevue/rating'
 import Textarea from 'primevue/textarea'
+import { useToast } from 'primevue/usetoast'
+import SpeechToText from './SpeechToText.vue'
 
+
+
+const toast = useToast()
 const visible = ref(false)
 const casinoName = ref('')
 const visitDate = ref(new Date()) //auto set to today
@@ -16,6 +21,8 @@ const initialAmount = ref(null)
 const cashOutAmount = ref(null)
 const mood = ref(0)
 const notes = ref('')
+
+
 const logVisit = async () => {
   const initial = Number(initialAmount.value) || 0
   const cashout = Number(cashOutAmount.value) || 0
@@ -40,6 +47,7 @@ const logVisit = async () => {
     mood.value = 0
     notes.value = ''
     visible.value = false
+    toast.add({severity: 'success', summary: 'Your visit is logged!', life:3000 })
   } catch (e) {
     console.error('Error logging the form:', e)
   }
@@ -80,7 +88,8 @@ const logVisit = async () => {
       </div>
       <div class="form-field">
         <label for="notes">Notes: </label>
-        <Textarea id="notes" v-model="notes" rows="4" placeholder="Add notes about vist here..." />
+        <!-- <Textarea id="notes" v-model="notes" rows="4" placeholder="Add notes about vist here..." /> -->
+         <SpeechToText v-model="notes"></SpeechToText>
       </div>
       <div class="form-actions">
         <Button label="Cancel" class="p-button-text" @click="visible = false" />
