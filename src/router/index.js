@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import SplashPage from '@/views/SplashPage.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import RateView from '@/views/RateView.vue'
+import SpeechToText from '@/components/SpeechToText.vue'
 import PracticePage from '@/views/PracticePage.vue'
 
 const router = createRouter({
@@ -26,12 +27,18 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
+      path: '/test',
+      name: 'test',
+      component: SpeechToText
+    },
+    {
       path: '/practice',
       name: 'practice',
       component: PracticePage,
       meta: { requiresAuth: true }
     }
   ],
+
 })
 
 export default router
