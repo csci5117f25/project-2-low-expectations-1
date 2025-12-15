@@ -265,16 +265,10 @@
 
 <script setup>
 import { ref } from 'vue'
-import Button from 'primevue/button'
-import Card from 'primevue/card'
-import Message from 'primevue/message'
-import Divider from 'primevue/divider'
-import Skeleton from 'primevue/skeleton'
-import LogVisitForm from '@/components/LogVisitForm.vue'
 import { useRouter } from 'vue-router';
-import Button from 'primevue/button';
-import Card from 'primevue/card';
-import Message from 'primevue/message';
+import Button from 'primevue/button'
+import Message from 'primevue/message'
+import LogVisitForm from '@/components/LogVisitForm.vue'
 import LogOutButton from '@/components/LogOutButton.vue';
 import DraggableWidgetGrid from '@/components/DraggableWidgetGrid.vue';
 
@@ -290,6 +284,7 @@ const tabs = [
 
 const activeTab = ref('Dashboard');
 const editMode = ref(false);
+const logVisitFormRef = ref(false);
 
 // Active widgets on dashboard - initial state
 const activeWidgets = ref([
