@@ -3,14 +3,14 @@
     <div class="dashboard-content">
       <header class="header">
         <div class="header-left">
-          <img src="/public/playing-cards.png" class="logo" alt="Playing cards logo">
+          <img src="/playing-cards.png" class="logo" alt="Playing cards logo" />
           <div class="header-title">
-            <h1>Casino Tracker</h1>
+            <h1>Gamblr</h1>
             <p>Track your gambling habits responsibly</p>
           </div>
         </div>
         <div class="header-right">
-          <Button label="+ Log Visit" severity="secondary" />
+          <Button label="+ Log Visit" severity="secondary" @click="logVisitFormRef = true" />
           <Button 
             :label="editMode ? 'Done Editing' : 'Edit Dashboard'" 
             :severity="editMode ? 'success' : 'secondary'" 
@@ -18,7 +18,8 @@
             @click="toggleEditMode"
             icon="pi pi-cog"
           />
-          <LogOutButton></LogOutButton>
+          <LogOutButton />
+          <LogVisitForm v-model:visible="logVisitFormRef" />
         </div>
       </header>
 
@@ -29,17 +30,37 @@
           :label="tab.name"
           :severity="activeTab === tab.name ? 'primary' : 'secondary'"
           :outlined="activeTab !== tab.name"
+          :rounded="tab.name"
           @click="handleTabClick(tab)"
           class="tab-button"
         >
           <template #icon>
-            <img :src="`https://api.iconify.design/mdi/${tab.icon}.svg?color=%23fff`" class="tab-icon" :alt="tab.name">
+            <img
+              :src="`https://api.iconify.design/mdi/${tab.icon}.svg?color=${activeTab === tab.name ? '%23000' : '%23fff'}`"
+              class="tab-icon"
+              :alt="tab.name"
+            />
           </template>
         </Button>
+        <Button
+          label="Practice Longue"
+          severity="danger"
+          rounded
+          class="tab-button practice-button"
+          @click="handleTabClick({name: 'practice', routeName: 'practice'})"
+          >
+            <template #icon>
+              <img
+                :src="`https://api.iconify.design/mdi/slot-machine.svg?color=%23000`"
+                class="tab-icon"
+                :alt="'Practice Longue'"
+              />
+            </template>
+          </Button>
       </nav>
 
       <main class="main-content">
-        <Message severity="info" :closable="false" style="margin-bottom:24px;">
+        <Message severity="info" :closable="false" style="margin-bottom: 24px">
           <p>Placeholder for AI quotes or comments to be later implemented?</p>
         </Message>
 
@@ -57,7 +78,6 @@
 
         <div class="grid-2col">
 
-          <!-- Net Result Card
           <Card>
             <template #title>$ Net Result</template>
             <template #content>
@@ -100,8 +120,7 @@
             <template #content>
               <div class="chart-container">
                 <svg class="chart" viewBox="0 0 400 160" preserveAspectRatio="none">
-
-                  <!-- Y-axis labels 
+                  <!-- Y-axis labels
                   <text x="10" y="15" class="axis-label">$100</text>
                   <text x="10" y="50" class="axis-label">$50</text>
                   <text x="10" y="85" class="axis-label">$0</text>
@@ -152,8 +171,12 @@
           <!-- Break-Even Probability 
           <Card>
             <template #title>
-              <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <img src="https://api.iconify.design/mdi/chart-bar.svg?color=%23fff" class="title-icon" alt="Chart">
+              <div style="display: flex; align-items: center; gap: 0.5rem">
+                <img
+                  src="https://api.iconify.design/mdi/chart-bar.svg?color=%23fff"
+                  class="title-icon"
+                  alt="Chart"
+                />
                 Break-Even Probability
               </div>
             </template>
@@ -164,8 +187,12 @@
                   <p class="breakeven-sessions">2 more sessions averaging $37.50</p>
                 </Message>
                 <div class="breakeven-details">
-                  <p>Recent Loss of <strong>$160.00</strong> would take 4 winning sessions to recover</p>
-                  <p>Based on your average win of <strong>$37.50</strong> from 3 winning sessions</p>
+                  <p>
+                    Recent Loss of <strong>$160.00</strong> would take 4 winning sessions to recover
+                  </p>
+                  <p>
+                    Based on your average win of <strong>$37.50</strong> from 3 winning sessions
+                  </p>
                 </div>
               </div>
             </template>
@@ -174,8 +201,12 @@
           <!-- Casino Locations Map
           <Card>
             <template #title>
-              <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <img src="https://api.iconify.design/mdi/map-marker.svg?color=%23fff" class="title-icon" alt="Location">
+              <div style="display: flex; align-items: center; gap: 0.5rem">
+                <img
+                  src="https://api.iconify.design/mdi/map-marker.svg?color=%23fff"
+                  class="title-icon"
+                  alt="Location"
+                />
                 Casino Locations
               </div>
             </template>
@@ -183,8 +214,8 @@
               <div class="map-container">
                 <div class="map-placeholder">
                   <span class="map-text">Map</span>
-                  <div class="map-pin winning-pin" style="top: 20%; left: 25%;"></div>
-                  <div class="map-pin losing-pin" style="bottom: 20%; right: 25%;"></div>
+                  <div class="map-pin winning-pin" style="top: 20%; left: 25%"></div>
+                  <div class="map-pin losing-pin" style="bottom: 20%; right: 25%"></div>
                 </div>
               </div>
               <div class="map-legend">
@@ -204,13 +235,19 @@
         <!-- What You Could've Had
         <Card class="full-width">
           <template #title>
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-              <img src="https://api.iconify.design/mdi/lightbulb-on.svg?color=%23fff" class="title-icon" alt="Idea">
+            <div style="display: flex; align-items: center; gap: 0.5rem">
+              <img
+                src="https://api.iconify.design/mdi/lightbulb-on.svg?color=%23fff"
+                class="title-icon"
+                alt="Idea"
+              />
               What You Could've Had Instead
             </div>
           </template>
           <template #content>
-            <p class="couldve-intro">Your net loss of <strong class="negative">105.00</strong> could've been...</p>
+            <p class="couldve-intro">
+              Your net loss of <strong class="negative">105.00</strong> could've been...
+            </p>
             <div class="grid-2col">
               <div class="couldve-items">
                 <Skeleton v-for="i in 3" :key="i" height="48px" />
@@ -227,7 +264,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
+import Button from 'primevue/button'
+import Card from 'primevue/card'
+import Message from 'primevue/message'
+import Divider from 'primevue/divider'
+import Skeleton from 'primevue/skeleton'
+import LogVisitForm from '@/components/LogVisitForm.vue'
 import { useRouter } from 'vue-router';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
@@ -242,7 +285,7 @@ const tabs = [
   { name: 'All My Visits', icon: 'clock' },
   { name: 'Fun Spin', icon: 'dice' },
   { name: 'Map', icon: 'map' },
-  { name: 'Rating', icon: 'star', routeName: 'rating'}
+  { name: 'Rating', icon: 'star', routeName: 'rating'},
 ];
 
 const activeTab = ref('Dashboard');
@@ -256,11 +299,11 @@ const activeWidgets = ref([
 ]);
 
 const handleTabClick = (tab) => {
-  activeTab.value = tab.name;
+  activeTab.value = tab.name
   if (tab.routeName) {
-    router.push({ name: tab.routeName });
+    router.push({ name: tab.routeName })
   } else if (tab.route) {
-    router.push(tab.route);
+    router.push(tab.route)
   }
 };
 
@@ -299,8 +342,8 @@ const toggleEditMode = () => {
 }
 
 .logo {
-  width: 60px;
-  height: 60px;
+  width: 45px;
+  height: 45px;
 }
 
 .header-title h1 {
@@ -333,6 +376,24 @@ const toggleEditMode = () => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.practice-button {
+  margin-left: auto;
+  transition: background-image 0.3s ease;
+}
+
+.practice-button:hover {
+  background-image: url('/777.gif') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-color: transparent !important;
+  color: transparent !important;
+}
+
+.practice-button:hover .tab-icon,
+.practice-button:hover .p-button-label {
+  opacity: 0 !important;
 }
 
 .tab-icon {
@@ -559,7 +620,8 @@ const toggleEditMode = () => {
   color: var(--red-500);
 }
 
-.couldve-items, .couldve-quotes {
+.couldve-items,
+.couldve-quotes {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -576,13 +638,30 @@ const toggleEditMode = () => {
     align-items: flex-start;
   }
 
+  .header-title p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--text-color-secondary);
+  }
+
   .header-right {
-    flex-wrap: wrap;
     width: 100%;
+    justify-content: center;
+    /*flex-wrap: wrap;*/
+    
   }
 
   .nav-tabs {
-    overflow-x: auto;
+    justify-content: center;
+    flex-wrap: wrap;
+    overflow-x: visible;
+    padding: 0.5rem 1rem;
+  }
+
+  .practice-button {
+    margin-top: 0.5rem;
+    margin-left: 0;
+    width: 100%;
   }
 }
 </style>

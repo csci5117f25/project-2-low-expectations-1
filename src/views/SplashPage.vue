@@ -1,7 +1,7 @@
 <script setup>
-import LogInButton from '@/components/LogInButton.vue';
-import FeatureCard from '@/components/FeatureCard.vue';
-import Tag from 'primevue/tag';
+import LogInButton from '@/components/LogInButton.vue'
+import FeatureCard from '@/components/FeatureCard.vue'
+import Tag from 'primevue/tag'
 </script>
 
 <template>
@@ -17,21 +17,45 @@ import Tag from 'primevue/tag';
     </header>
 
     <section class="hero">
-      <Tag value ="Track Responsibly" severity="secondary" rounded/> 
+      <Tag value="Track Responsibly" severity="secondary" rounded />
       <h2 class="hero-title">Take control of Your Gambling Habits</h2>
       <p class="hero-content">
-        A simple way to understand your gambling patterns,
-        visualize your spending, and make informed decisions.
+        A simple way to understand your gambling patterns, visualize your spending, and make
+        informed decisions.
       </p>
-      <LogInButton/>
+      <LogInButton />
     </section>
     <section class="card-grid">
-      <FeatureCard icon="pi pi-chart-line" title="Net Results" description="Track wins/losses and cumulative totals."/>
-      <FeatureCard icon="pi pi-chart-scatter" title="Time-Series Charts" description="See your performance over time."/>
-      <FeatureCard icon="pi pi-map" title="Casino Mapping" description="Pin and view casinos you’ve visited."/>
-      <FeatureCard icon="pi pi-list-check" title="Casino Wishlist" description="Track casinos you want to visit."/>
-      <FeatureCard icon="pi pi-face-smile" title="Mood Tracking" description="Log your mood during sessions."/>
-      <FeatureCard icon="pi pi-clipboard" title="Journal Entries" description="Write down any thoughts or notes about your visit." />
+      <FeatureCard
+        icon="pi pi-chart-line"
+        title="Net Results"
+        description="Track wins/losses and cumulative totals."
+      />
+      <FeatureCard
+        icon="pi pi-chart-scatter"
+        title="Time-Series Charts"
+        description="See your performance over time."
+      />
+      <FeatureCard
+        icon="pi pi-map"
+        title="Casino Mapping"
+        description="Pin and view casinos you’ve visited."
+      />
+      <FeatureCard
+        icon="pi pi-list-check"
+        title="Casino Wishlist"
+        description="Track casinos you want to visit."
+      />
+      <FeatureCard
+        icon="pi pi-face-smile"
+        title="Mood Tracking"
+        description="Log your mood during sessions."
+      />
+      <FeatureCard
+        icon="pi pi-clipboard"
+        title="Journal Entries"
+        description="Write down any thoughts or notes about your visit."
+      />
     </section>
   </div>
 </template>
@@ -42,7 +66,7 @@ import Tag from 'primevue/tag';
   position: relative;
 }
 .landing_page::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   background: url('/casino-bg.jpg') center/cover no-repeat;
