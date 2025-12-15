@@ -2,36 +2,137 @@
 import { ref } from 'vue'
 import { db, auth } from '@/firebase_conf.js'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
+import { useCollection, useCurrentUser } from 'vuefire'
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import InputGroupAddon from 'primevue/inputgroupaddon'
 import DatePicker from 'primevue/calendar'
 import Rating from 'primevue/rating'
-import Textarea from 'primevue/textarea'
 import { useToast } from 'primevue/usetoast'
 import SpeechToText from './SpeechToText.vue'
+import AutoComplete  from 'primevue/autocomplete'
 
 
 
 const toast = useToast()
 const visible = ref(false)
-const casinoName = ref('')
+const selectedCasino = ref(null)
 const visitDate = ref(new Date()) //auto set to today
 const initialAmount = ref(null)
 const cashOutAmount = ref(null)
 const mood = ref(0)
 const notes = ref('')
+const filteredCasinos = ref([])
+
+const user = useCurrentUser()
+const userCasinos = useCollection(collection(db, 'users', user.value.uid, 'casinos'))
+
+// Search/filter casinos for autocomplete
+const searchCasinos = (event) => {
+  const query = event.query.toLowerCase().trim()
+
+  if (!userCasinos.value || userCasinos.value.length === 0) {
+    // No existing casinos, show option to create new
+    if (query) {
+      filteredCasinos.value = [{ name: event.query, isNew: true }]
+    } else {
+      filteredCasinos.value = []
+    }
+    return
+  }
+
+  const matches = userCasinos.value.filter((casino) =>
+  casino.name.toLowerCase().includes(query)
+)
+
+ const exactMatch = userCasinos.value.some(
+    (casino) => casino.name.toLowerCase() === query
+  )
+
+  if (!exactMatch && query) {
+    filteredCasinos.value = [...matches, { name: event.query, isNew: true }]
+  } else {
+    filteredCasinos.value = matches
+  }
+}
+
+const addNewCasino = async (casinoName) => {
+  try {
+    const docRef = await addDoc(collection(db, 'users', user.value.uid, 'casinos'), {
+      name: casinoName,
+      createdAt: serverTimestamp(),
+    })
+    return { id: docRef.id, name: casinoName }
+  } catch (e) {
+    console.error('Error adding casino:', e)
+    return null
+  }
+}
+
+
 
 
 const logVisit = async () => {
+
+   if (!selectedCasino.value) {
+    toast.add({ severity: 'warn', summary: 'Please select or enter a casino name', life: 3000 })
+    return
+  }
+
+  if (!visitDate.value) {
+    toast.add({ severity: 'warn', summary: 'Please select a visit date', life: 3000 })
+    return
+  }
+
+  if (initialAmount.value === null || initialAmount.value === '') {
+    toast.add({ severity: 'warn', summary: 'Please enter an initial amount', life: 3000 })
+    return
+  }
+
+  if (cashOutAmount.value === null || cashOutAmount.value === '') {
+    toast.add({ severity: 'warn', summary: 'Please enter a cash out amount', life: 3000 })
+    return
+  }
+
+  if (!mood.value || mood.value === 0) {
+    toast.add({ severity: 'warn', summary: 'Please rate your mood', life: 3000 })
+    return
+  }
+
   const initial = Number(initialAmount.value) || 0
   const cashout = Number(cashOutAmount.value) || 0
   const profit = cashout - initial
   const user = auth.currentUser
+
   try {
+    let casinoId
+    let casinoName
+
+     if (typeof selectedCasino.value === 'string') {
+      // User typed a new casino name without selecting from dropdown
+      const newCasino = await addNewCasino(selectedCasino.value)
+      if (newCasino) {
+        casinoId = newCasino.id
+        casinoName = newCasino.name
+      }
+    } else if (selectedCasino.value.isNew) {
+      // User selected "Create new" option
+      const newCasino = await addNewCasino(selectedCasino.value.name)
+      if (newCasino) {
+        casinoId = newCasino.id
+        casinoName = newCasino.name
+      }
+    } else {
+      // Existing casino selected
+      casinoId = selectedCasino.value.id
+      casinoName = selectedCasino.value.name
+    }
+
+
     await addDoc(collection(db, 'users', user.uid, 'casinoVisits'), {
-      casinoName: casinoName.value,
+      casinoId: casinoId,
+      casinoName: casinoName,
       visitDate: visitDate.value,
       initialAmount: initial,
       cashOutAmount: cashout,
@@ -41,7 +142,7 @@ const logVisit = async () => {
       createdAt: serverTimestamp(),
     })
     // resetting the fields
-    casinoName.value = ''
+    selectedCasino.value = null
     visitDate.value = null
     initialAmount.value = 0
     cashOutAmount.value = 0
@@ -60,7 +161,17 @@ const logVisit = async () => {
     <div class="logvisit-form-container">
       <div class="form-field">
         <label for="casino-name">Casino Name: </label>
-        <InputText id="casino-name" v-model="casinoName" placeholder="Name, location..." />
+        <!-- <InputText id="casino-name" v-model="casinoName" placeholder="Name, location..." /> -->
+        <AutoComplete
+          id="casino-name"
+          v-model="selectedCasino"
+          :suggestions="filteredCasinos"
+          optionLabel="name"
+          placeholder="Search or add a casino..."
+          @complete="searchCasinos"
+          :dropdown="true"
+          forceSelection
+        />
       </div>
       <div class="form-field">
         <label for="visit-date">Visit Date: </label>
