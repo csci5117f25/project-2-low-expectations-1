@@ -233,6 +233,7 @@
         </Card>
         <MoodMoney></MoodMoney>
         <RecentHistory></RecentHistory>
+        <CalendarHeatMap></CalendarHeatMap>
       </main>
     </div>
   </div>
@@ -250,6 +251,7 @@ import { useRouter } from 'vue-router';
 import LogOutButton from '@/components/LogOutButton.vue';
 import MoodMoney from '@/components/MoodMoney.vue';
 import RecentHistory from '@/components/RecentHistory.vue';
+import CalendarHeatMap from '@/components/CalendarHeatMap.vue'
 
 const router = useRouter();
 

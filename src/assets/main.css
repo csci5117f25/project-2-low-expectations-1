@@ -19,6 +19,16 @@
   --gap-large: 1.5rem;
 }
 
+.tippy-box {
+  background-color: #fff;
+  color: #000;
+}
+
+body.dark-mode .tippy-box {
+  background-color: #222;
+  color: #fff;
+}
+
 /* Typography */
 body,
 input,

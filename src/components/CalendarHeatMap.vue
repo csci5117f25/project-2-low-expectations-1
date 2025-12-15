@@ -49,6 +49,7 @@ const endDate = computed(() => {
 })
 
 
+
 //dealing with dark mode and light mode appearences
 function updateDarkMode() {
   isDarkMode.value = window.matchMedia('(prefers-color-scheme: dark)').matches

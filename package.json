@@ -33,7 +33,9 @@
     "eslint-plugin-vue": "~10.5.0",
     "globals": "^16.4.0",
     "prettier": "3.6.2",
+    "tippy.js": "^6.3.7",
     "vite": "^7.1.11",
-    "vite-plugin-vue-devtools": "^8.0.3"
+    "vite-plugin-vue-devtools": "^8.0.3",
+    "vue3-calendar-heatmap": "^2.0.5"
   }
 }

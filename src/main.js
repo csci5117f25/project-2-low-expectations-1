@@ -9,6 +9,7 @@ import Aura from '@primeuix/themes/aura'
 import ToastService from 'primevue/toastservice'
 import 'primeicons/primeicons.css'
 import './assets/main.css'
+import VueCalendarHeatmap from 'vue3-calendar-heatmap'
 
 const app = createApp(App)
 
@@ -28,6 +29,7 @@ app.use(PrimeVue, {
 })
 
 app.use(ToastService)
+app.use(VueCalendarHeatmap)
 
 router.beforeEach(async (to) => {
   // routes with `meta: { requiresAuth: true }` will check for
