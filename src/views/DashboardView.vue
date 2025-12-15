@@ -1,71 +1,14 @@
 <template>
   <div class="dashboard-container">
     <div class="dashboard-content">
-      <header class="header">
-        <div class="header-left">
-          <img src="/playing-cards.png" class="logo" alt="Playing cards logo" />
-          <div class="header-title">
-            <h1>Gamblr</h1>
-            <p>Track your gambling habits responsibly</p>
-          </div>
-        </div>
-        <div class="header-right">
-          <Button label="+ Log Visit" severity="secondary" @click="logVisitFormRef = true" />
-          <Button 
-            :label="editMode ? 'Done Editing' : 'Edit Dashboard'" 
-            :severity="editMode ? 'success' : 'secondary'" 
-            :outlined="!editMode"
-            @click="toggleEditMode"
-            icon="pi pi-cog"
-          />
-          <LogOutButton />
-          <LogVisitForm v-model:visible="logVisitFormRef" />
-        </div>
-      </header>
-
-      <nav class="nav-tabs">
-        <Button
-          v-for="tab in tabs"
-          :key="tab.name"
-          :label="tab.name"
-          :severity="activeTab === tab.name ? 'primary' : 'secondary'"
-          :outlined="activeTab !== tab.name"
-          :rounded="tab.name"
-          @click="handleTabClick(tab)"
-          class="tab-button"
-        >
-          <template #icon>
-            <img
-              :src="`https://api.iconify.design/mdi/${tab.icon}.svg?color=${activeTab === tab.name ? '%23000' : '%23fff'}`"
-              class="tab-icon"
-              :alt="tab.name"
-            />
-          </template>
-        </Button>
-        <Button
-          label="Practice Longue"
-          severity="danger"
-          rounded
-          class="tab-button practice-button"
-          @click="handleTabClick({name: 'practice', routeName: 'practice'})"
-          >
-            <template #icon>
-              <img
-                :src="`https://api.iconify.design/mdi/slot-machine.svg?color=%23000`"
-                class="tab-icon"
-                :alt="'Practice Longue'"
-              />
-            </template>
-          </Button>
-      </nav>
-
+      <NavBar />
       <main class="main-content">
         <Message severity="info" :closable="false" style="margin-bottom: 24px">
           <p>Placeholder for AI quotes or comments to be later implemented?</p>
         </Message>
 
         <!-- Draggable Widget Grid Component -->
-        <DraggableWidgetGrid 
+        <DraggableWidgetGrid
           :editMode="editMode"
           :widgets="activeWidgets"
           @update:widgets="activeWidgets = $event"
@@ -127,7 +70,7 @@
                   <text x="10" y="120" class="axis-label">-$50</text>
                   <text x="10" y="155" class="axis-label">-$100</text>
 
-                  <!-- Zero line 
+                  <!-- Zero line
                   <line x1="40" y1="85" x2="400" y2="85" stroke="#666" stroke-width="1" stroke-dasharray="4,4" />
 
                   <!-- Chart line
@@ -138,7 +81,7 @@
                     stroke-width="2"
                   />
 
-                  <!-- Data points 
+                  <!-- Data points
                   <circle cx="40" cy="75" r="3" fill="var(--primary-color)" />
                   <circle cx="120" cy="95" r="3" fill="var(--primary-color)" />
                   <circle cx="200" cy="70" r="3" fill="var(--primary-color)" />
@@ -156,7 +99,7 @@
                   <span>10/31</span>
                 </div>
 
-                <!-- Tooltip 
+                <!-- Tooltip
                 <div class="chart-tooltip">
                   <p class="tooltip-date">Date: 10/28</p>
                   <p class="tooltip-value">Cum. Net: +$195.00</p>
@@ -168,7 +111,7 @@
 
         <div class="grid-2col">
 
-          <!-- Break-Even Probability 
+          <!-- Break-Even Probability
           <Card>
             <template #title>
               <div style="display: flex; align-items: center; gap: 0.5rem">
@@ -265,22 +208,30 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router';
-import Button from 'primevue/button'
-import Message from 'primevue/message'
-import LogVisitForm from '@/components/LogVisitForm.vue'
-import LogOutButton from '@/components/LogOutButton.vue';
 import DraggableWidgetGrid from '@/components/DraggableWidgetGrid.vue';
+import Button from 'primevue/button'
+import Card from 'primevue/card'
+import Message from 'primevue/message'
+import Divider from 'primevue/divider'
+import Skeleton from 'primevue/skeleton'
+import LogVisitForm from '@/components/LogVisitForm.vue'
+import { useRouter } from 'vue-router'
+import LogOutButton from '@/components/LogOutButton.vue'
+import MoodMoney from '@/components/MoodMoney.vue'
+import RecentHistory from '@/components/RecentHistory.vue'
+import CalendarHeatMap from '@/components/CalendarHeatMap.vue'
+import TrophyWidget from '@/components/TrophyWidget.vue'
+import NavBar from './NavBar.vue'
 
-const router = useRouter();
+const router = useRouter()
 
 const tabs = [
   { name: 'Dashboard', icon: 'chart-arc' },
   { name: 'All My Visits', icon: 'clock' },
   { name: 'Fun Spin', icon: 'dice' },
   { name: 'Map', icon: 'map' },
-  { name: 'Rating', icon: 'star', routeName: 'rating'},
-];
+  { name: 'Rating', icon: 'star', routeName: 'rating' },
+]
 
 const activeTab = ref('Dashboard');
 const editMode = ref(false);
@@ -643,7 +594,7 @@ const toggleEditMode = () => {
     width: 100%;
     justify-content: center;
     /*flex-wrap: wrap;*/
-    
+
   }
 
   .nav-tabs {

@@ -13,8 +13,6 @@ import { useToast } from 'primevue/usetoast'
 import SpeechToText from './SpeechToText.vue'
 import AutoComplete  from 'primevue/autocomplete'
 
-
-
 const toast = useToast()
 const visible = ref(false)
 const selectedCasino = ref(null)
@@ -69,7 +67,6 @@ const addNewCasino = async (casinoName) => {
     return null
   }
 }
-
 
 
 
@@ -149,7 +146,7 @@ const logVisit = async () => {
     mood.value = 0
     notes.value = ''
     visible.value = false
-    toast.add({severity: 'success', summary: 'Your visit is logged!', life:3000 })
+    toast.add({ severity: 'success', summary: 'Your visit is logged!', life: 3000 })
   } catch (e) {
     console.error('Error logging the form:', e)
   }
@@ -187,12 +184,22 @@ const logVisit = async () => {
       <div class="form-field">
         <label for="buyIn">Initial Amount: </label>
         <InputGroupAddon>$</InputGroupAddon>
-        <InputText id="initlal_amt" v-model="initialAmount" type="number" placeholder="Enter only number." />
+        <InputText
+          id="initlal_amt"
+          v-model="initialAmount"
+          type="number"
+          placeholder="Enter only number."
+        />
       </div>
       <div class="form-field">
         <label for="cashOut">Cash Out Amount: </label>
         <InputGroupAddon>$</InputGroupAddon>
-        <InputText id="cashout_amt" v-model="cashOutAmount" type="number" placeholder="Enter only number." />
+        <InputText
+          id="cashout_amt"
+          v-model="cashOutAmount"
+          type="number"
+          placeholder="Enter only number."
+        />
       </div>
       <div class="form-field">
         <label for="mood">Mood: </label>
@@ -201,7 +208,7 @@ const logVisit = async () => {
       <div class="form-field">
         <label for="notes">Notes: </label>
         <!-- <Textarea id="notes" v-model="notes" rows="4" placeholder="Add notes about vist here..." /> -->
-         <SpeechToText v-model="notes"></SpeechToText>
+        <SpeechToText v-model="notes"></SpeechToText>
       </div>
       <div class="form-actions">
         <Button label="Cancel" class="p-button-text" @click="visible = false" />

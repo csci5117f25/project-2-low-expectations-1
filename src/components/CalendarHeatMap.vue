@@ -10,7 +10,6 @@ const dates = ref([])
 const isDarkMode = ref(false)
 const darkModeKey = ref(0)
 
-
 onMounted(async () => {
   if (!user.value) return
   const userID = user.value.uid
@@ -20,7 +19,7 @@ onMounted(async () => {
     snapshot.forEach((docSnap) => {
       const data = docSnap.data()
       if (!data.createdAt) return
-      const dateObj = data.createdAt.toDate() 
+      const dateObj = data.createdAt.toDate()
       const dateStr = dateObj.toISOString().split('T')[0]
       let found = false
       for (let i = 0; i < dates.value.length; i++) {
@@ -48,8 +47,6 @@ const endDate = computed(() => {
   return latest
 })
 
-
-
 //dealing with dark mode and light mode appearences
 function updateDarkMode() {
   isDarkMode.value = window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -57,7 +54,7 @@ function updateDarkMode() {
 
 onMounted(() => {
   updateDarkMode()
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
     isDarkMode.value = e.matches
   })
 })
@@ -65,30 +62,27 @@ onMounted(() => {
 watch(isDarkMode, () => {
   darkModeKey.value++
 })
-
-
 </script>
 
 <template>
   <Card class="full-width">
     <template #title>Calendar Heatmap</template>
     <template #content>
-        <div class="heatmap-wrapper" :class="{'dark-mode': isDarkMode}">
-            <CalendarHeatmap
-                v-if="dates.length"
-                :values="dates"
-                :endDate="endDate"
-                :darkMode="isDarkMode"
-                :round="2"
-                :key="darkModeKey"
-                tooltip-unit="casino visits"
-            />
-        </div>
+      <div class="heatmap-wrapper" :class="{ 'dark-mode': isDarkMode }">
+        <CalendarHeatmap
+          v-if="dates.length"
+          :values="dates"
+          :endDate="endDate"
+          :darkMode="isDarkMode"
+          :round="2"
+          :key="darkModeKey"
+          tooltip-unit="casino visits"
+        />
+      </div>
     </template>
   </Card>
 </template>
 <style scoped>
-
 .heatmap-wrapper {
   position: relative;
   padding-top: 20px;
@@ -100,7 +94,7 @@ watch(isDarkMode, () => {
 
 .heatmap-wrapper :deep(.vch__days__labels__wrapper text.vch__day__label) {
   transform: translateX(20px);
-  text-anchor: end; 
+  text-anchor: end;
   font-size: 10px;
 }
 
