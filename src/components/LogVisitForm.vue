@@ -8,7 +8,9 @@ import InputText from 'primevue/inputtext'
 import DatePicker from 'primevue/calendar'
 import Rating from 'primevue/rating'
 import Textarea from 'primevue/textarea'
+import { useToast } from 'primevue/usetoast'
 
+const toast = useToast()
 const visible = ref(false)
 const casinoName = ref('')
 const visitDate = ref(new Date()) //auto set to today
@@ -32,6 +34,13 @@ const logVisit = async () => {
       notes: notes.value,
       createdAt: serverTimestamp(),
     })
+    toast.add({
+      severity: 'success',
+      summary: 'Visit saved',
+      detail: 'Your casino visit has been saved!',
+      life: 3000,
+    })
+
     // resetting the fields
     casinoName.value = ''
     visitDate.value = null
@@ -43,6 +52,12 @@ const logVisit = async () => {
   } catch (e) {
     console.error('Error logging the form:', e)
   }
+  toast.add({
+    severity: 'error',
+    summary: 'Error',
+    detail: 'Something went wrong while saving your visit.',
+    life: 4000,
+  })
 }
 </script>
 
