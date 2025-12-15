@@ -6,7 +6,7 @@
         <div class="edit-message">
           <span> Edit Mode: Drag widgets to rearrange, click X to remove</span>
           <Button 
-            label="+ Add Widget" 
+            label="Add Widget" 
             icon="pi pi-plus"
             size="small"
             @click="showWidgetSelector = true"
@@ -90,12 +90,14 @@ import Message from 'primevue/message';
 import Dialog from 'primevue/dialog';
 import Card from 'primevue/card';
 import draggable from 'vuedraggable';
+
+// wig
 import TimeSeriesWidget from '@/components/widgets/TimeSeriesWidget.vue';
 import BreakEvenWidget from '@/components/widgets/BreakEvenWidget.vue';
 import AlternativeSpendingWidget from '@/components/widgets/AlternativeSpendingWidget.vue';
-import TestWidget1 from '@/components/widgets/TestWidget1.vue';
-import TestWidget2 from '@/components/widgets/TestWidget2.vue';
-import TestWidget3 from '@/components/widgets/TestWidget3.vue';
+import CalendarHeatMap from '@/components/widgets/CalendarHeatMap.vue';
+import MoodMoney from '@/components/widgets/MoodMoney.vue';  
+import TrophyWidget from '@/components/widgets/TrophyWidget.vue';
 
 // After importing widget, need to add it in 2 more places
 
@@ -114,16 +116,19 @@ const props = defineProps({
 const emit = defineEmits(['update:widgets', 'update:editMode']);
 
 const showWidgetSelector = ref(false);
+
+// local widgets should fetch databse to seet which widgets are being used
 const localWidgets = ref([...props.widgets]);
 
-// #1 Add New Widghets here
+// #1 Add New Widgets here. wig
 const availableWidgets = [
   { id: 'timeseries', name: 'Time Series Chart', component: 'TimeSeriesWidget', size: 'full', icon: 'chart-line' },
   { id: 'breakeven', name: 'Break-Even Probability', component: 'BreakEvenWidget', size: 'half', icon: 'chart-bar' },
   { id: 'alternative', name: 'Alternative Spending', component: 'AlternativeSpendingWidget', size: 'full', icon: 'lightbulb-on' },
-  { id: 'test1', name: 'Test Widget 1', component: 'TestWidget1', size: 'half', icon: 'cube' },
-  { id: 'test2', name: 'Test Widget 2', component: 'TestWidget2', size: 'half', icon: 'square' },
-  { id: 'test3', name: 'Test Widget 3', component: 'TestWidget3', size: 'half', icon: 'circle' },
+  { id: 'calendarheatmap', name: 'Calendar Heatmap', component: 'CalendarHeatMap', size: 'full', icon: 'calendar-heat' },
+  { id: 'moodmoney', name: 'Mood vs Money', component: 'MoodMoney', size: 'half', icon: 'emoticon-happy' },
+  { id: 'trophy', name: 'Trophy Widget', component: 'TrophyWidget', size: 'half', icon: 'trophy' },
+  
 ];
 
 // Computed
@@ -142,15 +147,15 @@ const addWidget = (widget) => {
   showWidgetSelector.value = false;
 };
 
-// #2 add new widgets here
+// #2 add new widgets here wig
 const getComponent = (componentName) => {
   const components = {
     TimeSeriesWidget,
     BreakEvenWidget,
     AlternativeSpendingWidget,
-    TestWidget1,
-    TestWidget2,
-    TestWidget3,
+    CalendarHeatMap,
+    MoodMoney,
+    TrophyWidget,
   };
   return components[componentName];
 };
@@ -190,7 +195,7 @@ watch(() => props.widgets, (newValue) => {
 .widgets-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-auto-rows: 250px;
+  grid-auto-rows: 300px;
   gap: 1.5rem;
   margin-bottom: 1.5rem;
 }
@@ -254,7 +259,7 @@ watch(() => props.widgets, (newValue) => {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  max-height: 60vh;
+  max-height: 80vh;
   overflow-y: auto;
 }
 

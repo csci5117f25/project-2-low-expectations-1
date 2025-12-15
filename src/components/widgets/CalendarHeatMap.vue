@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
 import { collection, onSnapshot } from 'firebase/firestore'
-import { db } from '../firebase_conf'
+import { db } from '@/firebase_conf'
 import { useCurrentUser } from 'vuefire'
 import Card from 'primevue/card'
 
@@ -65,9 +65,8 @@ watch(isDarkMode, () => {
 </script>
 
 <template>
-  <Card class="full-width">
-    <template #title>Calendar Heatmap</template>
-    <template #content>
+  <div class="calendar-heatmap-widget">
+    <h3 class="widget-title">Calendar Heatmap</h3>
       <div class="heatmap-wrapper" :class="{ 'dark-mode': isDarkMode }">
         <CalendarHeatmap
           v-if="dates.length"
@@ -79,8 +78,8 @@ watch(isDarkMode, () => {
           tooltip-unit="casino visits"
         />
       </div>
-    </template>
-  </Card>
+  </div>
+  
 </template>
 <style scoped>
 .heatmap-wrapper {

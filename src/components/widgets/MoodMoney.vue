@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch, computed } from 'vue'
 import { collection } from 'firebase/firestore'
-import { db } from '../firebase_conf'
+import { db } from '../../firebase_conf'
 import { useCurrentUser, useCollection } from 'vuefire'
 import Card from 'primevue/card'
 import { Bar } from 'vue-chartjs'

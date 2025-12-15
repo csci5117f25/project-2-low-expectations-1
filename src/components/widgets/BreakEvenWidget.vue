@@ -1,34 +1,45 @@
 <template>
-  <Card class="widget-card">
-    <template #title>
-      <div style="display: flex; align-items: center; gap: 0.5rem;">
-        <img src="https://api.iconify.design/mdi/chart-bar.svg?color=%23fff" class="title-icon" alt="Chart">
-        Break-Even Probability
+  <div class="breakeven-widget">
+    <h3 class="widget-title">
+      <img src="https://api.iconify.design/mdi/chart-bar.svg?color=%23fff" class="title-icon" alt="Chart">
+      Break-Even Probability
+    </h3>
+    <div class="breakeven-content">
+      <Message severity="error" :closable="false">
+        <p>To recover your current loss of <strong>$75.00</strong>, you'd need:</p>
+        <p class="breakeven-sessions">2 more sessions averaging $37.50</p>
+      </Message>
+      <div class="breakeven-details">
+        <p>Recent Loss of <strong>$160.00</strong> would take 4 winning sessions to recover</p>
+        <p>Based on your average win of <strong>$37.50</strong> from 3 winning sessions</p>
       </div>
-    </template>
-    <template #content>
-      <div class="breakeven-content">
-        <Message severity="error" :closable="false">
-          <p>To recover your current loss of <strong>$75.00</strong>, you'd need:</p>
-          <p class="breakeven-sessions">2 more sessions averaging $37.50</p>
-        </Message>
-        <div class="breakeven-details">
-          <p>Recent Loss of <strong>$160.00</strong> would take 4 winning sessions to recover</p>
-          <p>Based on your average win of <strong>$37.50</strong> from 3 winning sessions</p>
-        </div>
-      </div>
-    </template>
-  </Card>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import Card from 'primevue/card';
 import Message from 'primevue/message';
 </script>
 
 <style scoped>
-.widget-card {
+.breakeven-widget {
+  width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.widget-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-color-secondary, #ffffff);
+  margin: 0 0 1rem 0;
 }
 
 .title-icon {
@@ -39,11 +50,13 @@ import Message from 'primevue/message';
 .breakeven-content {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.75rem;
+  flex: 1;
+  overflow: hidden;
 }
 
 .breakeven-sessions {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: bold;
   margin: 0.5rem 0 0 0;
 }

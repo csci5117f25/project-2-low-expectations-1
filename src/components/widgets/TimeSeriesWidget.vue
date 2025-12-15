@@ -265,7 +265,7 @@ const updateChart = () => {
         callbacks: {
           label: function(context) {
             const value = context.parsed.y;
-            return formatCurrency(value);
+            return '$'+value;
           }
         }
       }

@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { collection, onSnapshot } from 'firebase/firestore'
 import { useCurrentUser } from 'vuefire'
-import { db } from '../firebase_conf'
+import { db } from '@/firebase_conf'
 import Card from 'primevue/card'
 
 const user = useCurrentUser()
