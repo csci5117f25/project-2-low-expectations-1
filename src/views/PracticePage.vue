@@ -620,6 +620,8 @@ function exitPractice() {
   height: 100vh;
   overflow: hidden;
   background: #000;
+  overscroll-behavior: none;
+  touch-action: pan-x pan-y;
 }
 
 .curtains {
@@ -664,6 +666,8 @@ function exitPractice() {
   width: 100%;
   height: 100%;
   cursor: pointer;
+  cursor: pointer;
+  touch-action: none;
 }
 
 .slot-ui {

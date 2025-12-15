@@ -24,18 +24,19 @@
         :severity="activeTab === tab.name ? 'primary' : 'secondary'"
         :outlined="activeTab !== tab.name"
         class="tab-button"
+        rounded
         @click="handleTabClick(tab)"
       >
         <template #icon>
           <img
-            :src="`https://api.iconify.design/mdi/${tab.icon}.svg?color=%23fff`"
+            :src="`https://api.iconify.design/mdi/${tab.icon}.svg?color=${activeTab === tab.name ? '%23000' : '%23fff'}`"
             class="tab-icon"
             :alt="tab.name"
           />
         </template>
       </Button>
       <Button
-        label="Practice Longue"
+        label="Practice Lounge"
         severity="danger"
         rounded
         class="tab-button practice-button"
@@ -43,9 +44,9 @@
       >
         <template #icon>
           <img
-            :src="`https://api.iconify.design/mdi/slot-machine.svg?color=%23000`"
+            :src="`https://api.iconify.design/mdi/slot-machine.svg?color=%23000`",
             class="tab-icon"
-            :alt="'Practice Longue'"
+            :alt="'Practice Lounge'"
           />
         </template>
       </Button>
@@ -133,9 +134,32 @@ activeTab.value = tabs.find((t) => t.routeName === route.name)?.name ?? 'Dashboa
   gap: 0.5rem;
 }
 
+.practice-button {
+  margin-left: auto;
+  transition: background-image 0.3s ease;
+}
+
+.practice-button:hover {
+  background-image: url('/777.gif') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-color: transparent !important;
+  color: transparent !important;
+}
+
+.practice-button:hover .tab-icon,
+.practice-button:hover .p-button-label {
+  opacity: 0 !important;
+}
+
 .tab-icon {
   width: 1rem;
   height: 1rem;
+}
+
+.title-icon {
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
 @media (max-width: 768px) {
