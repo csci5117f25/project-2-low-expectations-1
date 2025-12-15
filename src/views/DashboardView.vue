@@ -234,6 +234,7 @@
         <MoodMoney></MoodMoney>
         <RecentHistory></RecentHistory>
         <CalendarHeatMap></CalendarHeatMap>
+        <TrophyWidget></TrophyWidget>
       </main>
     </div>
   </div>
@@ -252,6 +253,7 @@ import LogOutButton from '@/components/LogOutButton.vue';
 import MoodMoney from '@/components/MoodMoney.vue';
 import RecentHistory from '@/components/RecentHistory.vue';
 import CalendarHeatMap from '@/components/CalendarHeatMap.vue'
+import TrophyWidget from '@/components/TrophyWidget.vue'
 
 const router = useRouter();
 
