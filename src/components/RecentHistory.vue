@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { ref, watch } from 'vue'
 import { collection, query, orderBy, limit } from 'firebase/firestore'
 import { db } from '../firebase_conf'
 import { useCurrentUser, useCollection } from 'vuefire'
@@ -8,6 +8,7 @@ import Column from 'primevue/column'
 import Card from 'primevue/card'
 
 const user = useCurrentUser()
+const visits = ref([])
 
 //different columns for the data tables based on casinovisit data
 const allColumns = [
@@ -37,16 +38,25 @@ const allColumns = [
   { field: 'notes', header: 'Notes' },
 ]
 
-//reactive ref to the current user's casino visits, ordered newest first; 
-const visitsRef = computed(() => {
-  if (!user.value) return null
-  const logsCollection = collection(db, 'users', user.value.uid, 'casinoVisits')
-  const q = query(logsCollection, orderBy('createdAt', 'desc'), limit(5)) //only show the latest 5 logged visits
-  return useCollection(q)
-})
-
-//reactive array for visit info
-const visits = computed(() => visitsRef.value?.value || [])
+//only initialize collection when user is available
+watch(
+  user,
+  (u) => {
+    if (!u) return
+    const visitRef = collection(db, 'users', u.uid, 'casinoVisits')
+    const q = query(visitRef, orderBy('createdAt', 'desc'), limit(5))
+    const visitCol = useCollection(q)
+    //update visits whenever the collection changes
+    watch(
+      visitCol,
+      (v) => {
+        visits.value = v || []
+      },
+      { immediate: true }
+    )
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
