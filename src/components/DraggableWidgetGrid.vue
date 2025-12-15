@@ -42,7 +42,10 @@
                   class="remove-btn"
                 />
               </div>
-              <component :is="getComponent(widget.component)" />
+              <component 
+                :is="getComponent(widget.component)" 
+                :visits="casinoVisits"
+              />
             </template>
           </Card>
         </div>
@@ -84,7 +87,10 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { db } from '@/firebase_conf';
+import { useCurrentUser } from 'vuefire';
 import Button from 'primevue/button';
 import Message from 'primevue/message';
 import Dialog from 'primevue/dialog';
@@ -115,7 +121,37 @@ const props = defineProps({
 
 const emit = defineEmits(['update:widgets', 'update:editMode']);
 
+// State
+const user = useCurrentUser();
 const showWidgetSelector = ref(false);
+const casinoVisits = ref([]);
+const loading = ref(true);
+
+// Fetch casino visits
+onMounted(() => {
+  if (!user.value) {
+    loading.value = false;
+    return;
+  }
+
+  const visitsRef = collection(db, 'users', user.value.uid, 'casinoVisits');
+  const query_ = query(visitsRef, orderBy('visitDate', 'asc'));
+
+  // get updated data
+  onSnapshot(query_, (snapshot) => {
+    casinoVisits.value = [];
+    snapshot.forEach((doc) => {
+      casinoVisits.value.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+    loading.value = false;
+  }, (err) => {
+    console.error('couldn;t fetch casino visits', err);
+    loading.value = false;
+  });
+});
 
 // local widgets should fetch databse to seet which widgets are being used
 const localWidgets = ref([...props.widgets]);
@@ -124,7 +160,7 @@ const localWidgets = ref([...props.widgets]);
 const availableWidgets = [
   { id: 'timeseries', name: 'Time Series Chart', component: 'TimeSeriesWidget', size: 'full', icon: 'chart-line' },
   { id: 'breakeven', name: 'Break-Even Probability', component: 'BreakEvenWidget', size: 'half', icon: 'chart-bar' },
-  { id: 'alternative', name: 'Alternative Spending', component: 'AlternativeSpendingWidget', size: 'full', icon: 'lightbulb-on' },
+  { id: 'alternative', name: 'Alternative Spending', component: 'AlternativeSpendingWidget', size: 'half', icon: 'lightbulb-on' },
   { id: 'calendarheatmap', name: 'Calendar Heatmap', component: 'CalendarHeatMap', size: 'full', icon: 'calendar-heat' },
   { id: 'moodmoney', name: 'Mood vs Money', component: 'MoodMoney', size: 'half', icon: 'emoticon-happy' },
   { id: 'trophy', name: 'Trophy Widget', component: 'TrophyWidget', size: 'half', icon: 'trophy' },

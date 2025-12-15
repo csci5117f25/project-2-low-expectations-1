@@ -1,35 +1,43 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { collection, onSnapshot } from 'firebase/firestore'
-import { useCurrentUser } from 'vuefire'
-import { db } from '@/firebase_conf'
+import { ref, watch } from 'vue'
 import Card from 'primevue/card'
 
-const user = useCurrentUser()
-const maxValue = ref(null)
-const minValue = ref(null)
-
-onMounted(async () => {
-  if (!user.value) return
-  const userID = user.value.uid
-  const visitRef = collection(db, 'users', userID, 'casinoVisits')
-  onSnapshot(visitRef, (snapshot) => {
-    let min = 0
-    let max = 0
-    snapshot.forEach((docSnap) => {
-      const data = docSnap.data()
-      if (!data.profit) return
-      if (data.profit > max) {
-        max = data.profit
-      }
-      if (data.profit < min) {
-        min = data.profit
-      }
-    })
-    maxValue.value = max
-    minValue.value = min
-  })
+// Props
+const props = defineProps({
+  visits: {
+    type: Array,
+    default: () => []
+  }
 })
+
+const maxValue = ref(0)
+const minValue = ref(0)
+
+// Calculate max and min values from visits
+const calculateValues = () => {
+  if (!props.visits || props.visits.length === 0) {
+    maxValue.value = 0
+    minValue.value = 0
+    return
+  }
+  let max = 0
+  let min = 0
+  
+  props.visits.forEach(visit => {
+    const profit = visit.profit || 0
+    if (profit > max) {
+      max = profit
+    }
+    if (profit < min) {
+      min = profit
+    }
+  })
+  maxValue.value = max
+  minValue.value = min
+}
+
+// Watch for changes in visits
+watch(() => props.visits, calculateValues, { immediate: true, deep: true })
 </script>
 
 <template>
