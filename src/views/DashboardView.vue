@@ -5,7 +5,7 @@
         <div class="header-left">
           <img src="/playing-cards.png" class="logo" alt="Playing cards logo" />
           <div class="header-title">
-            <h1>Casino Tracker</h1>
+            <h1>Gamblr</h1>
             <p>Track your gambling habits responsibly</p>
           </div>
         </div>
@@ -24,17 +24,33 @@
           :label="tab.name"
           :severity="activeTab === tab.name ? 'primary' : 'secondary'"
           :outlined="activeTab !== tab.name"
+          :rounded="tab.name"
           @click="handleTabClick(tab)"
           class="tab-button"
         >
           <template #icon>
             <img
-              :src="`https://api.iconify.design/mdi/${tab.icon}.svg?color=%23fff`"
+              :src="`https://api.iconify.design/mdi/${tab.icon}.svg?color=${activeTab === tab.name ? '%23000' : '%23fff'}`"
               class="tab-icon"
               :alt="tab.name"
             />
           </template>
         </Button>
+        <Button
+          label="Practice Longue"
+          severity="info"
+          rounded
+          class="tab-button practice-button"
+          @click="handleTabClick({name: 'practice', routeName: 'practice'})"
+          >
+            <template #icon>
+              <img
+                :src="`https://api.iconify.design/mdi/slot-machine.svg?color=%23000`"
+                class="tab-icon"
+                :alt="'Practice Longue'"
+              />
+            </template>
+          </Button>
       </nav>
 
       <main class="main-content">
@@ -261,7 +277,6 @@ const tabs = [
   { name: 'Fun Spin', icon: 'dice' },
   { name: 'Map', icon: 'map' },
   { name: 'Rating', icon: 'star', routeName: 'rating'},
-  { name: 'Practice Mode', icon: 'slot-machine', routeName: 'practice' }
 ];
 
 const activeTab = ref('Dashboard')
@@ -343,6 +358,25 @@ const logVisitFormRef = ref(false)
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.practice-button {
+  margin-left: auto;
+  transition: background-image 0.3s ease;
+}
+
+.practice-button:hover {
+  background-image: url('/777.gif') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-color: transparent !important;
+  color: transparent !important;
+  
+}
+
+.practice-button:hover .tab-icon,
+.practice-button:hover .p-button-label {
+  opacity: 0 !important;
 }
 
 .tab-icon {
@@ -583,8 +617,28 @@ const logVisitFormRef = ref(false)
     align-items: flex-start;
   }
 
+  .header-title p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--text-color-secondary);
+  }
+
+  .header-right {
+    width: 100%;
+    justify-content: center;
+  }
+
   .nav-tabs {
-    overflow-x: auto;
+    justify-content: center;
+    flex-wrap: wrap;
+    overflow-x: visible;
+    padding: 0.5rem 1rem;
+  }
+
+  .practice-button {
+    margin-top: 0.5rem;
+    margin-left: 0;
+    width: 100%;
   }
 }
 </style>
