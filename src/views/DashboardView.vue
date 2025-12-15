@@ -11,7 +11,13 @@
         </div>
         <div class="header-right">
           <Button label="+ Log Visit" severity="secondary" />
-          <!-- <Button label="Log out" severity="secondary" outlined /> -->
+          <Button 
+            :label="editMode ? 'Done Editing' : 'Edit Dashboard'" 
+            :severity="editMode ? 'success' : 'secondary'" 
+            :outlined="!editMode"
+            @click="toggleEditMode"
+            icon="pi pi-cog"
+          />
           <LogOutButton></LogOutButton>
         </div>
       </header>
@@ -37,9 +43,21 @@
           <p>Placeholder for AI quotes or comments to be later implemented?</p>
         </Message>
 
+        <!-- Draggable Widget Grid Component -->
+        <DraggableWidgetGrid 
+          :editMode="editMode"
+          :widgets="activeWidgets"
+          @update:widgets="activeWidgets = $event"
+        />
+
+        <!-- Time Series Chart Widget (Full Width) -->
+        <!-- <div class="chart-section">
+          <TimeSeriesWidget />
+        </div>
+
         <div class="grid-2col">
 
-          <!-- Net Result Card -->
+          <!-- Net Result Card
           <Card>
             <template #title>$ Net Result</template>
             <template #content>
@@ -61,7 +79,7 @@
             </template>
           </Card>
 
-          <!-- Net Gain/Loss Chart -->
+          <!-- Net Gain/Loss Chart
           <Card>
             <template #title>
               <div class="card-header">
@@ -83,17 +101,17 @@
               <div class="chart-container">
                 <svg class="chart" viewBox="0 0 400 160" preserveAspectRatio="none">
 
-                  <!-- Y-axis labels -->
+                  <!-- Y-axis labels 
                   <text x="10" y="15" class="axis-label">$100</text>
                   <text x="10" y="50" class="axis-label">$50</text>
                   <text x="10" y="85" class="axis-label">$0</text>
                   <text x="10" y="120" class="axis-label">-$50</text>
                   <text x="10" y="155" class="axis-label">-$100</text>
 
-                  <!-- Zero line -->
+                  <!-- Zero line 
                   <line x1="40" y1="85" x2="400" y2="85" stroke="#666" stroke-width="1" stroke-dasharray="4,4" />
 
-                  <!-- Chart line -->
+                  <!-- Chart line
                   <polyline
                     points="40,75 120,95 200,70 280,90 360,110 400,115"
                     fill="none"
@@ -101,7 +119,7 @@
                     stroke-width="2"
                   />
 
-                  <!-- Data points -->
+                  <!-- Data points 
                   <circle cx="40" cy="75" r="3" fill="var(--primary-color)" />
                   <circle cx="120" cy="95" r="3" fill="var(--primary-color)" />
                   <circle cx="200" cy="70" r="3" fill="var(--primary-color)" />
@@ -110,7 +128,7 @@
                   <circle cx="400" cy="115" r="3" fill="var(--primary-color)" />
                 </svg>
 
-                <!-- X-axis labels -->
+                <!-- X-axis labels
                 <div class="x-axis-labels">
                   <span>10/23</span>
                   <span>10/24</span>
@@ -119,7 +137,7 @@
                   <span>10/31</span>
                 </div>
 
-                <!-- Tooltip -->
+                <!-- Tooltip 
                 <div class="chart-tooltip">
                   <p class="tooltip-date">Date: 10/28</p>
                   <p class="tooltip-value">Cum. Net: +$195.00</p>
@@ -131,7 +149,7 @@
 
         <div class="grid-2col">
 
-          <!-- Break-Even Probability -->
+          <!-- Break-Even Probability 
           <Card>
             <template #title>
               <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -153,7 +171,7 @@
             </template>
           </Card>
 
-          <!-- Casino Locations Map -->
+          <!-- Casino Locations Map
           <Card>
             <template #title>
               <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -183,7 +201,7 @@
           </Card>
         </div>
 
-        <!-- What You Could've Had -->
+        <!-- What You Could've Had
         <Card class="full-width">
           <template #title>
             <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -202,7 +220,7 @@
               </div>
             </div>
           </template>
-        </Card>
+        </Card> -->
       </main>
     </div>
   </div>
@@ -214,9 +232,8 @@ import { useRouter } from 'vue-router';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 import Message from 'primevue/message';
-import Divider from 'primevue/divider';
-import Skeleton from 'primevue/skeleton';
 import LogOutButton from '@/components/LogOutButton.vue';
+import DraggableWidgetGrid from '@/components/DraggableWidgetGrid.vue';
 
 const router = useRouter();
 
@@ -229,7 +246,14 @@ const tabs = [
 ];
 
 const activeTab = ref('Dashboard');
-const chartPeriod = ref('m');
+const editMode = ref(false);
+
+// Active widgets on dashboard - initial state
+const activeWidgets = ref([
+  { id: 'timeseries', name: 'Time Series Chart', component: 'TimeSeriesWidget', size: 'full' },
+  { id: 'breakeven', name: 'Break-Even Probability', component: 'BreakEvenWidget', size: 'half' },
+  { id: 'alternative', name: 'Alternative Spending', component: 'AlternativeSpendingWidget', size: 'full' },
+]);
 
 const handleTabClick = (tab) => {
   activeTab.value = tab.name;
@@ -238,6 +262,10 @@ const handleTabClick = (tab) => {
   } else if (tab.route) {
     router.push(tab.route);
   }
+};
+
+const toggleEditMode = () => {
+  editMode.value = !editMode.value;
 };
 </script>
 
@@ -319,6 +347,10 @@ const handleTabClick = (tab) => {
 
 .main-content {
   padding: 2rem;
+}
+
+.chart-section {
+  margin-bottom: 1.5rem;
 }
 
 .grid-2col {
@@ -542,6 +574,11 @@ const handleTabClick = (tab) => {
     flex-direction: column;
     gap: 1rem;
     align-items: flex-start;
+  }
+
+  .header-right {
+    flex-wrap: wrap;
+    width: 100%;
   }
 
   .nav-tabs {
