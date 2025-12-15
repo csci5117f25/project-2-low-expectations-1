@@ -38,7 +38,7 @@
         </Button>
         <Button
           label="Practice Longue"
-          severity="info"
+          severity="danger"
           rounded
           class="tab-button practice-button"
           @click="handleTabClick({name: 'practice', routeName: 'practice'})"
@@ -373,7 +373,6 @@ const logVisitFormRef = ref(false)
   background-position: center !important;
   background-color: transparent !important;
   color: transparent !important;
-  
 }
 
 .practice-button:hover .tab-icon,
