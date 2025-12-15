@@ -49,6 +49,7 @@ export const transcribeAudio = onCall(async (request) => {
     encoding: "WEBM_OPUS",
     sampleRateHertz: 48000,
     languageCode: "en-US",
+    enableAutomaticPunctuation: true
   };
 
   const speechRequest = {
