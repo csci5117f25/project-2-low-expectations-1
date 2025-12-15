@@ -1,40 +1,49 @@
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue'
-import { collection, onSnapshot } from 'firebase/firestore'
-import { db } from '../firebase_conf'
-import { useCurrentUser } from 'vuefire'
+import { ref, computed, watch, onMounted } from 'vue'
 import Card from 'primevue/card'
 
-const user = useCurrentUser()
+// Props
+const props = defineProps({
+  visits: {
+    type: Array,
+    default: () => []
+  }
+})
+
 const dates = ref([])
 const isDarkMode = ref(false)
 const darkModeKey = ref(0)
 
-onMounted(async () => {
-  if (!user.value) return
-  const userID = user.value.uid
-  const visitRef = collection(db, 'users', userID, 'casinoVisits')
-  onSnapshot(visitRef, (snapshot) => {
+// Process visits data into calendar format
+const processVisits = () => {
+  if (!props.visits || props.visits.length === 0) {
     dates.value = []
-    snapshot.forEach((docSnap) => {
-      const data = docSnap.data()
-      if (!data.createdAt) return
-      const dateObj = data.createdAt.toDate()
-      const dateStr = dateObj.toISOString().split('T')[0]
-      let found = false
-      for (let i = 0; i < dates.value.length; i++) {
-        if (dates.value[i].date === dateStr) {
-          dates.value[i].count++
-          found = true
-          break
-        }
-      }
-      if (!found) {
-        dates.value.push({ date: dateStr, count: 1 })
-      }
-    })
+    return
+  }
+
+  const dateMap = {}
+  
+  props.visits.forEach((visit) => {
+    if (!visit.visitDate) return
+    
+    const dateObj = visit.visitDate.toDate ? visit.visitDate.toDate() : new Date(visit.visitDate)
+    const dateStr = dateObj.toISOString().split('T')[0]
+    
+    if (dateMap[dateStr]) {
+      dateMap[dateStr]++
+    } else {
+      dateMap[dateStr] = 1
+    }
   })
-})
+  
+  dates.value = Object.entries(dateMap).map(([date, count]) => ({
+    date,
+    count
+  }))
+}
+
+// Watch for changes in visits
+watch(() => props.visits, processVisits, { immediate: true, deep: true })
 
 //get the latest date from the logged visits
 const endDate = computed(() => {
@@ -65,9 +74,8 @@ watch(isDarkMode, () => {
 </script>
 
 <template>
-  <Card class="full-width">
-    <template #title>Calendar Heatmap</template>
-    <template #content>
+  <div class="calendar-heatmap-widget">
+    <h3 class="widget-title">Calendar Heatmap</h3>
       <div class="heatmap-wrapper" :class="{ 'dark-mode': isDarkMode }">
         <CalendarHeatmap
           v-if="dates.length"
@@ -79,8 +87,8 @@ watch(isDarkMode, () => {
           tooltip-unit="casino visits"
         />
       </div>
-    </template>
-  </Card>
+  </div>
+
 </template>
 <style scoped>
 .heatmap-wrapper {

@@ -1,8 +1,5 @@
 <script setup>
-import { ref, watch, computed } from 'vue'
-import { collection } from 'firebase/firestore'
-import { db } from '../firebase_conf'
-import { useCurrentUser, useCollection } from 'vuefire'
+import { ref, watch } from 'vue'
 import Card from 'primevue/card'
 import { Bar } from 'vue-chartjs'
 import {
@@ -17,7 +14,14 @@ import {
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
-const user = useCurrentUser()
+// Props
+const props = defineProps({
+  visits: {
+    type: Array,
+    default: () => []
+  }
+})
+
 const chartData = ref(null)
 const chartUpdated = ref(0)
 const chartOptions = ref({
@@ -45,7 +49,7 @@ const chartOptions = ref({
   },
 })
 
-async function loadData(logs) {
+function loadData(logs) {
   const trackNetResult = [0, 0, 0, 0, 0]
   const moodCounter = [0, 0, 0, 0, 0]
 
@@ -101,17 +105,11 @@ async function loadData(logs) {
   }
 }
 
-//reactive ref to the current user's 'casinoVisits' collection
-const visits = computed(() => {
-  if (!user.value) return null
-  return useCollection(collection(db, 'users', user.value.uid, 'casinoVisits'))
-})
-
 //watch for updates in visit logs and update the bar chart
 watch(
-  () => visits.value?.value,
+  () => props.visits,
   (logs) => {
-    if (!logs) return
+    if (!logs || logs.length === 0) return
     loadData(logs)
     chartUpdated.value++ //forces the chart to update
   },

@@ -39,106 +39,38 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import Chart from 'primevue/chart';
 import Button from 'primevue/button';
-// Firebase imports - commented out for static data demo
-// import { useCurrentUser } from 'vuefire';
-// import { collection, query, orderBy, getDocs, where } from 'firebase/firestore';
-// import { db } from '../firebase_conf';
 
 // Props
 const props = defineProps({
-  sessions: {
+  visits: {
     type: Array,
     default: () => []
   }
 });
 
+
 // State
 const showCumulative = ref(true);
 const chartData = ref({});
 const chartOptions = ref({});
-// const user = useCurrentUser(); // Commented out for static data demo
 
-// Static demo data - replace with Firebase data when ready
-const sessionsData = ref([
-  {
-    id: '1',
-    timestamp: new Date('2024-11-01'),
-    netResult: -150,
-    buyIn: 200,
-    cashOut: 50
-  },
-  {
-    id: '2',
-    timestamp: new Date('2024-11-05'),
-    netResult: 75,
-    buyIn: 100,
-    cashOut: 175
-  },
-  {
-    id: '3',
-    timestamp: new Date('2024-11-10'),
-    netResult: -50,
-    buyIn: 150,
-    cashOut: 100
-  },
-  {
-    id: '4',
-    timestamp: new Date('2024-11-15'),
-    netResult: 200,
-    buyIn: 300,
-    cashOut: 500
-  },
-  {
-    id: '5',
-    timestamp: new Date('2024-11-20'),
-    netResult: -75,
-    buyIn: 200,
-    cashOut: 125
-  },
-  {
-    id: '6',
-    timestamp: new Date('2024-11-25'),
-    netResult: 100,
-    buyIn: 150,
-    cashOut: 250
-  },
-  {
-    id: '7',
-    timestamp: new Date('2024-11-30'),
-    netResult: -25,
-    buyIn: 100,
-    cashOut: 75
-  }
-]);
-
-// Fetch sessions from Firestore - commented out for static data demo
-// const fetchSessions = async () => {
-//   if (!user.value) return;
+// Computed properties - convert visits to sessions format
+const processedSessions = computed(() => {
+  // console.log('Processing visits:', props.visits);
+  if (!props.visits || props.visits.length === 0) return [];
   
-//   try {
-//     const sessionsRef = collection(db, `users/${user.value.uid}/logs`);
-//     const q = query(sessionsRef, orderBy('timestamp', 'asc'));
-//     const querySnapshot = await getDocs(q);
-    
-//     sessionsData.value = querySnapshot.docs.map(doc => ({
-//       id: doc.id,
-//       ...doc.data(),
-//       timestamp: doc.data().timestamp?.toDate() || new Date()
-//     }));
-    
-//     updateChart();
-//   } catch (error) {
-//     console.error('Error fetching sessions:', error);
-//   }
-// };
-
-// Computed properties
-const activeSessions = computed(() => {
-  return props.sessions.length > 0 ? props.sessions : sessionsData.value;
+  return props.visits.map(visit => ({
+    id: visit.id,
+    timestamp: visit.visitDate?.toDate ? visit.visitDate.toDate() : new Date(visit.visitDate),
+    netResult: visit.profit || 0,
+    buyIn: visit.initialAmount || 0,
+    cashOut: visit.cashOutAmount || 0
+  }));
 });
+
 
 // Toggle between cumulative and session view
 const toggleView = () => {
@@ -148,7 +80,7 @@ const toggleView = () => {
 
 // Update chart data
 const updateChart = () => {
-  const sortedSessions = [...activeSessions.value].sort((a, b) => {
+  const sortedSessions = [...processedSessions.value].sort((a, b) => {
     const dateA = a.timestamp instanceof Date ? a.timestamp : new Date(a.timestamp);
     const dateB = b.timestamp instanceof Date ? b.timestamp : new Date(b.timestamp);
     return dateA - dateB;
@@ -265,7 +197,7 @@ const updateChart = () => {
         callbacks: {
           label: function(context) {
             const value = context.parsed.y;
-            return formatCurrency(value);
+            return '$'+value;
           }
         }
       }
@@ -328,27 +260,18 @@ const updateChart = () => {
 
 // Lifecycle
 onMounted(() => {
-  // Use static data for demo - uncomment fetchSessions() when Firebase is ready
-  // if (activeSessions.value.length === 0) {
-  //   fetchSessions();
-  // } else {
-  //   updateChart();
-  // }
   updateChart();
 });
 
-// Watch for prop changes
-import { watch } from 'vue';
-watch(() => props.sessions, () => {
+// Watch for changes in visits data
+watch(() => props.visits, () => {
   updateChart();
 }, { deep: true });
 
-// Watch user changes - commented out for static data demo
-// watch(user, () => {
-//   if (user.value) {
-//     fetchSessions();
-//   }
-// });
+// Watch for view toggle
+watch(showCumulative, () => {
+  updateChart();
+});
 </script>
 
 <style scoped>

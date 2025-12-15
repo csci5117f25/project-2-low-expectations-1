@@ -3,9 +3,22 @@
     <div class="dashboard-content">
       <NavBar />
       <main class="main-content">
+        <!-- Edit Dashboard Button -->
+       
+
         <Message severity="info" :closable="false" style="margin-bottom: 24px">
           <p>Placeholder for AI quotes or comments to be later implemented?</p>
         </Message>
+        <div class="dashboard-controls">
+          <Button 
+            :label="editMode ? 'Done Editing' : 'Edit Dashboard'" 
+            :severity="editMode ? 'success' : 'secondary'" 
+            :outlined="!editMode"
+            @click="toggleEditMode"
+            icon="pi pi-cog"
+            class="edit-dashboard-btn"
+          />
+        </div>
 
         <!-- Draggable Widget Grid Component -->
         <DraggableWidgetGrid
@@ -217,10 +230,7 @@ import Skeleton from 'primevue/skeleton'
 import LogVisitForm from '@/components/LogVisitForm.vue'
 import { useRouter } from 'vue-router'
 import LogOutButton from '@/components/LogOutButton.vue'
-import MoodMoney from '@/components/MoodMoney.vue'
 import RecentHistory from '@/components/RecentHistory.vue'
-import CalendarHeatMap from '@/components/CalendarHeatMap.vue'
-import TrophyWidget from '@/components/TrophyWidget.vue'
 import NavBar from './NavBar.vue'
 
 const router = useRouter()
@@ -240,8 +250,11 @@ const logVisitFormRef = ref(false);
 // Active widgets on dashboard - initial state
 const activeWidgets = ref([
   { id: 'timeseries', name: 'Time Series Chart', component: 'TimeSeriesWidget', size: 'full' },
+  { id: 'trophy', name: 'Trophy Case', component: 'TrophyWidget', size: 'half' },
   { id: 'breakeven', name: 'Break-Even Probability', component: 'BreakEvenWidget', size: 'half' },
   { id: 'alternative', name: 'Alternative Spending', component: 'AlternativeSpendingWidget', size: 'full' },
+  { id: 'calendarheatmap', name: 'Calendar Heatmap', component: 'CalendarHeatMap', size: 'full' },
+  { id: 'moodmoney', name: 'Mood vs Money', component: 'MoodMoney', size: 'half' },
 ]);
 
 const handleTabClick = (tab) => {
