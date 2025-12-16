@@ -5,8 +5,8 @@
       <Message severity="warn" :closable="false">
         <div class="edit-message">
           <span> Edit Mode: Drag widgets to rearrange, click X to remove</span>
-          <Button 
-            label="Add Widget" 
+          <Button
+            label="Add Widget"
             icon="pi pi-plus"
             size="small"
             @click="showWidgetSelector = true"
@@ -16,8 +16,8 @@
     </div>
 
     <!-- Draggable Widgets Grid -->
-    <draggable 
-      v-model="localWidgets" 
+    <draggable
+      v-model="localWidgets"
       class="widgets-grid"
       :disabled="!editMode"
       item-key="id"
@@ -25,27 +25,21 @@
       animation="200"
     >
       <template #item="{ element: widget }">
-        <div 
-          :class="['widget-wrapper', widget.size, { 'edit-mode': editMode }]"
-          :key="widget.id"
-        >
+        <div :class="['widget-wrapper', widget.size, { 'edit-mode': editMode }]" :key="widget.id">
           <Card class="widget-card">
             <template #content>
               <div v-if="editMode" class="widget-controls">
-                <Button 
-                  icon="pi pi-times" 
-                  severity="danger" 
-                  text 
-                  rounded 
+                <Button
+                  icon="pi pi-times"
+                  severity="danger"
+                  text
+                  rounded
                   size="small"
                   @click.stop="removeWidget(widget.id)"
                   class="remove-btn"
                 />
               </div>
-              <component 
-                :is="getComponent(widget.component)" 
-                :visits="casinoVisits"
-              />
+              <component :is="getComponent(widget.component)" :visits="casinoVisits" />
             </template>
           </Card>
         </div>
@@ -53,25 +47,25 @@
     </draggable>
 
     <!-- Widget Selector Dialog -->
-    <Dialog 
-      v-model:visible="showWidgetSelector" 
-      modal 
-      header="Add Widget" 
+    <Dialog
+      v-model:visible="showWidgetSelector"
+      modal
+      header="Add Widget"
       :style="{ width: '50vw' }"
       :breakpoints="{ '960px': '75vw', '640px': '90vw' }"
     >
       <div class="widget-selector">
-        <div 
-          v-for="widget in unusedWidgets" 
+        <div
+          v-for="widget in unusedWidgets"
           :key="widget.id"
           class="widget-option"
           @click="addWidget(widget)"
         >
-          <img 
-            :src="`https://api.iconify.design/mdi/${widget.icon}.svg?color=%23fff`" 
-            class="widget-option-icon" 
+          <img
+            :src="`https://api.iconify.design/mdi/${widget.icon}.svg?color=%23fff`"
+            class="widget-option-icon"
             :alt="widget.name"
-          >
+          />
           <div class="widget-option-info">
             <h4>{{ widget.name }}</h4>
             <p>{{ widget.size === 'full' ? 'Full Width' : 'Half Width' }}</p>
@@ -87,23 +81,23 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
-import { db } from '@/firebase_conf';
-import { useCurrentUser } from 'vuefire';
-import Button from 'primevue/button';
-import Message from 'primevue/message';
-import Dialog from 'primevue/dialog';
-import Card from 'primevue/card';
-import draggable from 'vuedraggable';
+import { ref, computed, watch, onMounted } from 'vue'
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore'
+import { db } from '@/firebase_conf'
+import { useCurrentUser } from 'vuefire'
+import Button from 'primevue/button'
+import Message from 'primevue/message'
+import Dialog from 'primevue/dialog'
+import Card from 'primevue/card'
+import draggable from 'vuedraggable'
 
 // wig
-import TimeSeriesWidget from '@/components/widgets/TimeSeriesWidget.vue';
-import BreakEvenWidget from '@/components/widgets/BreakEvenWidget.vue';
-import AlternativeSpendingWidget from '@/components/widgets/AlternativeSpendingWidget.vue';
-import CalendarHeatMap from '@/components/widgets/CalendarHeatMap.vue';
-import MoodMoney from '@/components/widgets/MoodMoney.vue';  
-import TrophyWidget from '@/components/widgets/TrophyWidget.vue';
+import TimeSeriesWidget from '@/components/widgets/TimeSeriesWidget.vue'
+import BreakEvenWidget from '@/components/widgets/BreakEvenWidget.vue'
+import AlternativeSpendingWidget from '@/components/widgets/AlternativeSpendingWidget.vue'
+import CalendarHeatMap from '@/components/widgets/CalendarHeatMap.vue'
+import MoodMoney from '@/components/widgets/MoodMoney.vue'
+import TrophyWidget from '@/components/widgets/TrophyWidget.vue'
 
 // After importing widget, need to add it in 2 more places
 
@@ -111,77 +105,110 @@ import TrophyWidget from '@/components/widgets/TrophyWidget.vue';
 const props = defineProps({
   editMode: {
     type: Boolean,
-    default: false
+    default: false,
   },
   widgets: {
     type: Array,
-    default: () => []
-  }
-});
+    default: () => [],
+  },
+})
 
-const emit = defineEmits(['update:widgets', 'update:editMode']);
+const emit = defineEmits(['update:widgets', 'update:editMode'])
 
 // State
-const user = useCurrentUser();
-const showWidgetSelector = ref(false);
-const casinoVisits = ref([]);
-const loading = ref(true);
+const user = useCurrentUser()
+const showWidgetSelector = ref(false)
+const casinoVisits = ref([])
+const loading = ref(true)
 
 // Fetch casino visits
 onMounted(() => {
   if (!user.value) {
-    loading.value = false;
-    return;
+    loading.value = false
+    return
   }
 
-  const visitsRef = collection(db, 'users', user.value.uid, 'casinoVisits');
-  const query_ = query(visitsRef, orderBy('visitDate', 'asc'));
+  const visitsRef = collection(db, 'users', user.value.uid, 'casinoVisits')
+  const query_ = query(visitsRef, orderBy('visitDate', 'asc'))
 
   // get updated data
-  onSnapshot(query_, (snapshot) => {
-    casinoVisits.value = [];
-    snapshot.forEach((doc) => {
-      casinoVisits.value.push({
-        id: doc.id,
-        ...doc.data()
-      });
-    });
-    loading.value = false;
-  }, (err) => {
-    console.error('couldn;t fetch casino visits', err);
-    loading.value = false;
-  });
-});
+  onSnapshot(
+    query_,
+    (snapshot) => {
+      casinoVisits.value = []
+      snapshot.forEach((doc) => {
+        casinoVisits.value.push({
+          id: doc.id,
+          ...doc.data(),
+        })
+      })
+      loading.value = false
+    },
+    (err) => {
+      console.error('couldn;t fetch casino visits', err)
+      loading.value = false
+    },
+  )
+})
 
 // local widgets should fetch databse to seet which widgets are being used
-const localWidgets = ref([...props.widgets]);
+const localWidgets = ref([...props.widgets])
 
 // #1 Add New Widgets here. wig
 const availableWidgets = [
-  { id: 'timeseries', name: 'Time Series Chart', component: 'TimeSeriesWidget', size: 'full', icon: 'chart-line' },
-  { id: 'breakeven', name: 'Break-Even Probability', component: 'BreakEvenWidget', size: 'half', icon: 'chart-bar' },
-  { id: 'alternative', name: 'Alternative Spending', component: 'AlternativeSpendingWidget', size: 'half', icon: 'lightbulb-on' },
-  { id: 'calendarheatmap', name: 'Calendar Heatmap', component: 'CalendarHeatMap', size: 'full', icon: 'calendar-heat' },
-  { id: 'moodmoney', name: 'Mood vs Money', component: 'MoodMoney', size: 'half', icon: 'emoticon-happy' },
+  {
+    id: 'timeseries',
+    name: 'Time Series Chart',
+    component: 'TimeSeriesWidget',
+    size: 'full',
+    icon: 'chart-line',
+  },
+  {
+    id: 'breakeven',
+    name: 'Break-Even Probability',
+    component: 'BreakEvenWidget',
+    size: 'half',
+    icon: 'chart-bar',
+  },
+  {
+    id: 'alternative',
+    name: 'Alternative Spending',
+    component: 'AlternativeSpendingWidget',
+    size: 'half',
+    icon: 'lightbulb-on',
+  },
+  {
+    id: 'calendarheatmap',
+    name: 'Calendar Heatmap',
+    component: 'CalendarHeatMap',
+    size: 'full',
+    icon: 'calendar-heat',
+  },
+  {
+    id: 'moodmoney',
+    name: 'Mood vs Money',
+    component: 'MoodMoney',
+    size: 'half',
+    icon: 'emoticon-happy',
+  },
   { id: 'trophy', name: 'Trophy Widget', component: 'TrophyWidget', size: 'half', icon: 'trophy' },
-  
-];
+]
 
 // Computed
 const unusedWidgets = computed(() => {
-  const activeIds = localWidgets.value.map(w => w.id);
-  return availableWidgets.filter(w => !activeIds.includes(w.id));
-});
+  const activeIds = localWidgets.value.map((w) => w.id)
+  return availableWidgets.filter((w) => !activeIds.includes(w.id))
+})
 
 // Methods
 const removeWidget = (widgetId) => {
-  localWidgets.value = localWidgets.value.filter(w => w.id !== widgetId);
-};
+  localWidgets.value = localWidgets.value.filter((w) => w.id !== widgetId)
+}
 
 const addWidget = (widget) => {
-  localWidgets.value.push({ ...widget });
-  showWidgetSelector.value = false;
-};
+  localWidgets.value.push({ ...widget })
+  showWidgetSelector.value = false
+}
 
 // #2 add new widgets here wig
 const getComponent = (componentName) => {
@@ -192,23 +219,32 @@ const getComponent = (componentName) => {
     CalendarHeatMap,
     MoodMoney,
     TrophyWidget,
-  };
-  return components[componentName];
-};
+  }
+  return components[componentName]
+}
 
 // Watch for changes and emit to parent
-watch(localWidgets, (newValue) => {
-  emit('update:widgets', newValue);
-}, { deep: true });
+watch(
+  localWidgets,
+  (newValue) => {
+    emit('update:widgets', newValue)
+  },
+  { deep: true },
+)
 
 // Watch for prop changes from parent (only update if different)
-watch(() => props.widgets, (newValue) => {
-  // Only update if the lengths are different or if widgets are actually different
-  if (newValue.length !== localWidgets.value.length || 
-      JSON.stringify(newValue) !== JSON.stringify(localWidgets.value)) {
-    localWidgets.value = [...newValue];
-  }
-});
+watch(
+  () => props.widgets,
+  (newValue) => {
+    // Only update if the lengths are different or if widgets are actually different
+    if (
+      newValue.length !== localWidgets.value.length ||
+      JSON.stringify(newValue) !== JSON.stringify(localWidgets.value)
+    ) {
+      localWidgets.value = [...newValue]
+    }
+  },
+)
 </script>
 
 <style scoped>

@@ -20,7 +20,9 @@ const allColumns = [
     header: 'Date',
     body: (row) => {
       if (!row.createdAt) return ''
-      const date = row.createdAt.toDate ? row.createdAt.toDate() : new Date(row.createdAt.seconds * 1000)
+      const date = row.createdAt.toDate
+        ? row.createdAt.toDate()
+        : new Date(row.createdAt.seconds * 1000)
       return date.toLocaleString()
     },
   },
@@ -42,7 +44,6 @@ const allColumns = [
 ]
 </script>
 
-
 <template>
   <Card class="full-width">
     <template #title>Recent History</template>
@@ -55,12 +56,7 @@ const allColumns = [
         class="full-table"
         emptyMessage="No visits logged yet."
       >
-        <Column
-          v-for="col in allColumns"
-          :key="col.field"
-          :field="col.field"
-          :header="col.header"
-        >
+        <Column v-for="col in allColumns" :key="col.field" :field="col.field" :header="col.header">
           <template #body="props">
             <span v-if="col.body" v-html="col.body(props.data)"></span>
             <span v-else>{{ props.data[col.field] }}</span>
@@ -70,7 +66,6 @@ const allColumns = [
     </template>
   </Card>
 </template>
-
 
 <style>
 .full-table td {

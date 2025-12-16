@@ -11,7 +11,7 @@ import DatePicker from 'primevue/calendar'
 import Rating from 'primevue/rating'
 import { useToast } from 'primevue/usetoast'
 import SpeechToText from './SpeechToText.vue'
-import AutoComplete  from 'primevue/autocomplete'
+import AutoComplete from 'primevue/autocomplete'
 
 const toast = useToast()
 const visible = ref(false)
@@ -40,13 +40,9 @@ const searchCasinos = (event) => {
     return
   }
 
-  const matches = userCasinos.value.filter((casino) =>
-  casino.name.toLowerCase().includes(query)
-)
+  const matches = userCasinos.value.filter((casino) => casino.name.toLowerCase().includes(query))
 
- const exactMatch = userCasinos.value.some(
-    (casino) => casino.name.toLowerCase() === query
-  )
+  const exactMatch = userCasinos.value.some((casino) => casino.name.toLowerCase() === query)
 
   if (!exactMatch && query) {
     filteredCasinos.value = [...matches, { name: event.query, isNew: true }]
@@ -68,11 +64,8 @@ const addNewCasino = async (casinoName) => {
   }
 }
 
-
-
 const logVisit = async () => {
-
-   if (!selectedCasino.value) {
+  if (!selectedCasino.value) {
     toast.add({ severity: 'warn', summary: 'Please select or enter a casino name', life: 3000 })
     return
   }
@@ -106,7 +99,7 @@ const logVisit = async () => {
     let casinoId
     let casinoName
 
-     if (typeof selectedCasino.value === 'string') {
+    if (typeof selectedCasino.value === 'string') {
       // User typed a new casino name without selecting from dropdown
       const newCasino = await addNewCasino(selectedCasino.value)
       if (newCasino) {
@@ -125,7 +118,6 @@ const logVisit = async () => {
       casinoId = selectedCasino.value.id
       casinoName = selectedCasino.value.name
     }
-
 
     await addDoc(collection(db, 'users', user.uid, 'casinoVisits'), {
       casinoId: casinoId,

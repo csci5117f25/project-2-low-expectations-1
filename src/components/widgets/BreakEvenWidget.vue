@@ -6,17 +6,28 @@
     </h3>
     <div class="breakeven-content">
       <Message v-if="currentLoss > 0" severity="error" :closable="false">
-        <p>To recover your current loss of <strong>${{ currentLoss.toFixed(2) }}</strong>, you'd need:</p>
-        <p class="breakeven-sessions">{{ sessionsNeeded }} more sessions averaging ${{ averageNeeded.toFixed(2) }}</p>
+        <p>
+          To recover your current loss of <strong>${{ currentLoss.toFixed(2) }}</strong
+          >, you'd need:
+        </p>
+        <p class="breakeven-sessions">
+          {{ sessionsNeeded }} more sessions averaging ${{ averageNeeded.toFixed(2) }}
+        </p>
       </Message>
       <Message v-else-if="currentLoss === 0" severity="info" :closable="false">
         <p>You're currently at break-even! Keep track of your sessions to maintain balance.</p>
       </Message>
       <Message v-else severity="success" :closable="false">
-        <p>You're currently up <strong>${{ Math.abs(currentLoss).toFixed(2) }}</strong>! Great job!</p>
+        <p>
+          You're currently up <strong>${{ Math.abs(currentLoss).toFixed(2) }}</strong
+          >! Great job!
+        </p>
       </Message>
       <div v-if="averageWin > 0 && winningSessionCount > 0" class="breakeven-details">
-        <p>Based on your average win of <strong>${{ averageWin.toFixed(2) }}</strong> from {{ winningSessionCount }} winning sessions</p>
+        <p>
+          Based on your average win of <strong>${{ averageWin.toFixed(2) }}</strong> from
+          {{ winningSessionCount }} winning sessions
+        </p>
       </div>
       <div v-else-if="visits.length > 0" class="breakeven-details">
         <p>No winning sessions yet. Keep playing responsibly!</p>
@@ -36,8 +47,8 @@ import Message from 'primevue/message'
 const props = defineProps({
   visits: {
     type: Array,
-    default: () => []
-  }
+    default: () => [],
+  },
 })
 
 const currentLoss = ref(0)
@@ -56,25 +67,25 @@ const calculateBreakEven = () => {
     averageNeeded.value = 0
     return
   }
-  
+
   let totalProfit = 0
   let totalWins = 0
   let winCount = 0
-  
-  props.visits.forEach(visit => {
+
+  props.visits.forEach((visit) => {
     const profit = visit.profit || 0
     totalProfit += profit
-    
+
     if (profit > 0) {
       totalWins += profit
       winCount++
     }
   })
-  
+
   currentLoss.value = -totalProfit // Negative total profit means we're in the red
   winningSessionCount.value = winCount
   averageWin.value = winCount > 0 ? totalWins / winCount : 0
-  
+
   // Calculate sessions needed to break even
   if (currentLoss.value > 0 && averageWin.value > 0) {
     sessionsNeeded.value = Math.ceil(currentLoss.value / averageWin.value)
