@@ -57,29 +57,28 @@ onMounted(() => {
       loadedModel = gltf.scene
       const casino = new THREE.Group()
 
-      // Fix textures for iOS compatibility
       loadedModel.traverse((child) => {
-        if (child.isMesh && child.material) {
+        if (child.isMesh) {
           const materials = Array.isArray(child.material) ? child.material : [child.material]
           materials.forEach((material) => {
-            if (material.map) {
-              material.map.generateMipmaps = false
-              material.map.minFilter = THREE.LinearFilter
-              material.map.magFilter = THREE.LinearFilter
-              material.map.colorSpace = THREE.SRGBColorSpace
-            }
-            if (material.normalMap) {
-              material.normalMap.generateMipmaps = false
-              material.normalMap.minFilter = THREE.LinearFilter
-            }
-            if (material.roughnessMap) {
-              material.roughnessMap.generateMipmaps = false
-              material.roughnessMap.minFilter = THREE.LinearFilter
-            }
-            if (material.metalnessMap) {
-              material.metalnessMap.generateMipmaps = false
-              material.metalnessMap.minFilter = THREE.LinearFilter
-            }
+            const textureTypes = ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap', 'emissiveMap', 'bumpMap', 'displacementMap']
+            
+            textureTypes.forEach((texType) => {
+              if (material[texType]) {
+                const tex = material[texType]
+                tex.generateMipmaps = false
+                tex.minFilter = THREE.LinearFilter
+                tex.magFilter = THREE.LinearFilter
+                tex.wrapS = THREE.ClampToEdgeWrapping
+                tex.wrapT = THREE.ClampToEdgeWrapping
+                tex.anisotropy = 1
+                if (texType === 'map') {
+                  tex.colorSpace = THREE.SRGBColorSpace
+                }
+                tex.needsUpdate = true
+              }
+            })
+            material.needsUpdate = true
           })
         }
       })
@@ -90,8 +89,11 @@ onMounted(() => {
       casino.rotation.y = -Math.PI / 2
 
       scene.add(casino)
+      console.log('Casino model loaded successfully')
     },
-    undefined,
+    (progress) => {
+      console.log('Loading:', (progress.loaded / progress.total * 100).toFixed(0) + '%')
+    },
     (error) => {
       console.error('Error loading casino model:', error)
     }
@@ -123,7 +125,34 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize)
   if (animationId) cancelAnimationFrame(animationId)
-  if (renderer) renderer.dispose()
+  if (renderer) {
+    renderer.dispose()
+    renderer.forceContextLoss()
+  }
+  if (scene) {
+    scene.traverse((object) => {
+      if (object.geometry) object.geometry.dispose()
+      if (object.material) {
+        if (Array.isArray(object.material)) {
+          object.material.forEach(material => {
+            Object.keys(material).forEach(prop => {
+              if (material[prop] && material[prop].dispose) {
+                material[prop].dispose()
+              }
+            })
+            material.dispose()
+          })
+        } else {
+          Object.keys(object.material).forEach(prop => {
+            if (object.material[prop] && object.material[prop].dispose) {
+              object.material[prop].dispose()
+            }
+          })
+          object.material.dispose()
+        }
+      }
+    })
+  }
 })
 
 function handleResize() {
