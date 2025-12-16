@@ -25,201 +25,13 @@
           :widgets="activeWidgets"
           @update:widgets="activeWidgets = $event"
         />
-
-        <!-- Time Series Chart Widget (Full Width) -->
-        <!-- <div class="chart-section">
-          <TimeSeriesWidget />
-        </div>
-
-        <div class="grid-2col">
-
-          <Card>
-            <template #title>$ Net Result</template>
-            <template #content>
-              <div class="net-result">
-                <div class="result-value negative">↘ $ -105.00</div>
-                <p class="result-label">Current Loss</p>
-              </div>
-              <Divider />
-              <div class="result-details">
-                <div class="detail-item">
-                  <span class="detail-label">Total Spent</span>
-                  <span class="detail-value">$ 375.00</span>
-                </div>
-                <div class="detail-item">
-                  <span class="detail-label">Total Cashed Out</span>
-                  <span class="detail-value">$ 265.00</span>
-                </div>
-              </div>
-            </template>
-          </Card>
-
-          <!-- Net Gain/Loss Chart
-          <Card>
-            <template #title>
-              <div class="card-header">
-                <span>↗ Net Gain/Loss Over Time</span>
-                <div class="chart-filters">
-                  <Button
-                    v-for="period in ['w', 'm', 'yr', '10 yr']"
-                    :key="period"
-                    :label="period"
-                    size="small"
-                    :severity="chartPeriod === period ? 'primary' : 'secondary'"
-                    :outlined="chartPeriod !== period"
-                    @click="chartPeriod = period"
-                  />
-                </div>
-              </div>
-            </template>
-            <template #content>
-              <div class="chart-container">
-                <svg class="chart" viewBox="0 0 400 160" preserveAspectRatio="none">
-                  <!-- Y-axis labels
-                  <text x="10" y="15" class="axis-label">$100</text>
-                  <text x="10" y="50" class="axis-label">$50</text>
-                  <text x="10" y="85" class="axis-label">$0</text>
-                  <text x="10" y="120" class="axis-label">-$50</text>
-                  <text x="10" y="155" class="axis-label">-$100</text>
-
-                  <!-- Zero line
-                  <line x1="40" y1="85" x2="400" y2="85" stroke="#666" stroke-width="1" stroke-dasharray="4,4" />
-
-                  <!-- Chart line
-                  <polyline
-                    points="40,75 120,95 200,70 280,90 360,110 400,115"
-                    fill="none"
-                    stroke="var(--primary-color)"
-                    stroke-width="2"
-                  />
-
-                  <!-- Data points
-                  <circle cx="40" cy="75" r="3" fill="var(--primary-color)" />
-                  <circle cx="120" cy="95" r="3" fill="var(--primary-color)" />
-                  <circle cx="200" cy="70" r="3" fill="var(--primary-color)" />
-                  <circle cx="280" cy="90" r="3" fill="var(--primary-color)" />
-                  <circle cx="360" cy="110" r="3" fill="var(--primary-color)" />
-                  <circle cx="400" cy="115" r="3" fill="var(--primary-color)" />
-                </svg>
-
-                <!-- X-axis labels
-                <div class="x-axis-labels">
-                  <span>10/23</span>
-                  <span>10/24</span>
-                  <span>10/29</span>
-                  <span>10/30</span>
-                  <span>10/31</span>
-                </div>
-
-                <!-- Tooltip
-                <div class="chart-tooltip">
-                  <p class="tooltip-date">Date: 10/28</p>
-                  <p class="tooltip-value">Cum. Net: +$195.00</p>
-                </div>
-              </div>
-            </template>
-          </Card>
-        </div>
-
-        <div class="grid-2col">
-
-          <!-- Break-Even Probability
-          <Card>
-            <template #title>
-              <div style="display: flex; align-items: center; gap: 0.5rem">
-                <img
-                  src="https://api.iconify.design/mdi/chart-bar.svg?color=%23fff"
-                  class="title-icon"
-                  alt="Chart"
-                />
-                Break-Even Probability
-              </div>
-            </template>
-            <template #content>
-              <div class="breakeven-content">
-                <Message severity="error" :closable="false">
-                  <p>To recover your current loss of <strong>$75.00</strong>, you'd need:</p>
-                  <p class="breakeven-sessions">2 more sessions averaging $37.50</p>
-                </Message>
-                <div class="breakeven-details">
-                  <p>
-                    Recent Loss of <strong>$160.00</strong> would take 4 winning sessions to recover
-                  </p>
-                  <p>
-                    Based on your average win of <strong>$37.50</strong> from 3 winning sessions
-                  </p>
-                </div>
-              </div>
-            </template>
-          </Card>
-
-          <!-- Casino Locations Map
-          <Card>
-            <template #title>
-              <div style="display: flex; align-items: center; gap: 0.5rem">
-                <img
-                  src="https://api.iconify.design/mdi/map-marker.svg?color=%23fff"
-                  class="title-icon"
-                  alt="Location"
-                />
-                Casino Locations
-              </div>
-            </template>
-            <template #content>
-              <div class="map-container">
-                <div class="map-placeholder">
-                  <span class="map-text">Map</span>
-                  <div class="map-pin winning-pin" style="top: 20%; left: 25%"></div>
-                  <div class="map-pin losing-pin" style="bottom: 20%; right: 25%"></div>
-                </div>
-              </div>
-              <div class="map-legend">
-                <div class="legend-item">
-                  <span class="legend-dot winning"></span>
-                  <span>Winning Location</span>
-                </div>
-                <div class="legend-item">
-                  <span class="legend-dot losing"></span>
-                  <span>Losing Location</span>
-                </div>
-              </div>
-            </template>
-          </Card>
-        </div>
-
-        <!-- What You Could've Had
-        <Card class="full-width">
-          <template #title>
-            <div style="display: flex; align-items: center; gap: 0.5rem">
-              <img
-                src="https://api.iconify.design/mdi/lightbulb-on.svg?color=%23fff"
-                class="title-icon"
-                alt="Idea"
-              />
-              What You Could've Had Instead
-            </div>
-          </template>
-          <template #content>
-            <p class="couldve-intro">
-              Your net loss of <strong class="negative">105.00</strong> could've been...
-            </p>
-            <div class="grid-2col">
-              <div class="couldve-items">
-                <Skeleton v-for="i in 3" :key="i" height="48px" />
-              </div>
-              <div class="couldve-quotes">
-                <Skeleton v-for="i in 3" :key="i" height="48px" />
-              </div>
-            </div>
-          </template>
-        </Card> -->
       </main>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import DraggableWidgetGrid from '@/components/DraggableWidgetGrid.vue'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -231,8 +43,12 @@ import { useRouter } from 'vue-router'
 import LogOutButton from '@/components/LogOutButton.vue'
 import RecentHistory from '@/components/widgets/RecentHistory.vue'
 import NavBar from './NavBar.vue'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { db } from '@/firebase_conf'
+import { useCurrentUser } from 'vuefire'
 
 const router = useRouter()
+const user = useCurrentUser()
 
 const tabs = [
   { name: 'Dashboard', icon: 'chart-arc' },
@@ -246,8 +62,8 @@ const activeTab = ref('Dashboard')
 const editMode = ref(false)
 const logVisitFormRef = ref(false)
 
-// Active widgets on dashboard - initial state
-const activeWidgets = ref([
+// Default widgets configuration
+const defaultWidgets = [
   { id: 'timeseries', name: 'Time Series Chart', component: 'TimeSeriesWidget', size: 'full' },
   { id: 'trophy', name: 'Trophy Case', component: 'TrophyWidget', size: 'half' },
   { id: 'breakeven', name: 'Break-Even Probability', component: 'BreakEvenWidget', size: 'half' },
@@ -260,7 +76,54 @@ const activeWidgets = ref([
   { id: 'calendarheatmap', name: 'Calendar Heatmap', component: 'CalendarHeatMap', size: 'full' },
   { id: 'moodmoney', name: 'Mood vs Money', component: 'MoodMoney', size: 'half' },
   { id: 'recenthistory', name: 'Recent History', component: 'RecentHistory', size: 'full'}
-]);
+]
+
+// active widgets
+const activeWidgets = ref([...defaultWidgets])
+
+//load widget configuration
+const loadWidgetConfig = async () => {
+  if (!user.value?.uid) return
+  
+  try {
+    const configRef = doc(db, 'users', user.value.uid, 'settings', 'dashboardConfig')
+    const configDoc = await getDoc(configRef)
+    
+    if (configDoc.exists() && configDoc.data().widgets) {
+      activeWidgets.value = configDoc.data().widgets
+    }
+  } catch (err) {
+    console.error('couldn;t laod dashbaord config: ', err)
+  }
+}
+
+// Save widget configuration to Firestore
+const saveWidgetConfig = async (widgets) => {
+  if (!user.value?.uid) return
+  
+  try {
+    const configRef = doc(db, 'users', user.value.uid, 'settings', 'dashboardConfig')
+    await setDoc(configRef, { widgets }, { merge: true })
+  } catch (error) {
+  }
+}
+
+// save widget configuration
+watch(activeWidgets, (newWidgets) => {
+  saveWidgetConfig(newWidgets)
+}, { deep: true })
+
+watch(user, (newUser) => {
+  if (newUser) {
+    loadWidgetConfig()
+  }
+}, { immediate: true })
+
+onMounted(() => {
+  if (user.value) {
+    loadWidgetConfig()
+  }
+})
 
 const handleTabClick = (tab) => {
   activeTab.value = tab.name
