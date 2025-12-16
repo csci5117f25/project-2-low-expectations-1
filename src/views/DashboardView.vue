@@ -279,7 +279,7 @@ const toggleEditMode = () => {
 <style scoped>
 .dashboard-container {
   min-height: 100vh;
-  background: var(--surface-card);
+  background: var(--surface-ground);
   padding: 0;
 }
 
