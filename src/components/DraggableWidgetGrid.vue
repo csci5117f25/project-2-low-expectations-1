@@ -23,6 +23,10 @@
       item-key="id"
       ghost-class="ghost"
       animation="200"
+      :delay="200"
+      :delay-on-touch-only="true"
+      :touch-start-threshold="10"
+      :force-fallback="false"
     >
       <template #item="{ element: widget }">
         <div :class="['widget-wrapper', widget.size, { 'edit-mode': editMode }]" :key="widget.id">
