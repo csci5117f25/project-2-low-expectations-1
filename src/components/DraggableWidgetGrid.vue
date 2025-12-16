@@ -44,7 +44,7 @@
               </div>
               <component 
                 :is="getComponent(widget.component)" 
-                :visits="casinoVisits"
+                :visits="widget.component === 'RecentHistory' ? recentVisits : casinoVisits"
               />
             </template>
           </Card>
@@ -104,6 +104,7 @@ import AlternativeSpendingWidget from '@/components/widgets/AlternativeSpendingW
 import CalendarHeatMap from '@/components/widgets/CalendarHeatMap.vue';
 import MoodMoney from '@/components/widgets/MoodMoney.vue';  
 import TrophyWidget from '@/components/widgets/TrophyWidget.vue';
+import RecentHistory from '@/components/widgets/RecentHistory.vue';
 
 // After importing widget, need to add it in 2 more places
 
@@ -153,6 +154,18 @@ onMounted(() => {
   });
 });
 
+//obtain the latest five logged visits, order by latest first
+const recentVisits = computed(() => {
+  const sorted = casinoVisits.value.slice();
+  sorted.sort((a, b) => {
+    const aTime = a.visitDate?.seconds ?? 0;
+    const bTime = b.visitDate?.seconds ?? 0;
+    return bTime - aTime; 
+  });
+  return sorted.slice(0, 5);
+});
+
+
 // local widgets should fetch databse to seet which widgets are being used
 const localWidgets = ref([...props.widgets]);
 
@@ -164,7 +177,7 @@ const availableWidgets = [
   { id: 'calendarheatmap', name: 'Calendar Heatmap', component: 'CalendarHeatMap', size: 'full', icon: 'calendar-heat' },
   { id: 'moodmoney', name: 'Mood vs Money', component: 'MoodMoney', size: 'half', icon: 'emoticon-happy' },
   { id: 'trophy', name: 'Trophy Widget', component: 'TrophyWidget', size: 'half', icon: 'trophy' },
-  
+  { id: 'recenthistory', name: 'Recent History', component: 'RecentHistory', size: 'full', icon: 'history' },
 ];
 
 // Computed
@@ -192,6 +205,7 @@ const getComponent = (componentName) => {
     CalendarHeatMap,
     MoodMoney,
     TrophyWidget,
+    RecentHistory
   };
   return components[componentName];
 };

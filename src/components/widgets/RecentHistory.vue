@@ -1,19 +1,18 @@
 <script setup>
-import { computed } from 'vue'
+import { useCurrentUser } from 'vuefire'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Card from 'primevue/card'
 
-// Props
+const user = useCurrentUser()
 const props = defineProps({
   visits: {
     type: Array,
-    default: () => [],
-  },
+    default: () => []
+  }
 })
 
-const visitRows = computed(() => props.visits)
-
+//different columns for the data tables based on casinovisit data
 const allColumns = [
   {
     field: 'createdAt',
@@ -42,26 +41,21 @@ const allColumns = [
 ]
 </script>
 
-
 <template>
   <Card class="full-width">
-    <template #title>Recent History</template>
+    <template #title> Recent History </template>
     <template #content>
       <DataTable
-        :value="visitRows"
+        :value="visits"
         responsiveLayout="scroll"
         scrollable
-        :scrollHeight="visitRows.length > 3 ? '200px' : 'auto'"
+        :scrollHeight="visits.length > 3 ? '200px' : 'auto'"
         class="full-table"
         emptyMessage="No visits logged yet."
       >
-        <Column
-          v-for="col in allColumns"
-          :key="col.field"
-          :field="col.field"
-          :header="col.header"
-        >
+        <Column v-for="col in allColumns" :key="col.field" :field="col.field" :header="col.header">
           <template #body="props">
+            <!-- handles the different colors for profit values -->
             <span v-if="col.body" v-html="col.body(props.data)"></span>
             <span v-else>{{ props.data[col.field] }}</span>
           </template>
@@ -70,7 +64,6 @@ const allColumns = [
     </template>
   </Card>
 </template>
-
 
 <style>
 .full-table td {
