@@ -276,8 +276,6 @@ const toggleEditMode = () => {
   min-height: 100vh;
   background: var(--surface-ground);
   padding: 0;
-  z-index: 100;
-
 }
 
 .dashboard-content {
