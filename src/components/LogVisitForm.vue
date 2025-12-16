@@ -26,6 +26,8 @@ const filteredCasinos = ref([])
 const user = useCurrentUser()
 const userCasinos = useCollection(collection(db, 'users', user.value.uid, 'casinos'))
 
+const emit = defineEmits(['update:visible'])
+
 // Search/filter casinos for autocomplete
 const searchCasinos = (event) => {
   const query = event.query.toLowerCase().trim()
@@ -138,6 +140,7 @@ const logVisit = async () => {
     mood.value = 0
     notes.value = ''
     visible.value = false
+    emit('update:visible', false)
     toast.add({ severity: 'success', summary: 'Your visit is logged!', life: 3000 })
   } catch (e) {
     console.error('Error logging the form:', e)
@@ -203,7 +206,7 @@ const logVisit = async () => {
         <SpeechToText v-model="notes"></SpeechToText>
       </div>
       <div class="form-actions">
-        <Button label="Cancel" class="p-button-text" @click="visible = false" />
+        <!-- <Button label="Cancel" class="p-button-text" @click="visible = false" /> -->
         <Button label="Log Visit" @click="logVisit" />
       </div>
     </div>
