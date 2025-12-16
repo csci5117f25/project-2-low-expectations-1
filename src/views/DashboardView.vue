@@ -259,8 +259,8 @@ const activeWidgets = ref([
   },
   { id: 'calendarheatmap', name: 'Calendar Heatmap', component: 'CalendarHeatMap', size: 'full' },
   { id: 'moodmoney', name: 'Mood vs Money', component: 'MoodMoney', size: 'half' },
-  { id: 'recenthistory', name: 'Recent History', component: 'RecentHistory', size: 'full'}
-]);
+  { id: 'recenthistory', name: 'Recent History', component: 'RecentHistory', size: 'full' },
+])
 
 const handleTabClick = (tab) => {
   activeTab.value = tab.name

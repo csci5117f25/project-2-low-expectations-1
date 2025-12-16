@@ -8,8 +8,8 @@ const user = useCurrentUser()
 const props = defineProps({
   visits: {
     type: Array,
-    default: () => []
-  }
+    default: () => [],
+  },
 })
 
 //different columns for the data tables based on casinovisit data
