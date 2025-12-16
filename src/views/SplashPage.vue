@@ -78,6 +78,8 @@ onMounted(() => {
                 tex.needsUpdate = true
               }
             })
+            
+            // Simplify material for iOS
             material.needsUpdate = true
           })
         }
@@ -125,34 +127,18 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize)
   if (animationId) cancelAnimationFrame(animationId)
+  
   if (renderer) {
     renderer.dispose()
-    renderer.forceContextLoss()
+    if (renderer.forceContextLoss) {
+      renderer.forceContextLoss()
+    }
   }
-  if (scene) {
-    scene.traverse((object) => {
-      if (object.geometry) object.geometry.dispose()
-      if (object.material) {
-        if (Array.isArray(object.material)) {
-          object.material.forEach(material => {
-            Object.keys(material).forEach(prop => {
-              if (material[prop] && material[prop].dispose) {
-                material[prop].dispose()
-              }
-            })
-            material.dispose()
-          })
-        } else {
-          Object.keys(object.material).forEach(prop => {
-            if (object.material[prop] && object.material[prop].dispose) {
-              object.material[prop].dispose()
-            }
-          })
-          object.material.dispose()
-        }
-      }
-    })
-  }
+  
+  scene = null
+  camera = null
+  renderer = null
+  loadedModel = null
 })
 
 function handleResize() {
