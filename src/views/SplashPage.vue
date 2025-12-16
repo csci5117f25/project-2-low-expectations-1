@@ -7,132 +7,202 @@ import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
 const canvasRef = ref(null)
-let scene, camera, renderer, animationId, loadedModel
+let scene, camera, renderer, animationId, loadedModel, isDestroyed = false
 
 onMounted(() => {
   if (!canvasRef.value) return
 
-  scene = new THREE.Scene()
-  scene.background = new THREE.Color(0x1a0a0a)
-  
-  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-  camera.position.set(0, 2, 25)
-  camera.lookAt(0, 0, 0)
-  
-  renderer = new THREE.WebGLRenderer({ 
-    canvas: canvasRef.value,
-    antialias: true
-  })
-  
-  renderer.setSize(window.innerWidth, window.innerHeight)
-  renderer.setPixelRatio(window.devicePixelRatio)
-
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6)
-  scene.add(ambientLight)
-
-  const spotLight = new THREE.SpotLight(0xffd700, 1)
-  spotLight.position.set(0, 10, 10)
-  spotLight.angle = Math.PI / 6
-  scene.add(spotLight)
-
-  const pointLight1 = new THREE.PointLight(0xff0000, 0.5)
-  pointLight1.position.set(-5, 5, 5)
-  scene.add(pointLight1)
-
-  const pointLight2 = new THREE.PointLight(0x0000ff, 0.5)
-  pointLight2.position.set(5, 5, 5)
-  scene.add(pointLight2)
-
-  const frontLight = new THREE.DirectionalLight(0xffffff, 1.2)
-  frontLight.position.set(0, 5, 20)
-  frontLight.target.position.set(0, 0, 0)
-  scene.add(frontLight)
-  scene.add(frontLight.target)
-
-  const loader = new GLTFLoader()
-  
-  loader.load(
-    '/models/gameready_casino_scene.glb',
-    (gltf) => {
-      loadedModel = gltf.scene
-      const casino = new THREE.Group()
-
-      loadedModel.traverse((child) => {
-        if (child.isMesh) {
-          const materials = Array.isArray(child.material) ? child.material : [child.material]
-          materials.forEach((material) => {
-            const textureTypes = ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap', 'emissiveMap', 'bumpMap', 'displacementMap']
-            
-            textureTypes.forEach((texType) => {
-              if (material[texType]) {
-                const tex = material[texType]
-                tex.generateMipmaps = false
-                tex.minFilter = THREE.LinearFilter
-                tex.magFilter = THREE.LinearFilter
-                tex.wrapS = THREE.ClampToEdgeWrapping
-                tex.wrapT = THREE.ClampToEdgeWrapping
-                tex.anisotropy = 1
-                if (texType === 'map') {
-                  tex.colorSpace = THREE.SRGBColorSpace
-                }
-                tex.needsUpdate = true
-              }
-            })
-            
-            // Simplify material for iOS
-            material.needsUpdate = true
-          })
-        }
-      })
-
-      casino.add(loadedModel)
-      casino.scale.set(0.2, 0.2, 0.2)
-      casino.position.set(10, -7, 0)
-      casino.rotation.y = -Math.PI / 2
-
-      scene.add(casino)
-      console.log('Casino model loaded successfully')
-    },
-    (progress) => {
-      console.log('Loading:', (progress.loaded / progress.total * 100).toFixed(0) + '%')
-    },
-    (error) => {
-      console.error('Error loading casino model:', error)
-    }
-  )
-
-  let angle = 0
-  const animate = () => {
-    animationId = requestAnimationFrame(animate)
+  try {
+    scene = new THREE.Scene()
+    scene.background = new THREE.Color(0x1a0a0a)
     
-    angle += 0.0005
-    const radius = 30
-    camera.position.x = Math.sin(angle) * radius
-    camera.position.z = Math.cos(angle) * radius
-    camera.position.y = 8
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+    camera.position.set(0, 2, 25)
     camera.lookAt(0, 0, 0)
     
-    renderer.render(scene, camera)
-  }
-  animate()
-
-  const handleResize = () => {
-    camera.aspect = window.innerWidth / window.innerHeight
-    camera.updateProjectionMatrix()
+    renderer = new THREE.WebGLRenderer({ 
+      canvas: canvasRef.value,
+      antialias: true,
+      alpha: false,
+      powerPreference: 'high-performance',
+      failIfMajorPerformanceCaveat: false
+    })
+    
     renderer.setSize(window.innerWidth, window.innerHeight)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)) // Limit pixel ratio for iOS
+    renderer.outputColorSpace = THREE.SRGBColorSpace
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6)
+    scene.add(ambientLight)
+
+    const spotLight = new THREE.SpotLight(0xffd700, 1)
+    spotLight.position.set(0, 10, 10)
+    spotLight.angle = Math.PI / 6
+    scene.add(spotLight)
+
+    const pointLight1 = new THREE.PointLight(0xff0000, 0.5)
+    pointLight1.position.set(-5, 5, 5)
+    scene.add(pointLight1)
+
+    const pointLight2 = new THREE.PointLight(0x0000ff, 0.5)
+    pointLight2.position.set(5, 5, 5)
+    scene.add(pointLight2)
+
+    const frontLight = new THREE.DirectionalLight(0xffffff, 1.2)
+    frontLight.position.set(0, 5, 20)
+    frontLight.target.position.set(0, 0, 0)
+    scene.add(frontLight)
+    scene.add(frontLight.target)
+
+    const loader = new GLTFLoader()
+    
+    loader.load(
+      '/models/gameready_casino_scene.glb',
+      (gltf) => {
+        if (isDestroyed) return
+        
+        loadedModel = gltf.scene
+        const casino = new THREE.Group()
+
+        loadedModel.traverse((child) => {
+          if (child.isMesh) {
+            const materials = Array.isArray(child.material) ? child.material : [child.material]
+            materials.forEach((material) => {
+              const textureTypes = ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap', 'emissiveMap', 'bumpMap', 'displacementMap']
+              
+              textureTypes.forEach((texType) => {
+                if (material[texType]) {
+                  const tex = material[texType]
+                  
+                  tex.generateMipmaps = false
+                  tex.minFilter = THREE.LinearFilter
+                  tex.magFilter = THREE.LinearFilter
+                  tex.wrapS = THREE.ClampToEdgeWrapping
+                  tex.wrapT = THREE.ClampToEdgeWrapping
+                  tex.anisotropy = 1
+                  
+                  if (texType === 'map') {
+                    tex.colorSpace = THREE.SRGBColorSpace
+                  }
+                  
+                  tex.needsUpdate = true
+                }
+              })
+              
+              material.needsUpdate = true
+              
+              if (material.map) {
+                material.map.encoding = THREE.sRGBEncoding
+              }
+            })
+          }
+        })
+
+        casino.add(loadedModel)
+        casino.scale.set(0.2, 0.2, 0.2)
+        casino.position.set(10, -7, 0)
+        casino.rotation.y = -Math.PI / 2
+
+        scene.add(casino)
+        console.log('Casino model loaded successfully')
+      },
+      (progress) => {
+        const percent = (progress.loaded / progress.total * 100).toFixed(0)
+        console.log('Loading:', percent + '%')
+      },
+      (error) => {
+        console.error('Error loading casino model:', error)
+      }
+    )
+
+    let angle = 0
+    const animate = () => {
+      if (isDestroyed) return
+      
+      animationId = requestAnimationFrame(animate)
+      
+      angle += 0.0005
+      const radius = 30
+      camera.position.x = Math.sin(angle) * radius
+      camera.position.z = Math.cos(angle) * radius
+      camera.position.y = 8
+      camera.lookAt(0, 0, 0)
+      
+      try {
+        renderer.render(scene, camera)
+      } catch (e) {
+        console.error('Render error:', e)
+        if (animationId) {
+          cancelAnimationFrame(animationId)
+        }
+      }
+    }
+    
+    animate()
+
+    const handleResize = () => {
+      if (!camera || !renderer || isDestroyed) return
+      
+      camera.aspect = window.innerWidth / window.innerHeight
+      camera.updateProjectionMatrix()
+      renderer.setSize(window.innerWidth, window.innerHeight)
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    }
+    
+    window.addEventListener('resize', handleResize)
+    
+    const handleVisibilityChange = () => {
+      if (document.hidden && animationId) {
+        cancelAnimationFrame(animationId)
+      } else if (!document.hidden && !isDestroyed) {
+        animate()
+      }
+    }
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+  } catch (error) {
+    console.error('Three.js initialization error:', error)
+    if (canvasRef.value) {
+      canvasRef.value.style.display = 'none'
+    }
   }
-  window.addEventListener('resize', handleResize)
 })
 
 onBeforeUnmount(() => {
+  isDestroyed = true
+  
+  if (animationId) {
+    cancelAnimationFrame(animationId)
+    animationId = null
+  }
+  
   window.removeEventListener('resize', handleResize)
-  if (animationId) cancelAnimationFrame(animationId)
+  document.removeEventListener('visibilitychange', handleVisibilityChange)
+  
+  if (loadedModel) {
+    loadedModel.traverse((child) => {
+      if (child.isMesh) {
+        if (child.geometry) child.geometry.dispose()
+        if (child.material) {
+          if (Array.isArray(child.material)) {
+            child.material.forEach(m => {
+              if (m.map) m.map.dispose()
+              m.dispose()
+            })
+          } else {
+            if (child.material.map) child.material.map.dispose()
+            child.material.dispose()
+          }
+        }
+      }
+    })
+  }
   
   if (renderer) {
     renderer.dispose()
-    if (renderer.forceContextLoss) {
-      renderer.forceContextLoss()
-    }
+    renderer.forceContextLoss()
+    renderer.domElement = null
   }
   
   scene = null
@@ -142,10 +212,36 @@ onBeforeUnmount(() => {
 })
 
 function handleResize() {
-  if (!camera || !renderer) return
+  if (!camera || !renderer || isDestroyed) return
   camera.aspect = window.innerWidth / window.innerHeight
   camera.updateProjectionMatrix()
   renderer.setSize(window.innerWidth, window.innerHeight)
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+}
+
+function handleVisibilityChange() {
+  if (document.hidden && animationId) {
+    cancelAnimationFrame(animationId)
+  } else if (!document.hidden && !isDestroyed && renderer) {
+    let angle = 0
+    const animate = () => {
+      if (isDestroyed) return
+      animationId = requestAnimationFrame(animate)
+      angle += 0.0005
+      const radius = 30
+      camera.position.x = Math.sin(angle) * radius
+      camera.position.z = Math.cos(angle) * radius
+      camera.position.y = 8
+      camera.lookAt(0, 0, 0)
+      try {
+        renderer.render(scene, camera)
+      } catch (e) {
+        console.error('Render error:', e)
+        if (animationId) cancelAnimationFrame(animationId)
+      }
+    }
+    animate()
+  }
 }
 </script>
 
@@ -157,7 +253,7 @@ function handleResize() {
     <div class="content">
       <header class="header">
         <div class="header-left">
-          <img src="/playing-cards.png" class="logo" />
+          <img src="/playing-cards.png" class="logo" alt="Gamblr Logo" />
           <div class="header-title">
             <h1>Gamblr</h1>
             <p>Track your gambling habits responsibly</p>
@@ -218,6 +314,7 @@ function handleResize() {
   overflow-x: hidden;
   overscroll-behavior: none;
   touch-action: pan-x pan-y;
+  background: #1a0a0a; /* Fallback background */
 }
 
 .three-bg {
@@ -236,6 +333,7 @@ function handleResize() {
   width: 100%;
   height: 100%;
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px); /* iOS Safari */
   background: rgba(0, 0, 0, 0.3);
   z-index: 1;
 }
