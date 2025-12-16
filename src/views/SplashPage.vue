@@ -57,6 +57,33 @@ onMounted(() => {
       loadedModel = gltf.scene
       const casino = new THREE.Group()
 
+      // Fix textures for iOS compatibility
+      loadedModel.traverse((child) => {
+        if (child.isMesh && child.material) {
+          const materials = Array.isArray(child.material) ? child.material : [child.material]
+          materials.forEach((material) => {
+            if (material.map) {
+              material.map.generateMipmaps = false
+              material.map.minFilter = THREE.LinearFilter
+              material.map.magFilter = THREE.LinearFilter
+              material.map.colorSpace = THREE.SRGBColorSpace
+            }
+            if (material.normalMap) {
+              material.normalMap.generateMipmaps = false
+              material.normalMap.minFilter = THREE.LinearFilter
+            }
+            if (material.roughnessMap) {
+              material.roughnessMap.generateMipmaps = false
+              material.roughnessMap.minFilter = THREE.LinearFilter
+            }
+            if (material.metalnessMap) {
+              material.metalnessMap.generateMipmaps = false
+              material.metalnessMap.minFilter = THREE.LinearFilter
+            }
+          })
+        }
+      })
+
       casino.add(loadedModel)
       casino.scale.set(0.2, 0.2, 0.2)
       casino.position.set(10, -7, 0)
@@ -174,6 +201,8 @@ function handleResize() {
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
+  overscroll-behavior: none;
+  touch-action: pan-x pan-y;
 }
 
 .three-bg {
