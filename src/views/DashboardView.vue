@@ -230,7 +230,7 @@ import Skeleton from 'primevue/skeleton'
 import LogVisitForm from '@/components/LogVisitForm.vue'
 import { useRouter } from 'vue-router'
 import LogOutButton from '@/components/LogOutButton.vue'
-import RecentHistory from '@/components/RecentHistory.vue'
+import RecentHistory from '@/components/widgets/RecentHistory.vue'
 import NavBar from './NavBar.vue'
 
 const router = useRouter()
