@@ -26,7 +26,11 @@
       :delay="200"
       :delay-on-touch-only="true"
       :touch-start-threshold="10"
-      :force-fallback="false"
+      :force-fallback="true"
+      :scroll="true"
+      :scroll-sensitivity="100"
+      :scroll-speed="17"
+      :bubble-scroll="true"
     >
       <template #item="{ element: widget }">
         <div :class="['widget-wrapper', widget.size, { 'edit-mode': editMode }]" :key="widget.id">
@@ -323,12 +327,10 @@ watch(
 }
 
 .widget-wrapper.edit-mode .widget-card {
-  border: 2px dashed var(--primary-color);
-  box-shadow: 0 0 0 4px rgba(94, 21, 125, 0.1);
+  border: 2px dashed grey;
 }
 
 .widget-wrapper.edit-mode .widget-card:hover {
-  box-shadow: 0 0 0 4px rgba(94, 21, 125, 0.2);
   transform: translateY(-2px);
 }
 
