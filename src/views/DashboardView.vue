@@ -84,11 +84,11 @@ const activeWidgets = ref([...defaultWidgets])
 //load widget configuration
 const loadWidgetConfig = async () => {
   if (!user.value?.uid) return
-  
+
   try {
     const configRef = doc(db, 'users', user.value.uid, 'settings', 'dashboardConfig')
     const configDoc = await getDoc(configRef)
-    
+
     if (configDoc.exists() && configDoc.data().widgets) {
       activeWidgets.value = configDoc.data().widgets
     }
@@ -100,7 +100,7 @@ const loadWidgetConfig = async () => {
 // Save widget configuration to Firestore
 const saveWidgetConfig = async (widgets) => {
   if (!user.value?.uid) return
-  
+
   try {
     const configRef = doc(db, 'users', user.value.uid, 'settings', 'dashboardConfig')
     await setDoc(configRef, { widgets }, { merge: true })
@@ -142,7 +142,7 @@ const toggleEditMode = () => {
 <style scoped>
 .dashboard-container {
   min-height: 100vh;
-  background: var(--surface-ground);
+  background: var(--surface-card);
   padding: 0;
 }
 
