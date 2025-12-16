@@ -255,6 +255,7 @@ const activeWidgets = ref([
   { id: 'alternative', name: 'Alternative Spending', component: 'AlternativeSpendingWidget', size: 'full' },
   { id: 'calendarheatmap', name: 'Calendar Heatmap', component: 'CalendarHeatMap', size: 'full' },
   { id: 'moodmoney', name: 'Mood vs Money', component: 'MoodMoney', size: 'half' },
+  { id: 'recenthistory', name: 'Recent History', component: 'RecentHistory', size: 'full'}
 ]);
 
 const handleTabClick = (tab) => {
