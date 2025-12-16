@@ -6,8 +6,8 @@ import Card from 'primevue/card'
 const props = defineProps({
   visits: {
     type: Array,
-    default: () => []
-  }
+    default: () => [],
+  },
 })
 
 const maxValue = ref(0)
@@ -22,8 +22,8 @@ const calculateValues = () => {
   }
   let max = 0
   let min = 0
-  
-  props.visits.forEach(visit => {
+
+  props.visits.forEach((visit) => {
     const profit = visit.profit || 0
     if (profit > max) {
       max = profit

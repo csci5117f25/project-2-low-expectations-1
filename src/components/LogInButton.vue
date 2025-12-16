@@ -36,7 +36,13 @@ async function login() {
 </script>
 
 <template>
-  <Button class="log-in-btn" label="Log in with Google" icon="pi pi-google" @click="login" rounded></Button>
+  <Button
+    class="log-in-btn"
+    label="Log in with Google"
+    icon="pi pi-google"
+    @click="login"
+    rounded
+  ></Button>
 </template>
 
 <style scoped>

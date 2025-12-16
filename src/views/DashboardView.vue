@@ -4,15 +4,14 @@
       <NavBar />
       <main class="main-content">
         <!-- Edit Dashboard Button -->
-       
 
         <Message severity="info" :closable="false" style="margin-bottom: 24px">
           <p>Placeholder for AI quotes or comments to be later implemented?</p>
         </Message>
         <div class="dashboard-controls">
-          <Button 
-            :label="editMode ? 'Done Editing' : 'Edit Dashboard'" 
-            :severity="editMode ? 'success' : 'secondary'" 
+          <Button
+            :label="editMode ? 'Done Editing' : 'Edit Dashboard'"
+            :severity="editMode ? 'success' : 'secondary'"
             :outlined="!editMode"
             @click="toggleEditMode"
             icon="pi pi-cog"
@@ -221,7 +220,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import DraggableWidgetGrid from '@/components/DraggableWidgetGrid.vue';
+import DraggableWidgetGrid from '@/components/DraggableWidgetGrid.vue'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Message from 'primevue/message'
@@ -243,16 +242,21 @@ const tabs = [
   { name: 'Rating', icon: 'star', routeName: 'rating' },
 ]
 
-const activeTab = ref('Dashboard');
-const editMode = ref(false);
-const logVisitFormRef = ref(false);
+const activeTab = ref('Dashboard')
+const editMode = ref(false)
+const logVisitFormRef = ref(false)
 
 // Active widgets on dashboard - initial state
 const activeWidgets = ref([
   { id: 'timeseries', name: 'Time Series Chart', component: 'TimeSeriesWidget', size: 'full' },
   { id: 'trophy', name: 'Trophy Case', component: 'TrophyWidget', size: 'half' },
   { id: 'breakeven', name: 'Break-Even Probability', component: 'BreakEvenWidget', size: 'half' },
-  { id: 'alternative', name: 'Alternative Spending', component: 'AlternativeSpendingWidget', size: 'full' },
+  {
+    id: 'alternative',
+    name: 'Alternative Spending',
+    component: 'AlternativeSpendingWidget',
+    size: 'full',
+  },
   { id: 'calendarheatmap', name: 'Calendar Heatmap', component: 'CalendarHeatMap', size: 'full' },
   { id: 'moodmoney', name: 'Mood vs Money', component: 'MoodMoney', size: 'half' },
   { id: 'recenthistory', name: 'Recent History', component: 'RecentHistory', size: 'full'}
@@ -265,11 +269,11 @@ const handleTabClick = (tab) => {
   } else if (tab.route) {
     router.push(tab.route)
   }
-};
+}
 
 const toggleEditMode = () => {
-  editMode.value = !editMode.value;
-};
+  editMode.value = !editMode.value
+}
 </script>
 
 <style scoped>
@@ -528,7 +532,6 @@ const toggleEditMode = () => {
     width: 100%;
     justify-content: center;
     /*flex-wrap: wrap;*/
-
   }
 
   .nav-tabs {

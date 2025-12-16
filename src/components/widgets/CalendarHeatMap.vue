@@ -6,8 +6,8 @@ import Card from 'primevue/card'
 const props = defineProps({
   visits: {
     type: Array,
-    default: () => []
-  }
+    default: () => [],
+  },
 })
 
 const dates = ref([])
@@ -22,23 +22,23 @@ const processVisits = () => {
   }
 
   const dateMap = {}
-  
+
   props.visits.forEach((visit) => {
     if (!visit.visitDate) return
-    
+
     const dateObj = visit.visitDate.toDate ? visit.visitDate.toDate() : new Date(visit.visitDate)
     const dateStr = dateObj.toISOString().split('T')[0]
-    
+
     if (dateMap[dateStr]) {
       dateMap[dateStr]++
     } else {
       dateMap[dateStr] = 1
     }
   })
-  
+
   dates.value = Object.entries(dateMap).map(([date, count]) => ({
     date,
-    count
+    count,
   }))
 }
 
@@ -76,19 +76,18 @@ watch(isDarkMode, () => {
 <template>
   <div class="calendar-heatmap-widget">
     <h3 class="widget-title">Calendar Heatmap</h3>
-      <div class="heatmap-wrapper" :class="{ 'dark-mode': isDarkMode }">
-        <CalendarHeatmap
-          v-if="dates.length"
-          :values="dates"
-          :endDate="endDate"
-          :darkMode="isDarkMode"
-          :round="2"
-          :key="darkModeKey"
-          tooltip-unit="casino visits"
-        />
-      </div>
+    <div class="heatmap-wrapper" :class="{ 'dark-mode': isDarkMode }">
+      <CalendarHeatmap
+        v-if="dates.length"
+        :values="dates"
+        :endDate="endDate"
+        :darkMode="isDarkMode"
+        :round="2"
+        :key="darkModeKey"
+        tooltip-unit="casino visits"
+      />
+    </div>
   </div>
-
 </template>
 <style scoped>
 .heatmap-wrapper {

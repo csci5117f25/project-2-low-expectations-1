@@ -18,14 +18,15 @@ ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 const props = defineProps({
   visits: {
     type: Array,
-    default: () => []
-  }
+    default: () => [],
+  },
 })
 
 const chartData = ref(null)
 const chartUpdated = ref(0)
 const chartOptions = ref({
   responsive: true,
+  maintainAspectRatio: false,
   plugins: {
     legend: { display: false },
     title: { display: false },
@@ -37,14 +38,20 @@ const chartOptions = ref({
         text: 'Mood',
       },
       grid: { display: false },
+      border: { display: false },
     },
     y: {
-      ticks: { display: false },
+      ticks: {
+        callback: function (value) {
+          return '$' + value.toLocaleString()
+        },
+      },
       grid: {
         drawTicks: false,
         drawBorder: false,
-        color: (context) => (context.tick.value === 0 ? '#999' : 'transparent'),
+        color: 'rgba(200,200,200,0.2)',
       },
+      border: { display: false },
     },
   },
 })
@@ -118,12 +125,28 @@ watch(
 </script>
 
 <template>
-  <div class="grid-2col">
-    <Card>
-      <template #title> Mood vs Money </template>
-      <template #content>
-        <Bar v-if="chartData" :key="chartUpdated" :data="chartData" :options="chartOptions" />
-      </template>
-    </Card>
+  <div class="mood-money-chart">
+    <Bar
+      v-if="chartData"
+      class="mood-money-chart-canvas"
+      :key="chartUpdated"
+      :data="chartData"
+      :options="chartOptions"
+    />
   </div>
 </template>
+<style>
+.mood-money-chart-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.mood-money-chart-canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+</style>

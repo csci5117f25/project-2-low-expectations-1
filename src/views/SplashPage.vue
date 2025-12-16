@@ -14,16 +14,16 @@ onMounted(() => {
 
   scene = new THREE.Scene()
   scene.background = new THREE.Color(0x1a0a0a)
-  
+
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
   camera.position.set(0, 2, 25)
   camera.lookAt(0, 0, 0)
-  
-  renderer = new THREE.WebGLRenderer({ 
+
+  renderer = new THREE.WebGLRenderer({
     canvas: canvasRef.value,
-    antialias: true
+    antialias: true,
   })
-  
+
   renderer.setSize(window.innerWidth, window.innerHeight)
   renderer.setPixelRatio(window.devicePixelRatio)
 
@@ -50,7 +50,7 @@ onMounted(() => {
   scene.add(frontLight.target)
 
   const loader = new GLTFLoader()
-  
+
   loader.load(
     '/models/gameready_casino_scene.glb',
     (gltf) => {
@@ -61,8 +61,17 @@ onMounted(() => {
         if (child.isMesh) {
           const materials = Array.isArray(child.material) ? child.material : [child.material]
           materials.forEach((material) => {
-            const textureTypes = ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap', 'emissiveMap', 'bumpMap', 'displacementMap']
-            
+            const textureTypes = [
+              'map',
+              'normalMap',
+              'roughnessMap',
+              'metalnessMap',
+              'aoMap',
+              'emissiveMap',
+              'bumpMap',
+              'displacementMap',
+            ]
+
             textureTypes.forEach((texType) => {
               if (material[texType]) {
                 const tex = material[texType]
@@ -78,7 +87,7 @@ onMounted(() => {
                 tex.needsUpdate = true
               }
             })
-            
+
             // Simplify material for iOS
             material.needsUpdate = true
           })
@@ -94,24 +103,24 @@ onMounted(() => {
       console.log('Casino model loaded successfully')
     },
     (progress) => {
-      console.log('Loading:', (progress.loaded / progress.total * 100).toFixed(0) + '%')
+      console.log('Loading:', ((progress.loaded / progress.total) * 100).toFixed(0) + '%')
     },
     (error) => {
       console.error('Error loading casino model:', error)
-    }
+    },
   )
 
   let angle = 0
   const animate = () => {
     animationId = requestAnimationFrame(animate)
-    
+
     angle += 0.0005
     const radius = 30
     camera.position.x = Math.sin(angle) * radius
     camera.position.z = Math.cos(angle) * radius
     camera.position.y = 8
     camera.lookAt(0, 0, 0)
-    
+
     renderer.render(scene, camera)
   }
   animate()
@@ -127,14 +136,14 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize)
   if (animationId) cancelAnimationFrame(animationId)
-  
+
   if (renderer) {
     renderer.dispose()
     if (renderer.forceContextLoss) {
       renderer.forceContextLoss()
     }
   }
-  
+
   scene = null
   camera = null
   renderer = null
@@ -153,7 +162,7 @@ function handleResize() {
   <div class="landing_page">
     <canvas ref="canvasRef" class="three-bg" />
     <div class="blur-overlay" />
-    
+
     <div class="content">
       <header class="header">
         <div class="header-left">

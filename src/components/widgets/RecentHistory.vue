@@ -19,7 +19,9 @@ const allColumns = [
     header: 'Date',
     body: (row) => {
       if (!row.createdAt) return ''
-      const date = row.createdAt.toDate ? row.createdAt.toDate() : new Date(row.createdAt.seconds * 1000)
+      const date = row.createdAt.toDate
+        ? row.createdAt.toDate()
+        : new Date(row.createdAt.seconds * 1000)
       return date.toLocaleString()
     },
   },
