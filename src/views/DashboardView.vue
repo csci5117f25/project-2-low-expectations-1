@@ -5,9 +5,7 @@
       <main class="main-content">
         <!-- Edit Dashboard Button -->
 
-        <Message severity="info" :closable="false" style="margin-bottom: 24px">
-          <p>Placeholder for AI quotes or comments to be later implemented?</p>
-        </Message>
+        <NetResultQuotes></NetResultQuotes>
         <div class="dashboard-controls">
           <Button
             :label="editMode ? 'Done Editing' : 'Edit Dashboard'"
@@ -231,6 +229,7 @@ import { useRouter } from 'vue-router'
 import LogOutButton from '@/components/LogOutButton.vue'
 import RecentHistory from '@/components/widgets/RecentHistory.vue'
 import NavBar from './NavBar.vue'
+import NetResultQuotes from '@/components/netResultQuotes.vue'
 
 const router = useRouter()
 

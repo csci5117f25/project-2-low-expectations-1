@@ -45,7 +45,6 @@
         <template #icon>
           <img
             :src="`https://api.iconify.design/mdi/slot-machine.svg?color=%23000`"
-            ,
             class="tab-icon"
             :alt="'Practice Lounge'"
           />
