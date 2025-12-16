@@ -39,7 +39,10 @@
                   class="remove-btn"
                 />
               </div>
-              <component :is="getComponent(widget.component)" :visits="casinoVisits" />
+              <component 
+                :is="getComponent(widget.component)" 
+                :visits="widget.component === 'RecentHistory' ? recentVisits : casinoVisits"
+              />
             </template>
           </Card>
         </div>
@@ -92,12 +95,13 @@ import Card from 'primevue/card'
 import draggable from 'vuedraggable'
 
 // wig
-import TimeSeriesWidget from '@/components/widgets/TimeSeriesWidget.vue'
-import BreakEvenWidget from '@/components/widgets/BreakEvenWidget.vue'
-import AlternativeSpendingWidget from '@/components/widgets/AlternativeSpendingWidget.vue'
-import CalendarHeatMap from '@/components/widgets/CalendarHeatMap.vue'
-import MoodMoney from '@/components/widgets/MoodMoney.vue'
-import TrophyWidget from '@/components/widgets/TrophyWidget.vue'
+import TimeSeriesWidget from '@/components/widgets/TimeSeriesWidget.vue';
+import BreakEvenWidget from '@/components/widgets/BreakEvenWidget.vue';
+import AlternativeSpendingWidget from '@/components/widgets/AlternativeSpendingWidget.vue';
+import CalendarHeatMap from '@/components/widgets/CalendarHeatMap.vue';
+import MoodMoney from '@/components/widgets/MoodMoney.vue';  
+import TrophyWidget from '@/components/widgets/TrophyWidget.vue';
+import RecentHistory from '@/components/widgets/RecentHistory.vue';
 
 // After importing widget, need to add it in 2 more places
 
@@ -151,6 +155,18 @@ onMounted(() => {
   )
 })
 
+//obtain the latest five logged visits, order by latest first
+const recentVisits = computed(() => {
+  const sorted = casinoVisits.value.slice();
+  sorted.sort((a, b) => {
+    const aTime = a.visitDate?.seconds ?? 0;
+    const bTime = b.visitDate?.seconds ?? 0;
+    return bTime - aTime; 
+  });
+  return sorted.slice(0, 5);
+});
+
+
 // local widgets should fetch databse to seet which widgets are being used
 const localWidgets = ref([...props.widgets])
 
@@ -192,7 +208,8 @@ const availableWidgets = [
     icon: 'emoticon-happy',
   },
   { id: 'trophy', name: 'Trophy Widget', component: 'TrophyWidget', size: 'half', icon: 'trophy' },
-]
+  { id: 'recenthistory', name: 'Recent History', component: 'RecentHistory', size: 'full', icon: 'history' },
+];
 
 // Computed
 const unusedWidgets = computed(() => {
@@ -219,9 +236,10 @@ const getComponent = (componentName) => {
     CalendarHeatMap,
     MoodMoney,
     TrophyWidget,
-  }
-  return components[componentName]
-}
+    RecentHistory
+  };
+  return components[componentName];
+};
 
 // Watch for changes and emit to parent
 watch(
