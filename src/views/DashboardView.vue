@@ -53,7 +53,7 @@
           </div>
           <Button
             :label="editMode ? 'Done Editing' : 'Edit Dashboard'"
-            :severity="editMode ? 'success' : 'secondary'"
+            :severity="editMode ? 'primary' : 'secondary'"
             :outlined="!editMode"
             @click="toggleEditMode"
             icon="pi pi-cog"
