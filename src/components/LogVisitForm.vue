@@ -197,7 +197,7 @@ const logVisit = async () => {
         />
       </div>
       <div class="form-field">
-        <label for="buyIn">Initial Amount: </label>
+        <label for="buyIn">Cash In Amount: </label>
         <InputNumber
         id="initlal_amt"
         v-model="initialAmount"

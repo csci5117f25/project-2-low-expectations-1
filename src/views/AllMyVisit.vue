@@ -5,9 +5,9 @@
       <NavTabs />
       <main class="main-content">
         <h2 class="section-title">My Visits</h2>
-        <div 
-          v-for="(visit, index) in visits" 
-          :key="visit.id" 
+        <div
+          v-for="(visit, index) in visits"
+          :key="visit.id"
           class="visit-card"
           :style="{ backgroundImage: `url(/${getCardImage(index)})` }"
         >
@@ -20,7 +20,7 @@
               <div class="profit" :class="visit.profit >= 0 ? 'positive' : 'negative'">
                 {{ visit.profit >= 0 ? '+' : '' }} ${{ visit.profit }}
                 <div class="date">
-                  {{ visit.visitDate?.toLocaleDateString() }}
+                  {{ formatDate(visit.visitDate) }}
                 </div>
               </div>
             </div>
@@ -30,7 +30,7 @@
                 icon="pi pi-pencil"
                 severity="info"
                 rounded
-                @click="gotoEditPage(visit.id)"
+                @click="openEditDialog(visit)"
               />
               <Button
                 icon="pi pi-trash"
@@ -41,6 +41,60 @@
             </div>
           </div>
         </div>
+        <Dialog
+        v-model:visible="editDialogVisible"
+        header="Edit Visit"
+        modal
+        :style="{ width: '90vw', maxWidth: '500px' }"
+        class="edit-dialog"
+        >
+        <div class="form-content">
+            <div class="field">
+              <label>Casino</label>
+              <Select
+              v-model="editForm.casinoName"
+              :options="casinos"
+              optionLabel="name"
+              optionValue="name"
+              placeholder="Select a Casino"
+              fluid
+              />
+            </div>
+            <div class="field">
+              <label>Date</label>
+              <DatePicker v-model="editForm.visitDate" showIcon fluid />
+            </div>
+
+            <div class="field">
+              <label>Cash In Amount </label>
+              <InputNumber v-model="editForm.initialAmount" mode="currency" currency="USD" fluid />
+            </div>
+
+            <div class="field">
+              <label>Cash Out Amount </label>
+              <InputNumber v-model="editForm.cashOutAmount" mode="currency" currency="USD" fluid />
+            </div>
+
+             <div class="field">
+              <label>Mood</label>
+              <div class="rating-container">
+                <Rating v-model="editForm.mood" :cancel="false" />
+              </div>
+            </div>
+          <div class="field">
+              <label>Notes</label>
+              <Textarea v-model="editForm.notes" rows="4" fluid />
+            </div>
+          </div>
+
+          <template #footer>
+            <Button label="Cancel" icon="pi pi-times" text @click="editDialogVisible = false" />
+            <Button label="Save" icon="pi pi-check" @click="saveEdit" :loading="saving" />
+          </template>
+        </Dialog>
+        <ConfirmDialog />
+
+
       </main>
     </div>
   </div>
@@ -48,31 +102,111 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { collection, getDocs, orderBy, query, doc, deleteDoc } from 'firebase/firestore'
+import { collection, getDocs, orderBy, query, doc, deleteDoc, updateDoc, Timestamp} from 'firebase/firestore'
+import { useToast } from 'primevue'
 import { db, auth } from '@/firebase_conf'
-import { useRouter } from 'vue-router'
 import Header from './Header.vue'
 import NavTabs from './NavTabs.vue'
 import Button from 'primevue/button'
+import Dialog from 'primevue/dialog'
+import DatePicker from 'primevue/datepicker'
+import Textarea from 'primevue/textarea'
+import Rating from 'primevue/rating'
+import InputNumber from 'primevue/inputnumber'
+import Select from 'primevue/select'
+import { useCollection } from 'vuefire'
+import ConfirmDialog from 'primevue/confirmdialog';
+import { useConfirm } from "primevue/useconfirm";
 
-const router = useRouter()
-const gotoEditPage = (id) => {
-  router.push('/visits/'+id)
+const confirm = useConfirm();
+const toast = useToast()
+const user = auth.currentUser
+const editDialogVisible = ref(false)
+const editingVisitId = ref(null)
+const saving = ref(false)
+const editForm = ref({
+  casinoName: '',
+  visitDate: null,
+  initialAmount: 0,
+  cashOutAmount: 0,
+  mood: 0,
+  notes: ''
+})
+
+const openEditDialog = (visit) => {
+  editingVisitId.value = visit.id
+  editForm.value = {
+    casinoName: visit.casinoName || '',
+    visitDate: visit.visitDate?.toDate
+      ? visit.visitDate.toDate()
+      : (visit.visitDate || new Date()),
+    initialAmount: visit.initialAmount || 0,
+    cashOutAmount: visit.cashOutAmount || 0,
+    mood: visit.mood || 0,
+    notes: visit.notes || ''
+  }
+  editDialogVisible.value = true
 }
 
-const deleteVisit = async(visitId) => {
-  const ok = window.confirm('Can you confirm that you want to delete this visit?')
-  if (!ok) return
+const saveEdit = async () => {
+  if (!editingVisitId.value) return
+  saving.value = true
   try {
-    const user = auth.currentUser
     if (!user) return
-    await deleteDoc(
-      doc(db, 'users', user.uid, 'casinoVisits', visitId)
-    )
-    visits.value = visits.value.filter(v=>v.id !== visitId)
+
+    const visitRef = doc(db, 'users', user.uid, 'casinoVisits', editingVisitId.value)
+
+
+    const profit = Math.round((editForm.value.initialAmount - editForm.value.cashOutAmount) * 100) / 100
+    await updateDoc(visitRef, {
+      casinoName: editForm.value.casinoName,
+      visitDate: editForm.value.visitDate ? Timestamp.fromDate(editForm.value.visitDate) : null,
+      initialAmount: Number(editForm.value.initialAmount),
+      cashOutAmount: Number(editForm.value.cashOutAmount),
+      profit: profit,
+      mood: Number(editForm.value.mood),
+      notes: editForm.value.notes
+    })
+
+    editDialogVisible.value = false
+    toast.add({ severity: 'success', summary: 'Edit saved!', life: 3000 })
   } catch (e) {
-    console.error('Failed to delete visit:', e)
+    console.error('Failed to update visit:', e)
+    alert('Failed to save changes')
+  } finally {
+    saving.value = false
   }
+}
+
+const casinos = useCollection(collection(db,'users', user.uid, 'casinos'))
+
+const deleteVisit = (visitId) => {
+  confirm.require({
+    message: 'Are you sure you want to delete this visit?',
+    header: 'Delete Confirmation',
+    icon: 'pi pi-info-circle',
+    rejectLabel: 'Cancel',
+    rejectProps: {
+      label: 'Cancel',
+      severity: 'secondary',
+      outlined: true
+    },
+    acceptProps: {
+      label: 'Delete',
+      severity: 'danger'
+    },
+    accept: async () => {
+      try {
+        if (!user) return
+
+        await deleteDoc(doc(db, 'users', user.uid, 'casinoVisits', visitId))
+
+        toast.add({ severity: 'error', summary: 'Deleted', detail: 'Visit deleted successfully', life: 3000 })
+      } catch (e) {
+        console.error('Failed to delete visit:', e)
+      }
+    }
+  })
 }
 
 const getCardImage = (index) => {
@@ -80,17 +214,27 @@ const getCardImage = (index) => {
   return cards[index % 3]
 }
 
-const visits = ref([])
-onMounted(async () => {
-  const user = auth.currentUser
-  if (!user) return
-  const userVisitsRef = collection(db, 'users', user.uid, 'casinoVisits')
-  const q = query(userVisitsRef, orderBy('visitDate', 'desc'))
-  const snapshot = await getDocs(q)
-  visits.value = snapshot.docs.map((doc) => {
-    return {id: doc.id, ...doc.data(), visitDate:doc.data().visitDate?.toDate()}
-  })
-})
+// const visits = ref([])
+const visits = useCollection(
+  query(
+  collection(db, 'users', user.uid, 'casinoVisits'),
+  orderBy('visitDate', 'desc')
+))
+
+const formatDate = (dateVal) => {
+  if (!dateVal) return ''
+  if (dateVal.toDate) return dateVal.toDate().toLocaleDateString()
+  return new Date(dateVal).toLocaleDateString()
+}
+// onMounted(async () => {
+//   if (!user) return
+//   const userVisitsRef = collection(db, 'users', user.uid, 'casinoVisits')
+//   const q = query(userVisitsRef, orderBy('visitDate', 'desc'))
+//   const snapshot = await getDocs(q)
+//   visits.value = snapshot.docs.map((doc) => {
+//     return {id: doc.id, ...doc.data(), visitDate:doc.data().visitDate?.toDate()}
+//   })
+// })
 </script>
 
 <style scoped>
@@ -245,6 +389,30 @@ onMounted(async () => {
 
 .visit-actions :deep(.p-button.p-button-danger) {
   color: #ff5252 !important;
+}
+
+.form-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-top: 0.5rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.field label {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.rating-container {
+  display: flex;
+  align-items: center;
+  height: 40px;
 }
 
 @media (max-width: 768px) {

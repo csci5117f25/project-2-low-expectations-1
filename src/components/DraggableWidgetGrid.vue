@@ -2,38 +2,43 @@
   <div class="draggable-dashboard">
     <!-- Edit Mode Controls -->
     <div v-if="editMode" class="edit-controls">
-      <Message severity="warn" :closable="false">
+      <Message :closable="false">
         <div class="edit-message">
-          <span> Edit Mode: Drag widgets to rearrange, click X to remove</span>
+          <span>Edit Mode: Drag widgets to rearrange</span>
           <Button
             label="Add Widget"
             icon="pi pi-plus"
             size="small"
+            class="add-widget-button"
             @click="showWidgetSelector = true"
           />
         </div>
       </Message>
     </div>
 
-    <!-- Draggable Widgets Grid -->
+    <!-- Draggable Widgets Grid  this is cooked-->
     <draggable
       v-model="localWidgets"
       class="widgets-grid"
       :disabled="!editMode"
       :item-key="id"
-      :ghost-class="ghost"
+      ghost-class="blue-background-class"
       :animation="150"
       :delay="200"
       :delay-on-touch-only="true"
       :touch-start-threshold="10"
       :swap-threshold="0.65"
-      :force-fallback="5"
 
+      :force-auto-scroll-fallback="true"
+      :fallback-class="fallback-dragging"
+      :fallback-on-body="true"
       :fallback-tolerance="5"
       :scroll="true"
-      :scroll-sensitivity="100"
-      :scroll-speed="17"
+      :scroll-sensitivity="90"
+      :scroll-speed="20"
       :bubble-scroll="true"
+     
+    >
     >
       <template #item="{ element: widget }">
         <div :class="['widget-wrapper', widget.size, { 'edit-mode': editMode }]" :key="widget.id">
@@ -95,7 +100,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore'
 import { db } from '@/firebase_conf'
 import { useCurrentUser } from 'vuefire'
@@ -241,7 +246,6 @@ watch(
 watch(
   () => props.widgets,
   (newValue) => {
-    // Only update if the lengths are different or if widgets are actually different
     if (
       newValue.length !== localWidgets.value.length ||
       JSON.stringify(newValue) !== JSON.stringify(localWidgets.value)
@@ -263,12 +267,14 @@ watch(
 .edit-controls {
   margin-bottom: 1.5rem;
 }
+/* .add-widget-button {
+} */
 
 .edit-message {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  gap: 1rem;
+  gap: 2rem;
   flex-wrap: wrap;
 }
 
@@ -326,9 +332,11 @@ watch(
   border: 2px dashed grey;
 }
 
-.widget-wrapper.edit-mode .widget-card:hover {
-  transform: translateY(-2px);
-}
+.widget-wrapper.edit-mode .widget-card:hover { 
+  /* transform: translateY(-2px); */
+  transform: scale(0.98);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+} 
 
 .widget-controls {
   position: absolute;
@@ -496,5 +504,12 @@ watch(
   .widget-option-info h4 {
     font-size: 1rem;
   }
+}
+
+.fallback-dragging {
+  opacity: 1 !important;
+  transition: none !important;
+  cursor: grabbing !important;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2) !important;
 }
 </style>
