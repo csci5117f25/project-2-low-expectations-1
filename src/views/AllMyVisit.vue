@@ -184,6 +184,13 @@ onMounted(async () => {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
+.mood-icon {
+  width: 20px;
+  height: 20px;
+  margin-left: 0.5rem;
+  vertical-align: -4px;
+}
+
 .profit.positive {
   color: #4caf50;
 }

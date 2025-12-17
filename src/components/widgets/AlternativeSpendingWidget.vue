@@ -13,27 +13,29 @@
         Start tracking your visits to see what you could've spent your money on instead.
       </span>
     </p>
-    <div class="item-display">
-      <div class="item-suggestion">
-        <span class="item-quantity">{{ currentItem.num }} x </span>
-        <span class="item-name-large">{{ currentItem.name }}</span>
+    <div v-if="totalLoss > 0 || totalProfit > 0">
+      <div class="item-display">
+        <div class="item-suggestion">
+          <span class="item-quantity">{{ currentItem.num }} x </span>
+          <span class="item-name-large">{{ currentItem.name }}</span>
+        </div>
       </div>
-    </div>
-    <div class="regenerate-section">
-      <Button
-        label="Show Me Another"
-        icon="pi pi-refresh"
-        @click="regenerateItem"
-        size="small"
-        outlined
-      />
-    </div>
-    <div class="grid-2col">
-      <div class="couldve-items">
-        <Skeleton v-for="i in 2" :key="i" height="32px" />
+      <div class="regenerate-section">
+        <Button
+          label="Show Me Another"
+          icon="pi pi-refresh"
+          @click="regenerateItem"
+          size="small"
+          outlined
+        />
       </div>
-      <div class="couldve-quotes">
-        <Skeleton v-for="i in 2" :key="i" height="32px" />
+      <div class="grid-2col">
+        <div class="couldve-items">
+          <Skeleton v-for="i in 2" :key="i" height="32px" />
+        </div>
+        <div class="couldve-quotes">
+          <Skeleton v-for="i in 2" :key="i" height="32px" />
+        </div>
       </div>
     </div>
   </div>
