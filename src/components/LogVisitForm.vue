@@ -104,7 +104,7 @@ const logVisit = async () => {
 
   const initial = Number(initialAmount.value) || 0
   const cashout = Number(cashOutAmount.value) || 0
-  const profit = cashout - initial
+  const profit = Math.round((cashout - initial) * 100) / 100
   const user = auth.currentUser
 
   try {
@@ -306,7 +306,7 @@ const logVisit = async () => {
   border-radius: var(--radius-medium);
 }
 
-.p-diaglog .p-footer {
+.p-dialog .p-footer {
   background: var(--surface-card);
   padding-top: 1.25rem;
 }
