@@ -10,7 +10,7 @@
         <div class="dashboard-controls">
           <div class="filter-controls">
             <div class="filter-item">
-              <label for="date-range">Date Range:</label>
+              <IftaLabel>
               <DatePicker
               id="date-range"
               v-model="dateRange"
@@ -22,9 +22,11 @@
               dateFormat="mm/dd/yy"
               class="date-picker"
               ></DatePicker>
+              <label for="date-range">Date Range:</label>
+              </IftaLabel>
             </div>
             <div class="filter-item">
-              <label for="casino-filter">Casino:</label>
+              <IftaLabel>
               <Select
               id="casino-filter"
               v-model="selectedCasino"
@@ -36,6 +38,8 @@
               checkmark
               class="casino-dropdown"
               ></Select>
+              <label for="casino-filter">Casino:</label>
+              </IftaLabel>
             </div>
                <Button
               label="Clear Filters"
@@ -89,7 +93,7 @@ import { db } from '@/firebase_conf'
 import { useCollection, useCurrentUser } from 'vuefire'
 import DatePicker  from 'primevue/datepicker'
 import  Select  from 'primevue/select'
-
+import IftaLabel  from 'primevue/iftalabel'
 
 const router = useRouter()
 const user = useCurrentUser()
@@ -259,6 +263,7 @@ const toggleEditMode = () => {
   gap: 1rem;
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
+  margin-top: 2rem;
 }
 
 .filter-controls {
@@ -273,6 +278,7 @@ const toggleEditMode = () => {
   flex-direction: column;
   gap: 0.25rem;
 }
+
 
 .main-content {
   padding: 2rem;
