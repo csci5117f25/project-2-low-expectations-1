@@ -22,23 +22,25 @@ const formatCurrency = (value) => {
   }).format(value)
 }
 
-// Calculate max and min values from visits
+//calculate max and min values from visits
 const calculateValues = () => {
-  if (!props.visits || props.visits.length === 0) {
-    maxValue.value = 0
-    minValue.value = 0
-    return
-  }
+  maxValue.value = 0
+  minValue.value = 0
+  if (!props.visits || props.visits.length === 0) return
+  let maxWin = 0
+  let maxLoss = 0
+  for (let i = 0; i < props.visits.length; i++) {
+    const profit = Number(props.visits[i].profit) || 0
+    if (profit > maxWin) {
+      maxWin = profit
+    }
 
-  const profits = props.visits.map((v) => Number(v.profit) || 0)
-
-  if (profits.length > 0) {
-    maxValue.value = Math.max(...profits)
-    minValue.value = Math.min(...profits)
-  } else {
-    maxValue.value = 0
-    minValue.value = 0
+    if (profit < maxLoss) {
+      maxLoss = profit
+    }
   }
+  maxValue.value = maxWin
+  minValue.value = maxLoss
 }
 
 // Watch for changes in visits
