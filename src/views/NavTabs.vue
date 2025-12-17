@@ -7,7 +7,6 @@
       :severity="activeTab === tab.name ? 'primary' : 'secondary'"
       :outlined="activeTab !== tab.name"
       class="tab-button"
-      rounded
       @click="handleTabClick(tab)"
     >
       <template #icon>
@@ -21,7 +20,6 @@
     <Button
       label="Practice Lounge"
       severity="danger"
-      rounded
       class="tab-button practice-button"
       @click="handleTabClick({ name: 'practice', routeName: 'practice' })"
     >

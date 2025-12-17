@@ -1,7 +1,6 @@
 <template>
   <div class="breakeven-widget">
     <h3 class="widget-title">
-      <i class="pi pi-chart-bar title-icon"></i>
       Break-Even Probability
     </h3>
     <div class="breakeven-content">
