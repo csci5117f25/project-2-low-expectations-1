@@ -3,7 +3,6 @@
     <Header />
     <div class="dashboard-content">
       <NavTabs />
-      <NetResultQuotes></NetResultQuotes>
 
       <main class="main-content">
         <!-- Edit Dashboard Button -->
@@ -67,6 +66,9 @@
           :visits="filteredVisits"
           @update:widgets="activeWidgets = $event"
         />
+        <NetResultQuotes></NetResultQuotes>
+
+
       </main>
     </div>
   </div>
