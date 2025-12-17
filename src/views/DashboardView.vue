@@ -70,7 +70,7 @@ const defaultWidgets = [
     id: 'alternative',
     name: 'Alternative Spending',
     component: 'AlternativeSpendingWidget',
-    size: 'full',
+    size: 'half',
   },
   { id: 'calendarheatmap', name: 'Calendar Heatmap', component: 'CalendarHeatMap', size: 'full' },
   { id: 'moodmoney', name: 'Mood vs Money', component: 'MoodMoney', size: 'half' },
@@ -139,6 +139,10 @@ const toggleEditMode = () => {
 </script>
 
 <style scoped>
+.edit-dashboard-btn {
+  margin-bottom: 1rem;
+}
+
 .dashboard-container {
   min-height: 100vh;
   background: var(--surface-card);
