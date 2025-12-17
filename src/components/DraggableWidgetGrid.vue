@@ -49,7 +49,7 @@
               </div>
               <component
                 :is="getComponent(widget.component)"
-                :visits="widget.component === 'RecentHistory' ? recentVisits : casinoVisits"
+                :visits="widget.component === 'RecentHistory' ? recentVisits : visits"
               />
             </template>
           </Card>
@@ -123,49 +123,20 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  visits: {
+    type: Array,
+    default: () => [],
+  },
 })
 
 const emit = defineEmits(['update:widgets', 'update:editMode'])
 
 // State
-const user = useCurrentUser()
 const showWidgetSelector = ref(false)
-const casinoVisits = ref([])
-const loading = ref(true)
-
-// Fetch casino visits
-onMounted(() => {
-  if (!user.value) {
-    loading.value = false
-    return
-  }
-
-  const visitsRef = collection(db, 'users', user.value.uid, 'casinoVisits')
-  const query_ = query(visitsRef, orderBy('visitDate', 'asc'))
-
-  // get updated data
-  onSnapshot(
-    query_,
-    (snapshot) => {
-      casinoVisits.value = []
-      snapshot.forEach((doc) => {
-        casinoVisits.value.push({
-          id: doc.id,
-          ...doc.data(),
-        })
-      })
-      loading.value = false
-    },
-    (err) => {
-      console.error('couldn;t fetch casino visits', err)
-      loading.value = false
-    },
-  )
-})
 
 //obtain the latest five logged visits, order by latest first
 const recentVisits = computed(() => {
-  const sorted = casinoVisits.value.slice()
+  const sorted = [...props.visits]
   sorted.sort((a, b) => {
     const aTime = a.visitDate?.seconds ?? 0
     const bTime = b.visitDate?.seconds ?? 0
