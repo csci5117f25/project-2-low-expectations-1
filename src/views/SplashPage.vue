@@ -283,7 +283,6 @@ function handleResize() {
   width: 65px;
   height: 65px;
   padding: 2px;
-  border: 1px solid white;
   border-radius: 8px;
 }
 
