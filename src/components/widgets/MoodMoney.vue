@@ -99,7 +99,7 @@ function loadData(logs) {
   chartOptions.value.scales.y.max = max
   chartOptions.value.scales.y.min = min
   chartData.value = {
-    labels: ['1', '2', '3', '4', '5'],
+    labels: ['😖', '🙁', '🙂', '😄', '🤩'],
     datasets: [
       {
         label: 'Avg. Net Result',
@@ -137,8 +137,8 @@ watch(
 </template>
 <style>
 .mood-money-chart-container {
-  width: 100%;
-  height: 100%;
+  width: 100% !important;
+  height: 100% !important;
   display: flex;
   flex-direction: column;
   min-height: 0;

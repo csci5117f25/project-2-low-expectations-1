@@ -48,11 +48,11 @@ watch(() => props.visits, calculateValues, { immediate: true, deep: true })
         <div class="icons">
           <div class="max">
             <i class="pi pi-sort-up-fill" style="color: green"></i>
-            <p>{{ maxValue }}</p>
+            <p>${{ maxValue }}</p>
           </div>
           <div class="min">
             <i class="pi pi-sort-down-fill" style="color: red"></i>
-            <p>{{ minValue }}</p>
+            <p>${{ minValue }}</p>
           </div>
         </div>
       </template>
