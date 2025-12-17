@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { db, auth } from '@/firebase_conf.js'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import { useCollection, useCurrentUser } from 'vuefire'
@@ -14,7 +14,6 @@ import SpeechToText from './SpeechToText.vue'
 import AutoComplete from 'primevue/autocomplete'
 
 const toast = useToast()
-const visible = ref(false)
 const selectedCasino = ref(null)
 const visitDate = ref(new Date()) //auto set to today
 const initialAmount = ref(null)
@@ -26,7 +25,19 @@ const filteredCasinos = ref([])
 const user = useCurrentUser()
 const userCasinos = useCollection(collection(db, 'users', user.value.uid, 'casinos'))
 
+const props = defineProps({
+  visible: {
+    type: Boolean,
+    default: false
+  }
+})
+
 const emit = defineEmits(['update:visible'])
+
+const dialogVisible = computed({
+  get: () => props.visible,
+  set: (value) => emit('update:visible', value)
+})
 
 // Search/filter casinos for autocomplete
 const searchCasinos = (event) => {
@@ -139,7 +150,7 @@ const logVisit = async () => {
     cashOutAmount.value = 0
     mood.value = 0
     notes.value = ''
-    visible.value = false
+    dialogVisible.value = false
     emit('update:visible', false)
     toast.add({ severity: 'success', summary: 'Your visit is logged!', life: 3000 })
   } catch (e) {
@@ -149,7 +160,7 @@ const logVisit = async () => {
 </script>
 
 <template>
-  <Dialog header="Log your Casino Visit" v-model:visible="visible" :modal="true" :closable="true">
+  <Dialog header="Log your Casino Visit" v-model:visible="dialogVisible" :modal="true" :closable="true">
     <div class="logvisit-form-container">
       <div class="form-field">
         <label for="casino-name">Casino Name: </label>
