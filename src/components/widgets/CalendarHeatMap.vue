@@ -90,7 +90,7 @@ watch(
       processVisits()
     }
   },
-  { immediate: true, deep: true }
+  { immediate: true, deep: true },
 )
 
 watch(profitMode, () => {
@@ -114,7 +114,7 @@ onMounted(() => {
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
     isDarkMode.value = e.matches
   })
-  
+
   if (props.visits && props.visits.length > 0) {
     processVisits()
   }
@@ -132,7 +132,7 @@ watch(isDarkMode, () => {
         Calendar Heatmap
       </h3>
       <Button
-        :label="profitMode ? 'Show Default Colors' : 'Show Profit/Loss'"
+        :label="profitMode ? 'Show Frequency' : 'Show Profit/Loss'"
         @click="profitMode = !profitMode"
         size="small"
         outlined

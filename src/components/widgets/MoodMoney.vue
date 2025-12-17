@@ -37,7 +37,7 @@ const chartOptions = ref({
         text: 'Mood',
         color: '#aaa',
         font: {
-          weight: 'bold', 
+          weight: 'bold',
         },
       },
       grid: { display: false },
@@ -45,7 +45,7 @@ const chartOptions = ref({
       ticks: {
         color: '#aaa',
         font: {
-          weight: 'bold', 
+          weight: 'bold',
         },
       },
     },
@@ -56,7 +56,7 @@ const chartOptions = ref({
         },
         color: '#aaa',
         font: {
-          weight: 'bold', 
+          weight: 'bold',
         },
       },
       grid: {
@@ -144,7 +144,7 @@ watch(
 
 <template>
   <div class="mood-money-widget-container">
-    <h3 class="widget-title">Mood vs Money</h3>
+    <h3 class="widget-title">Mood vs Returns</h3>
     <div class="mood-money-chart-wrapper">
       <Bar
         v-if="chartData"
