@@ -90,6 +90,8 @@ const logVisitFormVisible = ref(false)
   .header-right {
     width: 100%;
     justify-content: space-between;
+    flex-direction: column-reverse;
+    align-items: flex-end;
   }
 }
 </style>
