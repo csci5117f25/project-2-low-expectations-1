@@ -35,14 +35,28 @@ const chartOptions = ref({
       title: {
         display: true,
         text: 'Mood',
+        color: '#aaa',
+        font: {
+          weight: 'bold', 
+        },
       },
       grid: { display: false },
       border: { display: false },
+      ticks: {
+        color: '#aaa',
+        font: {
+          weight: 'bold', 
+        },
+      },
     },
     y: {
       ticks: {
         callback: function (value) {
           return '$' + value.toLocaleString()
+        },
+        color: '#aaa',
+        font: {
+          weight: 'bold', 
         },
       },
       grid: {
@@ -106,6 +120,11 @@ function loadData(logs) {
         backgroundColor: barColors,
         borderRadius: 8,
         borderColor: '#999',
+        datalabels: {
+          font: {
+            weight: 'bold',
+          },
+        },
       },
     ],
   }
