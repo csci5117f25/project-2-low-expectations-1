@@ -16,7 +16,6 @@
               v-model="dateRange"
               selectionMode="range"
               :manualInput="false"
-              showIcon
               showButtonBar
               placeholder="Select date range"
               dateFormat="mm/dd/yy"
