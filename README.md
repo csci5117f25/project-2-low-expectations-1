@@ -66,6 +66,9 @@ along with a very brief caption:**
 **Document integrations with 3rd Party code or services here.
 Please do not document required libraries (e.g., VUE, Firebase, vuefire).**
 
+Sortable / Vue Draggable [https://github.com/SortableJS/Vue.Draggable]
+iconify [https://iconify.design/]
+
 Three.js
 ```bash
 npm install three
