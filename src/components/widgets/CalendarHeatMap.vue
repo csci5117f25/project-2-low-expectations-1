@@ -205,11 +205,9 @@ watch(isDarkMode, () => {
 
 .heatmap-wrapper {
   position: relative;
-  padding-top: 10px;
-  padding-bottom: 40px;
   width: 100%;
   overflow-x: scroll;
-  overflow-y: hidden;
+  overflow-y: visible;
   -webkit-overflow-scrolling: touch;
   box-sizing: border-box;
   flex: 1;
@@ -246,7 +244,7 @@ watch(isDarkMode, () => {
 }
 
 .heatmap-wrapper :deep(svg.vch__wrapper) {
-  width: 900px;
+  width: 800px;
   min-width: 700px;
   display: block;
   margin: 0 auto;
@@ -261,6 +259,7 @@ watch(isDarkMode, () => {
 :deep(.vch__month__label),
 :deep(.vch__day__label) {
   fill: #555;
+  transform: translateY(3px);
 }
 
 .dark-mode :deep(.vch__month__label),
