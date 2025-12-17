@@ -39,9 +39,7 @@ Which (if any) progressive web app feature(s) does your app support?
 
 ## Mockup images
 
-**[Add images/photos that show your mockup](https://stackoverflow.com/questions/10189356/how-to-add-screenshot-to-readmes-in-github-repository) along with a very brief caption:**
-
-![](prototype/Project2LowFidelityMockUp.png)
+[Project2LowFidelityMockUp.pdf](https://github.com/user-attachments/files/24208905/Project2LowFidelityMockUp.pdf)
 *Low-fidelity prototype of CasinoTracker highlighting the landing page, log in, listings interface, and various users' own visit details.*
 
 * You can find the full prototype at prototype/Project2LowFidelityMockUp.pdf
@@ -59,8 +57,6 @@ Which (if any) progressive web app feature(s) does your app support?
 
 **[Add a screenshot of each key page](https://stackoverflow.com/questions/10189356/how-to-add-screenshot-to-readmes-in-github-repository)
 along with a very brief caption:**
-
-![](https://media.giphy.com/media/o0vwzuFwCGAFO/giphy.gif)
 
 <img width="1500" height="851" alt="Screenshot 2025-12-17 at 3 01 57 AM" src="https://github.com/user-attachments/assets/40553738-4000-4d29-961f-b718a0d1428b" />
 Splash Page
