@@ -9,11 +9,11 @@
           <div class="visit-header">
             <div>
               {{ visit.casinoName?.toUpperCase()}}
-              <!-- <span v-if="visit.mood>= 5"> 🤩</span>
-              <span v-else-if="visit.mood===4"> 😄</span>
-              <span v-else-if="visit.mood===3"> 🙂</span>
-              <span v-else-if="visit.mood===2"> 🙁</span>
-              <span v-else> 😖</span> -->
+              <img v-if="visit.mood>= 5" src="https://api.iconify.design/mdi/emoticon-excited-outline.svg?color=%2322c55e" alt="Very Happy" class="mood-icon" />
+              <img v-else-if="visit.mood===4" src="https://api.iconify.design/mdi/emoticon-happy-outline.svg?color=%2384cc16" alt="Happy" class="mood-icon" />
+              <img v-else-if="visit.mood===3" src="https://api.iconify.design/mdi/emoticon-neutral-outline.svg?color=%23eab308" alt="Neutral" class="mood-icon" />
+              <img v-else-if="visit.mood===2" src="https://api.iconify.design/mdi/emoticon-confused-outline.svg?color=%23f97316" alt="Sad" class="mood-icon" />
+              <img v-else src="https://api.iconify.design/mdi/emoticon-sad-outline.svg?color=%23ef4444" alt="Very Sad" class="mood-icon" />
             </div>
             <div class="profit" :class="visit.profit >= 0 ? 'positive' : 'negative'">
               {{ visit.profit >= 0 ? '+' : '' }} ${{ visit.profit }}
@@ -123,6 +123,13 @@ onMounted(async () => {
 .visit-header {
   display: flex;
   justify-content: space-between;
+}
+
+.mood-icon {
+  width: 20px;
+  height: 20px;
+  margin-left: 0.5rem;
+  vertical-align: -4px;
 }
 
 .profit.positive {
