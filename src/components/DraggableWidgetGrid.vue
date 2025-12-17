@@ -84,7 +84,7 @@
           <i class="pi pi-plus-circle"></i>
         </div>
         <div v-if="unusedWidgets.length === 0" class="no-widgets">
-          <p>All available widgets are already on your dashboard! 🎉</p>
+          <p>All available widgets are already on your dashboard!</p>
         </div>
       </div>
     </Dialog>
@@ -353,7 +353,7 @@ watch(
 
 .ghost {
   opacity: 0.5;
-  background: var(--primary-color);
+  background: gray;
 }
 
 .widget-selector {
