@@ -7,6 +7,45 @@
 
         <NetResultQuotes></NetResultQuotes>
         <div class="dashboard-controls">
+          <div class="filter-controls">
+            <div class="filter-item">
+              <label for="date-range">Date Range:</label>
+              <DatePicker
+              id="date-range"
+              v-model="dateRange"
+              selectionMode="range"
+              :manualInput="false"
+              showIcon
+              showButtonBar
+              placeholder="Select date range"
+              dateFormat="mm/dd/yy"
+              class="date-picker"
+              ></DatePicker>
+            </div>
+            <div class="filter-item">
+              <label for="casino-filter">Casino:</label>
+              <Select
+              id="casino-filter"
+              v-model="selectedCasino"
+              :options="casinoOptions"
+              optionLabel="name"
+              optionValue="id"
+              placeholder="All Casinos"
+              showClear
+              checkmark
+              class="casino-dropdown"
+              ></Select>
+            </div>
+               <Button
+              label="Clear Filters"
+              severity="secondary"
+              text
+              size="small"
+              @click="clearFilters"
+              icon="pi pi-filter-slash"
+              :disabled="!hasActiveFilters"
+            />
+          </div>
           <Button
             :label="editMode ? 'Done Editing' : 'Edit Dashboard'"
             :severity="editMode ? 'success' : 'secondary'"
@@ -21,6 +60,7 @@
         <DraggableWidgetGrid
           :editMode="editMode"
           :widgets="activeWidgets"
+          :visits="filteredVisits"
           @update:widgets="activeWidgets = $event"
         />
       </main>
@@ -29,7 +69,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, computed } from 'vue'
 import DraggableWidgetGrid from '@/components/DraggableWidgetGrid.vue'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -41,10 +81,14 @@ import { useRouter } from 'vue-router'
 import LogOutButton from '@/components/LogOutButton.vue'
 import RecentHistory from '@/components/widgets/RecentHistory.vue'
 import NavBar from './NavBar.vue'
+import { doc, getDoc, setDoc, collection} from 'firebase/firestore'
 import NetResultQuotes from '@/components/netResultQuotes.vue'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { db } from '@/firebase_conf'
-import { useCurrentUser } from 'vuefire'
+import { useCollection, useCurrentUser } from 'vuefire'
+import DatePicker  from 'primevue/datepicker'
+import  Select  from 'primevue/select'
+
 
 const router = useRouter()
 const user = useCurrentUser()
@@ -60,6 +104,59 @@ const tabs = [
 const activeTab = ref('Dashboard')
 const editMode = ref(false)
 const logVisitFormRef = ref(false)
+
+//Filter state
+const dateRange  = ref(null)
+const selectedCasino = ref(null)
+
+const casinoOptions = useCollection(collection(db, 'users', user.value.uid, 'casinos'))
+
+
+const allVisits = useCollection(collection(db, 'users', user.value.uid, 'casinoVisits'))
+
+const filteredVisits = computed(() => {
+  if (!allVisits.value) return []
+
+  let visits = [...allVisits.value]
+
+  //filter by casino
+  if(selectedCasino.value) {
+    visits = visits.filter((v) => v.casinoId === selectedCasino.value)
+  }
+
+  // Filter by start date
+  if (dateRange.value && dateRange.value[0]) {
+    const startDate = new Date(dateRange.value[0])
+    startDate.setHours(0, 0, 0, 0)
+
+    visits = visits.filter((v) => {
+      const visitDate = v.visitDate?.toDate ? v.visitDate.toDate() : new Date(v.visitDate)
+      return visitDate >= startDate
+    })
+  }
+
+  // Filter by end date
+  if (dateRange.value && dateRange.value[1]) {
+    const endDate = new Date(dateRange.value[1])
+    endDate.setHours(23, 59, 59, 999)
+
+    visits = visits.filter((v) => {
+      const visitDate = v.visitDate?.toDate ? v.visitDate.toDate() : new Date(v.visitDate)
+      return visitDate <= endDate
+    })
+  }
+
+  return visits
+})
+
+const hasActiveFilters = computed(() => {
+  return dateRange.value !== null || selectedCasino.value !== null
+})
+
+function clearFilters() {
+  dateRange.value = null
+  selectedCasino.value = null
+}
 
 // Default widgets configuration
 const defaultWidgets = [
@@ -152,6 +249,28 @@ const toggleEditMode = () => {
   background: var(--surface-card);
   min-height: 100vh;
   width: 100%;
+}
+
+.dashboard-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.filter-controls {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .main-content {
