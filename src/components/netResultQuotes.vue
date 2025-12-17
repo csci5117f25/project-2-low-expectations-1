@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore'
 import { db } from '@/firebase_conf'
 import { useCurrentUser } from 'vuefire'
@@ -76,12 +76,71 @@ watch(user, (currentUser) => {
   })
 }, { immediate: true })
 
+const netClass = computed(() => {
+  if (netResult.value > 0) return 'quote-up'
+  if (netResult.value < 0) return 'quote-down'
+  return 'quote-even'
+})
+
+
 </script>
 
 <template>
-  <Message
-    severity="info" :closable="false" class="session-message">
-    <p>{{ sessionQuote }}</p>
-  </Message>
+  <div :class="['quote-banner', netClass]">
+    <p class="quote-text">“{{ sessionQuote }}”</p>
+  </div>
 </template>
 
+
+<style scoped>
+.quote-banner {
+  margin: 1rem auto;
+  max-width: 700px;
+  padding: 1.5rem 2rem;
+  border-radius: 16px;
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: 1.35rem;
+  font-style: italic;
+  backdrop-filter: blur(8px);
+  background: rgba(30, 30, 30, 0.6);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.quote-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(circle at top left, transparent, rgba(255,255,255,0.05));
+}
+
+.quote-up {
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: #aeefff;
+  text-shadow: 0 0 6px rgba(174, 239, 255, 0.4);
+}
+
+.quote-down {
+  background: linear-gradient(135deg, #2c2c2c, #1a1a1a);
+  color: #ff9e9e;
+  text-shadow: 0 0 6px rgba(255, 158, 158, 0.3);
+}
+
+.quote-even {
+  background: linear-gradient(135deg, #3a3a3a, #4a4a4a);
+  color: #cccccc;
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.2);
+}
+
+.quote-text {
+  margin: 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.6;
+}
+
+</style>

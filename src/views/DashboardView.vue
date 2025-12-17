@@ -3,10 +3,10 @@
     <Header />
     <div class="dashboard-content">
       <NavTabs />
+      <NetResultQuotes></NetResultQuotes>
+
       <main class="main-content">
         <!-- Edit Dashboard Button -->
-
-        <NetResultQuotes></NetResultQuotes>
         <div class="dashboard-controls">
           <div class="filter-controls">
             <div class="filter-item">
