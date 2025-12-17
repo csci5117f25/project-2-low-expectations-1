@@ -43,7 +43,7 @@ const dialogVisible = computed({
 // Search/filter casinos for autocomplete
 const searchCasinos = (event) => {
   const query = event.query.toLowerCase().trim()
-
+  
   if (!userCasinos.value || userCasinos.value.length === 0) {
     // No existing casinos, show option to create new
     if (query) {
