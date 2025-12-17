@@ -39,7 +39,14 @@ Which (if any) progressive web app feature(s) does your app support?
 
 ## Mockup images
 
-[Project2LowFidelityMockUp.pdf](https://github.com/user-attachments/files/24208905/Project2LowFidelityMockUp.pdf)
+<img width="699" height="891" alt="Screenshot 2025-12-17 at 3 08 13 AM" src="https://github.com/user-attachments/assets/001ef739-0a70-45eb-90a2-de76221f9097" />
+
+
+<img width="1404" height="920" alt="Screenshot 2025-12-17 at 3 08 25 AM" src="https://github.com/user-attachments/assets/96e8a758-302f-4b48-b1cd-4c0e7f1f7286" />
+
+
+
+
 *Low-fidelity prototype of CasinoTracker highlighting the landing page, log in, listings interface, and various users' own visit details.*
 
 * You can find the full prototype at prototype/Project2LowFidelityMockUp.pdf
