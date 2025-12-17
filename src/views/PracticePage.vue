@@ -597,6 +597,13 @@ function checkWin(orderedReels, betAmount) {
     lastWin.value = betAmount * multiplier
     balance.value += lastWin.value
     winMessage.value = 'Three in a row!'
+  } else if (
+    (results[0] === results[1] && results[2] === results[3]) ||
+    (results[0] === results[1] && results[1] !== results[2] && results[2] === results[3])
+  ) {
+    lastWin.value = betAmount * 5
+    balance.value += lastWin.value
+    winMessage.value = 'Two Pairs!'
   } else if (results[0] === results[1] || results[1] === results[2] || results[2] === results[3]) {
     lastWin.value = betAmount * 2
     balance.value += lastWin.value
@@ -605,6 +612,7 @@ function checkWin(orderedReels, betAmount) {
     winMessage.value = ''
   }
 }
+
 
 function exitPractice() {
   router.push({ name: 'dashboard' })
