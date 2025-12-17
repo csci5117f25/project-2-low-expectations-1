@@ -90,13 +90,40 @@ watch(isDarkMode, () => {
   </div>
 </template>
 <style scoped>
+.calendar-heatmap-widget {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.widget-title {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-color-secondary, #ffffff);
+  margin: 0 0 1rem 0;
+}
+
 .heatmap-wrapper {
   position: relative;
   padding-top: 20px;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
 }
 
 .heatmap-wrapper :deep(svg.vch__wrapper) {
   overflow: visible;
+  max-width: 100%;
 }
 
 .heatmap-wrapper :deep(.vch__days__labels__wrapper text.vch__day__label) {
@@ -133,5 +160,63 @@ watch(isDarkMode, () => {
 
 :deep(.vch__legend__wrapper rect:nth-child(1)) {
   display: none;
+}
+
+@media (max-width: 768px) {
+  .widget-title {
+    font-size: 1rem;
+    letter-spacing: 1px;
+    margin-bottom: 0.75rem;
+  }
+
+  .heatmap-wrapper {
+    padding-top: 15px;
+    padding-right: 10px;
+  }
+
+  .heatmap-wrapper :deep(.vch__days__labels__wrapper text.vch__day__label) {
+    font-size: 8px;
+    transform: translateX(15px);
+  }
+
+  :deep(.vch__month__label) {
+    font-size: 10px;
+  }
+
+  :deep(.vch__legend) {
+    flex-wrap: wrap;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .widget-title {
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .heatmap-wrapper {
+    padding-top: 10px;
+  }
+
+  .heatmap-wrapper :deep(.vch__days__labels__wrapper text.vch__day__label) {
+    font-size: 7px;
+    transform: translateX(12px);
+  }
+
+  :deep(.vch__month__label) {
+    font-size: 9px;
+  }
+
+  .heatmap-wrapper::after {
+    content: '← Scroll →';
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+    font-size: 0.7rem;
+    color: var(--text-color-secondary);
+    opacity: 0.6;
+    pointer-events: none;
+  }
 }
 </style>

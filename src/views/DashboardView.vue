@@ -70,7 +70,7 @@ const defaultWidgets = [
     id: 'alternative',
     name: 'Alternative Spending',
     component: 'AlternativeSpendingWidget',
-    size: 'half',
+    size: 'full',
   },
   { id: 'calendarheatmap', name: 'Calendar Heatmap', component: 'CalendarHeatMap', size: 'full' },
   { id: 'moodmoney', name: 'Mood vs Money', component: 'MoodMoney', size: 'half' },
@@ -139,14 +139,11 @@ const toggleEditMode = () => {
 </script>
 
 <style scoped>
-.edit-dashboard-btn {
-  margin-bottom: 1rem;
-}
-
 .dashboard-container {
   min-height: 100vh;
   background: var(--surface-card);
   padding: 0;
+  overflow-x: hidden;
 }
 
 .dashboard-content {
@@ -154,10 +151,22 @@ const toggleEditMode = () => {
   margin: 0 auto;
   background: var(--surface-card);
   min-height: 100vh;
+  width: 100%;
 }
 
 .main-content {
   padding: 2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.dashboard-controls {
+  margin-bottom: 1.5rem;
+}
+
+.edit-dashboard-btn {
+  width: 100%;
+  max-width: 200px;
 }
 
 .chart-section {
@@ -378,6 +387,18 @@ const toggleEditMode = () => {
 }
 
 @media (max-width: 768px) {
+  .main-content {
+    padding: 1rem;
+  }
+
+  .dashboard-controls {
+    margin-bottom: 1rem;
+  }
+
+  .edit-dashboard-btn {
+    max-width: 100%;
+  }
+
   .grid-2col {
     grid-template-columns: 1fr;
   }
@@ -397,7 +418,6 @@ const toggleEditMode = () => {
   .header-right {
     width: 100%;
     justify-content: center;
-    /*flex-wrap: wrap;*/
   }
 
   .nav-tabs {
@@ -411,6 +431,32 @@ const toggleEditMode = () => {
     margin-top: 0.5rem;
     margin-left: 0;
     width: 100%;
+  }
+
+  .result-value {
+    font-size: 1.5rem;
+  }
+
+  .result-details {
+    gap: 0.5rem;
+  }
+
+  .detail-value {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 0.75rem;
+  }
+
+  .result-value {
+    font-size: 1.25rem;
+  }
+
+  .chart {
+    height: 150px;
   }
 }
 </style>
