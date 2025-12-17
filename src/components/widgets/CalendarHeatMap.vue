@@ -203,7 +203,7 @@ watch(isDarkMode, () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 10px;
+  margin-top: 5px;
 }
 
 :deep(.vch__legend .vch__legend__wrapper) {
@@ -256,7 +256,7 @@ watch(isDarkMode, () => {
   align-items: center;
   margin-bottom: 10px; 
 }
-</style>
+
 @media (max-width: 768px) {
   .widget-title {
     font-size: 1rem;
