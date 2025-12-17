@@ -329,19 +329,16 @@ watch(
 
 .widget-controls {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
+  top: 0.5rem;
+  right: 0.5rem;
   display: flex;
   gap: 0.5rem;
   z-index: 10;
-  background: rgba(0, 0, 0, 0.8);
-  padding: 0.5rem;
-  border-radius: 8px;
-  backdrop-filter: blur(10px);
 }
 
 .remove-btn {
   background: rgba(244, 67, 54, 0.2) !important;
+  backdrop-filter: blur(10px);
 }
 
 .ghost {
