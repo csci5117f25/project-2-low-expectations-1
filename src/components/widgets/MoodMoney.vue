@@ -1,6 +1,5 @@
 <script setup>
 import { ref, watch } from 'vue'
-import Card from 'primevue/card'
 import { Bar } from 'vue-chartjs'
 import {
   Chart as ChartJS,
@@ -125,59 +124,68 @@ watch(
 </script>
 
 <template>
-  <div class="mood-money-chart">
-    <Bar
-      v-if="chartData"
-      class="mood-money-chart-canvas"
-      :key="chartUpdated"
-      :data="chartData"
-      :options="chartOptions"
-    />
+  <div class="mood-money-widget-container">
+    <h3 class="widget-title">Mood vs Money</h3>
+    <div class="mood-money-chart-wrapper">
+      <Bar
+        v-if="chartData"
+        class="mood-money-chart-canvas"
+        :key="chartUpdated"
+        :data="chartData"
+        :options="chartOptions"
+      />
+    </div>
   </div>
 </template>
 
 <style scoped>
-.mood-money-chart {
+.mood-money-widget-container {
   width: 100%;
-  max-width: 100%;
   height: 100%;
-  min-height: 200px;
   display: flex;
   flex-direction: column;
+  padding: 0.5rem;
   box-sizing: border-box;
-  overflow: hidden;
-  position: relative;
+}
+
+.widget-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.2rem;
+  text-align: left;
+  margin: 0 0 1rem 0;
+  color: var(--text-color-secondary);
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.mood-money-chart-wrapper {
+  display: flex;
+  width: 100%;
+  min-height: 200px; 
 }
 
 .mood-money-chart-canvas {
   width: 100% !important;
   height: 100% !important;
-  max-width: 100% !important;
-  display: block;
-}
-
-.mood-money-chart :deep(canvas) {
-  max-width: 100% !important;
-  height: auto !important;
 }
 
 @media (max-width: 768px) {
-  .mood-money-chart {
+  .mood-money-chart-wrapper {
     min-height: 180px;
   }
 
-  .mood-money-chart :deep(.chartjs-tooltip) {
+  .mood-money-chart-canvas :deep(.chartjs-tooltip) {
     font-size: 0.875rem;
     padding: 0.5rem;
   }
 }
 
 @media (max-width: 480px) {
-  .mood-money-chart {
+  .mood-money-chart-wrapper {
     min-height: 150px;
   }
 
-  .mood-money-chart :deep(canvas) {
+  .mood-money-chart-canvas :deep(canvas) {
     font-size: 10px;
   }
 }
