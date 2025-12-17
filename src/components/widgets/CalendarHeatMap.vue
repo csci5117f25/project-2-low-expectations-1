@@ -116,7 +116,6 @@ onMounted(() => {
     isDarkMode.value = e.matches
   })
   
-  // Process visits on mount
   if (props.visits && props.visits.length > 0) {
     processVisits()
   }
@@ -184,6 +183,7 @@ watch(isDarkMode, () => {
   flex-direction: column;
   box-sizing: border-box;
   overflow: hidden;
+  min-height: 0;
 }
 
 .widget-title {
@@ -206,14 +206,37 @@ watch(isDarkMode, () => {
 
 .heatmap-wrapper {
   position: relative;
-  padding-top: 20px;
+  padding-top: 10px;
+  padding-bottom: 40px;
   width: 100%;
-  max-width: 100%;
-  overflow-x: auto;
+  overflow-x: scroll;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
   box-sizing: border-box;
   flex: 1;
+  touch-action: pan-x;
+  min-height: 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+  display: flex;
+  justify-content: center;
+}
+
+.heatmap-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.heatmap-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.heatmap-wrapper::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+.heatmap-wrapper::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.5);
 }
 
 .empty-message {
@@ -224,8 +247,10 @@ watch(isDarkMode, () => {
 }
 
 .heatmap-wrapper :deep(svg.vch__wrapper) {
-  overflow: visible;
-  max-width: 100%;
+  width: 700px;
+  min-width: 700px;
+  display: block;
+  margin: 0 auto;
 }
 
 .heatmap-wrapper :deep(.vch__days__labels__wrapper text.vch__day__label) {
@@ -248,17 +273,22 @@ watch(isDarkMode, () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  gap: 8px;
 }
 
 :deep(.vch__legend .vch__legend__wrapper) {
   display: flex;
   flex-direction: row;
   gap: 4px;
+  align-items: center;
 }
 
-:deep(.vch__legend div:last-child) {
-  margin-left: 8px;
+:deep(.vch__legend div) {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 :deep(.vch__legend__wrapper rect:nth-child(1)) {
@@ -292,22 +322,43 @@ watch(isDarkMode, () => {
   }
 
   .heatmap-wrapper {
-    padding-top: 15px;
-    padding-right: 10px;
+    padding-top: 25px;
+    padding-bottom: 50px;
+  }
+
+  .heatmap-wrapper :deep(svg.vch__wrapper) {
+    width: 500px;
+    min-width: 500px;
   }
 
   .heatmap-wrapper :deep(.vch__days__labels__wrapper text.vch__day__label) {
-    font-size: 8px;
+    font-size: 9px;
     transform: translateX(15px);
   }
 
   :deep(.vch__month__label) {
-    font-size: 10px;
+    font-size: 11px;
   }
 
   :deep(.vch__legend) {
-    flex-wrap: wrap;
-    font-size: 0.75rem;
+    flex-wrap: nowrap;
+    font-size: 0.8rem;
+    justify-content: space-between;
+    padding: 0 10px;
+  }
+
+  .heatmap-wrapper::before {
+    content: '⟵ Swipe to scroll ⟶';
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    color: var(--text-color-secondary);
+    opacity: 0.7;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 1;
   }
 }
 
@@ -323,27 +374,34 @@ watch(isDarkMode, () => {
   }
 
   .heatmap-wrapper {
-    padding-top: 10px;
+    padding-top: 30px;
+    padding-bottom: 55px;
+  }
+
+  .heatmap-wrapper :deep(svg.vch__wrapper) {
+    width: 450px;
+    min-width: 450px;
   }
 
   .heatmap-wrapper :deep(.vch__days__labels__wrapper text.vch__day__label) {
-    font-size: 7px;
+    font-size: 8px;
     transform: translateX(12px);
   }
 
   :deep(.vch__month__label) {
-    font-size: 9px;
+    font-size: 10px;
   }
 
-  .heatmap-wrapper::after {
-    content: '← Scroll →';
-    position: absolute;
-    bottom: 5px;
-    right: 10px;
-    font-size: 0.7rem;
-    color: var(--text-color-secondary);
-    opacity: 0.6;
-    pointer-events: none;
+  :deep(.vch__legend) {
+    flex-wrap: nowrap;
+    font-size: 0.75rem;
+    padding: 0 5px;
+    justify-content: space-between;
+  }
+
+  .heatmap-wrapper::before {
+    top: 5px;
+    font-size: 0.65rem;
   }
 }
 </style>
