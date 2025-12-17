@@ -1,11 +1,6 @@
 <template>
   <div class="alternative-spending-widget">
     <h3 class="widget-title">
-      <img
-        src="https://api.iconify.design/mdi/lightbulb-on.svg?color=%23fff"
-        class="title-icon"
-        alt="Idea"
-      />
       What You Could've Had Instead
     </h3>
     <p class="couldve-intro">
@@ -26,9 +21,9 @@
       </div>
     </div>
     <div class="regenerate-section">
-      <Button 
-        label="Show Me Another" 
-        icon="pi pi-refresh" 
+      <Button
+        label="Show Me Another"
+        icon="pi pi-refresh"
         @click="regenerateItem"
         size="small"
         outlined
@@ -61,7 +56,7 @@ const props = defineProps({
 // calculate total profit/loss
 const totalProfit = computed(() => {
   if (!props.visits || props.visits.length === 0) return 0
-  
+
   return props.visits.reduce((sum, visit) => {
     const profit = visit.profit || 0
     return sum + profit

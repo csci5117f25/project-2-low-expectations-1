@@ -81,7 +81,7 @@ onMounted(async () => {
   background: var(--surface-card);
   min-height: 100vh;
   width: 100%;
-  padding-top: 160px;
+  padding-top: 120px;
 }
 
 .main-content {
