@@ -27,13 +27,17 @@
             <span class="tag" :class="visit.profit >= 0 ? 'positive' : 'negative'">
               {{ visit.profit >= 0 ? 'W':'L' }} Day
             </span>
-
             <Button
               icon="pi pi-pencil"
               severity="secondary"
-              text
               rounded
               @click="gotoEditPage(visit.id)"
+            />
+            <Button
+              icon="pi pi-trash"
+              severity="danger"
+              rounded
+              @click="deleteVisit(visit.id)"
             />
           </div>
         </div>
@@ -44,7 +48,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { collection, getDocs, orderBy, query } from 'firebase/firestore'
+import { collection, getDocs, orderBy, query, doc, deleteDoc } from 'firebase/firestore'
 import { db, auth } from '@/firebase_conf'
 import { useRouter } from 'vue-router'
 import Header from './Header.vue'
@@ -55,6 +59,22 @@ const router = useRouter()
 const gotoEditPage = (id) => {
   router.push('/visits/'+id)
 }
+
+const deleteVisit = async(visitId) => {
+  const ok = window.confirm('Can you confirm that you want to delete this visit?')
+  if (!ok) return
+  try {
+    const user = auth.currentUser
+    if (!user) return
+    await deleteDoc(
+      doc(db, 'users', user.uid, 'casinoVisits', visitId)
+    )
+    visits.value = visits.value.filter(v=>v.id !== visitId)
+  } catch (e) {
+    console.error('Failed to delete visit:', e)
+  }
+}
+
 const visits = ref([])
 onMounted(async () => {
   const user = auth.currentUser
