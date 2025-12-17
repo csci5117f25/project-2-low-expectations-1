@@ -41,7 +41,7 @@ const allColumns = [
 
 <template>
   <div class="recent-history-widget">
-    <div class="widget-title"> Recent History </div>
+    <div class="widget-title">Recent History</div>
     <div class="history-wrapper">
       <DataTable
         :value="visits"
@@ -71,22 +71,21 @@ const allColumns = [
 }
 .recent-history-widget {
   width: 100%;
-  max-width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
+  padding: 0.5rem;
   box-sizing: border-box;
-  overflow: hidden;
 }
 
 .widget-title {
   font-family: 'Cinzel', serif;
-  font-weight: 700;
-  font-size: 1.25rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--text-color-secondary, #ffffff);
+  font-size: 1.2rem;
+  text-align: left;
   margin: 0 0 1rem 0;
+  color: var(--text-color-secondary);
+  font-weight: 700;
+  letter-spacing: 1px;
 }
 
 .history-wrapper {
