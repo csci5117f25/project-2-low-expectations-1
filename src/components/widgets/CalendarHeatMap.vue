@@ -102,8 +102,7 @@ watch(profitMode, () => {
 })
 
 const endDate = computed(() => {
-  if (!dates.value.length) return null
-  return dates.value[dates.value.length - 1].date
+  return new Date().toISOString().split('T')[0]
 })
 
 function updateDarkMode() {
@@ -247,7 +246,7 @@ watch(isDarkMode, () => {
 }
 
 .heatmap-wrapper :deep(svg.vch__wrapper) {
-  width: 700px;
+  width: 900px;
   min-width: 700px;
   display: block;
   margin: 0 auto;
