@@ -166,5 +166,6 @@ const regenerateItem = () => {
   display: flex;
   justify-content: center;
   margin-bottom: 1rem;
+  margin-top: 1rem;
 }
 </style>

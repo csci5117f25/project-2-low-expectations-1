@@ -283,6 +283,8 @@ const toggleEditMode = () => {
   padding: 2rem;
   width: 100%;
   box-sizing: border-box;
+  overflow: auto;
+  height: 100%;
 }
 
 .dashboard-controls {
