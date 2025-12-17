@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
+import Button  from 'primevue/button'
 
 // Props
 const props = defineProps({
@@ -112,9 +113,12 @@ watch(isDarkMode, () => {
     <h3 class="widget-title" :class="{ 'dark-title': isDarkMode, 'light-title': !isDarkMode }">
       Calendar Heatmap
     </h3>
-    <button @click="profitMode = !profitMode" class="toggle-btn">
-      {{ profitMode ? 'Show Default Colors' : 'Show Profit/Loss' }}
-    </button>
+      <Button
+      :label="profitMode ? 'Show Default Colors' : 'Show Profit/Loss'"
+      @click="profitMode = !profitMode"
+      size="small"
+      outlined
+    />
   </div>
     <div class="heatmap-wrapper" :class="{ 'dark-mode': isDarkMode, 'profit-mode': profitMode}">
       <template v-if="dates.length">
@@ -254,7 +258,7 @@ watch(isDarkMode, () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px; 
+  margin-bottom: 10px;
 }
 
 @media (max-width: 768px) {
