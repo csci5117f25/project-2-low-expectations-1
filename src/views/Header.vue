@@ -1,17 +1,19 @@
 <template>
   <header class="header">
-    <div class="header-left">
-      <img src="/playing-cards.png" class="logo" alt="Playing cards logo" />
-      <div class="header-title">
-        <h1>GAMBLR</h1>
-        <p>Track your gambling habits responsibly</p>
-      </div>
-    </div>
+    <div class="header-container">
+        <div class="header-left">
+        <img src="/playing-cards.png" class="logo" alt="Playing cards logo" />
+        <div class="header-title">
+            <h1>GAMBLR</h1>
+            <p>Track your gambling habits responsibly</p>
+        </div>
+        </div>
 
-    <div class="header-right">
-      <Button label="+ Log Visit" severity="secondary" @click="logVisitFormVisible = true" />
-      <LogOutButton />
-      <LogVisitForm v-model:visible="logVisitFormVisible" />
+        <div class="header-right">
+        <Button label="+ Log Visit" severity="secondary" @click="logVisitFormVisible = true" />
+        <LogOutButton />
+        <LogVisitForm v-model:visible="logVisitFormVisible" />
+        </div>
     </div>
   </header>
 </template>
@@ -33,11 +35,20 @@ const logVisitFormVisible = ref(false)
   right: 0;
   z-index: 10;
   display: flex;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  border-bottom: 2px solid var(--surface-border);
+  background: var(--surface-card);
+}
+
+.header-container {
+  display: flex;
+  width: 100%;
+  max-width: 1200px;
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem 2rem;
-  border-bottom: 2px solid var(--surface-border);
-  background: var(--surface-card);
 }
 
 .header-left {
@@ -69,7 +80,7 @@ const logVisitFormVisible = ref(false)
   gap: 0.75rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 480px) {
   .header {
     flex-direction: column;
     align-items: flex-start;
