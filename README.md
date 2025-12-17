@@ -4,9 +4,9 @@ CSCI 5117, Fall 2025, [assignment description](https://canvas.umn.edu/courses/51
 
 ## App Info:
 
-* Team Name: TODO
-* App Name: TODO
-* App Link: <https://TODO.com/>
+* Team Name: HIGH expectations
+* App Name: Gamblr
+* App Link: gamblr-16a50.web.app
 
 ### Students
 
@@ -22,15 +22,18 @@ CSCI 5117, Fall 2025, [assignment description](https://canvas.umn.edu/courses/51
 **Describe the most challenging features you implemented
 (one sentence per bullet, maximum 4 bullets):**
 
-* ...
+* Draggable widget system
+* Speech to text
+* Visits filtering
+* Practice 3d environment
 
 Which (if any) device integration(s) does your app support?
 
-* ...
+* Microphone
 
 Which (if any) progressive web app feature(s) does your app support?
 
-* ...
+* N/A
 
 
 
@@ -48,7 +51,7 @@ Which (if any) progressive web app feature(s) does your app support?
 
 **Is there anything special we need to know in order to effectively test your app? (optional):**
 
-* ...
+* N/A
 
 
 
@@ -66,10 +69,7 @@ along with a very brief caption:**
 **Document integrations with 3rd Party code or services here.
 Please do not document required libraries (e.g., VUE, Firebase, vuefire).**
 
-Three.js
-```bash
-npm install three
-```
+Three.js - 3d Scene
 
 Slot Machine - licensed under CC Attribution
 deepakyhr
@@ -78,6 +78,15 @@ deepakyhr
 Gameready Casino scene - Free Standard License
 Katydid
 [https://skfb.ly/pC86Y]
+
+Heatmap - Used for heatmap widget
+
+Chart.js - Used for a few widgets
+
+Primevue - Used for components, charts, and icons
+
+Google Cloud Speech to API - Speech to text for notes
+
 
 * Library or service name: description of use
 * ...
