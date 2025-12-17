@@ -62,6 +62,8 @@ along with a very brief caption:**
 
 ![](https://media.giphy.com/media/o0vwzuFwCGAFO/giphy.gif)
 
+<img width="1500" height="851" alt="Screenshot 2025-12-17 at 3 01 57 AM" src="https://github.com/user-attachments/assets/40553738-4000-4d29-961f-b718a0d1428b" />
+
 
 
 ## External Dependencies
@@ -86,10 +88,6 @@ Chart.js - Used for a few widgets
 Primevue - Used for components, charts, and icons
 
 Google Cloud Speech to API - Speech to text for notes
-
-
-* Library or service name: description of use
-* ...
 
 **If there's anything else you would like to disclose about how your project
 relied on external code, expertise, or anything else, please disclose that
