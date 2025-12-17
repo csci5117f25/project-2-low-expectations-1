@@ -232,5 +232,9 @@ onMounted(async () => {
   .main-content {
     padding: 0.75rem;
   }
+  
+  .dashboard-content {
+    padding-top: 160px;
+  }
 }
 </style>

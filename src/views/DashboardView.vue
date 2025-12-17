@@ -523,6 +523,7 @@ const toggleEditMode = () => {
 
   .edit-dashboard-btn {
     max-width: 100%;
+    display: none;
   }
 
   .grid-2col {
@@ -575,6 +576,10 @@ const toggleEditMode = () => {
 @media (max-width: 480px) {
   .main-content {
     padding: 0.75rem;
+  }
+
+  .dashboard-content {
+    padding-top: 160px;
   }
 
   .result-value {
