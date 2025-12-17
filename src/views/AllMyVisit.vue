@@ -15,7 +15,7 @@
           <div class="card-content">
             <div class="visit-header">
               <div class="casino-name">
-                {{ visit.casinoName?.toUpperCase()}}
+                {{ visit.casinoName?.toUpperCase() }}
               </div>
               <div class="profit" :class="visit.profit >= 0 ? 'positive' : 'negative'">
                 {{ visit.profit >= 0 ? '+' : '' }} ${{ visit.profit }}
@@ -24,40 +24,30 @@
                 </div>
               </div>
             </div>
-            <p class="notes">Notes: {{ visit.notes || 'No notes recorded.'}}</p>
+            <p class="notes">Notes: {{ visit.notes || 'No notes recorded.' }}</p>
             <div class="visit-actions">
-              <Button
-                icon="pi pi-pencil"
-                severity="info"
-                rounded
-                @click="openEditDialog(visit)"
-              />
-              <Button
-                icon="pi pi-trash"
-                severity="danger"
-                rounded
-                @click="deleteVisit(visit.id)"
-              />
+              <Button icon="pi pi-pencil" severity="info" rounded @click="openEditDialog(visit)" />
+              <Button icon="pi pi-trash" severity="danger" rounded @click="deleteVisit(visit.id)" />
             </div>
           </div>
         </div>
         <Dialog
-        v-model:visible="editDialogVisible"
-        header="Edit Visit"
-        modal
-        :style="{ width: '90vw', maxWidth: '500px' }"
-        class="edit-dialog"
+          v-model:visible="editDialogVisible"
+          header="Edit Visit"
+          modal
+          :style="{ width: '90vw', maxWidth: '500px' }"
+          class="edit-dialog"
         >
-        <div class="form-content">
+          <div class="form-content">
             <div class="field">
               <label>Casino</label>
               <Select
-              v-model="editForm.casinoName"
-              :options="casinos"
-              optionLabel="name"
-              optionValue="name"
-              placeholder="Select a Casino"
-              fluid
+                v-model="editForm.casinoName"
+                :options="casinos"
+                optionLabel="name"
+                optionValue="name"
+                placeholder="Select a Casino"
+                fluid
               />
             </div>
             <div class="field">
@@ -75,13 +65,13 @@
               <InputNumber v-model="editForm.cashOutAmount" mode="currency" currency="USD" fluid />
             </div>
 
-             <div class="field">
+            <div class="field">
               <label>Mood</label>
               <div class="rating-container">
                 <Rating v-model="editForm.mood" :cancel="false" />
               </div>
             </div>
-          <div class="field">
+            <div class="field">
               <label>Notes</label>
               <Textarea v-model="editForm.notes" rows="4" fluid />
             </div>
@@ -93,8 +83,6 @@
           </template>
         </Dialog>
         <ConfirmDialog />
-
-
       </main>
     </div>
   </div>
@@ -102,7 +90,16 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { collection, getDocs, orderBy, query, doc, deleteDoc, updateDoc, Timestamp} from 'firebase/firestore'
+import {
+  collection,
+  getDocs,
+  orderBy,
+  query,
+  doc,
+  deleteDoc,
+  updateDoc,
+  Timestamp,
+} from 'firebase/firestore'
 import { useToast } from 'primevue'
 import { db, auth } from '@/firebase_conf'
 import Header from './Header.vue'
@@ -115,10 +112,10 @@ import Rating from 'primevue/rating'
 import InputNumber from 'primevue/inputnumber'
 import Select from 'primevue/select'
 import { useCollection } from 'vuefire'
-import ConfirmDialog from 'primevue/confirmdialog';
-import { useConfirm } from "primevue/useconfirm";
+import ConfirmDialog from 'primevue/confirmdialog'
+import { useConfirm } from 'primevue/useconfirm'
 
-const confirm = useConfirm();
+const confirm = useConfirm()
 const toast = useToast()
 const user = auth.currentUser
 const editDialogVisible = ref(false)
@@ -130,20 +127,18 @@ const editForm = ref({
   initialAmount: 0,
   cashOutAmount: 0,
   mood: 0,
-  notes: ''
+  notes: '',
 })
 
 const openEditDialog = (visit) => {
   editingVisitId.value = visit.id
   editForm.value = {
     casinoName: visit.casinoName || '',
-    visitDate: visit.visitDate?.toDate
-      ? visit.visitDate.toDate()
-      : (visit.visitDate || new Date()),
+    visitDate: visit.visitDate?.toDate ? visit.visitDate.toDate() : visit.visitDate || new Date(),
     initialAmount: visit.initialAmount || 0,
     cashOutAmount: visit.cashOutAmount || 0,
     mood: visit.mood || 0,
-    notes: visit.notes || ''
+    notes: visit.notes || '',
   }
   editDialogVisible.value = true
 }
@@ -156,8 +151,8 @@ const saveEdit = async () => {
 
     const visitRef = doc(db, 'users', user.uid, 'casinoVisits', editingVisitId.value)
 
-
-    const profit = Math.round((editForm.value.initialAmount - editForm.value.cashOutAmount) * 100) / 100
+    const profit =
+      Math.round((editForm.value.cashOutAmount - editForm.value.initialAmount) * 100) / 100
     await updateDoc(visitRef, {
       casinoName: editForm.value.casinoName,
       visitDate: editForm.value.visitDate ? Timestamp.fromDate(editForm.value.visitDate) : null,
@@ -165,7 +160,7 @@ const saveEdit = async () => {
       cashOutAmount: Number(editForm.value.cashOutAmount),
       profit: profit,
       mood: Number(editForm.value.mood),
-      notes: editForm.value.notes
+      notes: editForm.value.notes,
     })
 
     editDialogVisible.value = false
@@ -178,7 +173,7 @@ const saveEdit = async () => {
   }
 }
 
-const casinos = useCollection(collection(db,'users', user.uid, 'casinos'))
+const casinos = useCollection(collection(db, 'users', user.uid, 'casinos'))
 
 const deleteVisit = (visitId) => {
   confirm.require({
@@ -189,11 +184,11 @@ const deleteVisit = (visitId) => {
     rejectProps: {
       label: 'Cancel',
       severity: 'secondary',
-      outlined: true
+      outlined: true,
     },
     acceptProps: {
       label: 'Delete',
-      severity: 'danger'
+      severity: 'danger',
     },
     accept: async () => {
       try {
@@ -201,11 +196,16 @@ const deleteVisit = (visitId) => {
 
         await deleteDoc(doc(db, 'users', user.uid, 'casinoVisits', visitId))
 
-        toast.add({ severity: 'error', summary: 'Deleted', detail: 'Visit deleted successfully', life: 3000 })
+        toast.add({
+          severity: 'error',
+          summary: 'Deleted',
+          detail: 'Visit deleted successfully',
+          life: 3000,
+        })
       } catch (e) {
         console.error('Failed to delete visit:', e)
       }
-    }
+    },
   })
 }
 
@@ -216,10 +216,8 @@ const getCardImage = (index) => {
 
 // const visits = ref([])
 const visits = useCollection(
-  query(
-  collection(db, 'users', user.uid, 'casinoVisits'),
-  orderBy('visitDate', 'desc')
-))
+  query(collection(db, 'users', user.uid, 'casinoVisits'), orderBy('visitDate', 'desc')),
+)
 
 const formatDate = (dateVal) => {
   if (!dateVal) return ''
@@ -275,7 +273,9 @@ const formatDate = (dateVal) => {
   margin-bottom: 1rem;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .visit-card:hover {
