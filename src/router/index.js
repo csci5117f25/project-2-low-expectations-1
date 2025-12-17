@@ -3,7 +3,6 @@ import SplashPage from '@/views/SplashPage.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import AllMyVisit from '@/views/AllMyVisit.vue'
 import PracticePage from '@/views/PracticePage.vue'
-import EditMyVisit from '@/views/EditMyVisit.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,12 +23,6 @@ const router = createRouter({
       path: '/visits',
       name: 'visits',
       component: AllMyVisit,
-      meta: { requiresAuth: true }
-    },
-    {
-      path: '/visits/:id',
-      name: 'visitedit',
-      component: EditMyVisit,
       meta: { requiresAuth: true }
     },
     {

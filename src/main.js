@@ -10,6 +10,7 @@ import ToastService from 'primevue/toastservice'
 import 'primeicons/primeicons.css'
 import './assets/main.css'
 import VueCalendarHeatmap from 'vue3-calendar-heatmap'
+import ConfirmationService from 'primevue/confirmationservice';
 
 const app = createApp(App)
 
@@ -29,6 +30,7 @@ app.use(PrimeVue, {
 })
 
 app.use(ToastService)
+app.use(ConfirmationService);
 app.use(VueCalendarHeatmap)
 
 router.beforeEach(async (to) => {
