@@ -1,14 +1,13 @@
 <template>
   <div class="alternative-spending-widget">
-    <h3 class="widget-title">
-      What You Could've Had Instead
-    </h3>
+    <h3 class="widget-title">What You Could've Had Instead</h3>
     <p class="couldve-intro">
       <span v-if="totalLoss > 0">
-        Your net loss of <strong class="negative">${{totalLoss.toFixed(2)}}</strong> could've been...
+        Your net loss of <strong class="negative">${{ totalLoss.toFixed(2) }}</strong> could've
+        been...
       </span>
       <span v-else-if="totalProfit > 0">
-        You're up <strong class="positive">${{totalProfit.toFixed(2)}}</strong> You can now buy
+        You're up <strong class="positive">${{ totalProfit.toFixed(2) }}</strong> You can now buy
       </span>
       <span v-else>
         Start tracking your visits to see what you could've spent your money on instead.
@@ -41,17 +40,16 @@
 </template>
 
 <script setup>
-
-import { computed, ref } from 'vue';
-import { items } from './whatYouCouldaHad.json';
-import Button from 'primevue/button';
+import { computed, ref } from 'vue'
+import { items } from './whatYouCouldaHad.json'
+import Button from 'primevue/button'
 
 const props = defineProps({
   visits: {
     type: Array,
     default: () => [],
   },
-});
+})
 
 // calculate total profit/loss
 const totalProfit = computed(() => {
@@ -61,33 +59,32 @@ const totalProfit = computed(() => {
     const profit = visit.profit || 0
     return sum + profit
   }, 0)
-});
+})
 
 const totalLoss = computed(() => {
   return totalProfit.value < 0 ? -totalProfit.value : 0
-});
+})
 
 //generate a new random item on total loss
 const generateRandomItem = () => {
   const net_change = Math.abs(totalProfit.value)
-  const rand = Math.floor(Math.random() * items.length);
-  let price = items[rand].price;
-  let num_items = Math.floor(net_change / price);
-  console.log("Generated item price: ", price, " num_items: ", num_items);
-  if( num_items < 1) {
-    price = items[0].price;
-    num_items = net_change / price;
-    return { num: num_items, name: items[0].name };
+  const rand = Math.floor(Math.random() * items.length)
+  let price = items[rand].price
+  let num_items = Math.floor(net_change / price)
+  console.log('Generated item price: ', price, ' num_items: ', num_items)
+  if (num_items < 1) {
+    price = items[0].price
+    num_items = net_change / price
+    return { num: num_items, name: items[0].name }
   }
-  return { num: num_items, name: items[rand].name };
-};
+  return { num: num_items, name: items[rand].name }
+}
 
-const currentItem = ref(generateRandomItem());
+const currentItem = ref(generateRandomItem())
 
 const regenerateItem = () => {
-  currentItem.value = generateRandomItem();
-};
-
+  currentItem.value = generateRandomItem()
+}
 </script>
 
 <style scoped>
@@ -96,6 +93,18 @@ const regenerateItem = () => {
   height: 100%;
   display: flex;
   flex-direction: column;
+  padding: 0.5rem;
+  box-sizing: border-box;
+}
+
+.widget-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.2rem;
+  text-align: left;
+  margin: 0 0 1rem 0;
+  color: var(--text-color-secondary);
+  font-weight: 700;
+  letter-spacing: 1px;
 }
 
 .widget-title {

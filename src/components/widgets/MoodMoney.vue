@@ -178,9 +178,26 @@ watch(
 }
 
 .mood-money-chart-wrapper {
+  flex: 1;
+  position: relative;
+  width: 100%;
+  min-height: 0;
+}
+
+.widget-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.2rem;
+  text-align: left;
+  margin: 0 0 1rem 0;
+  color: var(--text-color-secondary);
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.mood-money-chart-wrapper {
   display: flex;
   width: 100%;
-  min-height: 200px; 
+  min-height: 200px;
 }
 
 .mood-money-chart-canvas {
