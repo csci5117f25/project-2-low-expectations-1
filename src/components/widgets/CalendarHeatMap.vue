@@ -46,6 +46,7 @@ const processVisits = () => {
 watch(() => props.visits, processVisits, { immediate: true, deep: true })
 
 //get the latest date from the logged visits
+// possible end date wrong
 const endDate = computed(() => {
   if (dates.value.length === 0) return new Date()
   let latest = new Date(dates.value[0].date)
