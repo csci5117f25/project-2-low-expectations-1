@@ -41,7 +41,7 @@ watch(() => props.visits, calculateValues, { immediate: true, deep: true })
 </script>
 
 <template>
-  <div class="grid-2col">
+  <div class="trophy-widget-container">
     <Card>
       <template #title> Biggest Win and Loss </template>
       <template #content>
@@ -60,11 +60,46 @@ watch(() => props.visits, calculateValues, { immediate: true, deep: true })
   </div>
 </template>
 
-<style>
+<style scoped>
+.trophy-widget-container {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.trophy-widget-container :deep(.p-card) {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.trophy-widget-container :deep(.p-card-title) {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-color-secondary, #ffffff);
+  margin: 0 0 1rem 0;
+}
+
+.trophy-widget-container :deep(.p-card-body),
+.trophy-widget-container :deep(.p-card-content) {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
 .icons {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 3rem;
+  flex-wrap: wrap;
+  width: 100%;
 }
 
 .max,
@@ -74,10 +109,88 @@ watch(() => props.visits, calculateValues, { immediate: true, deep: true })
   align-items: center;
   font-size: 1.5rem;
   font-weight: bold;
+  min-width: 100px;
 }
 
 .max i,
 .min i {
   font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.max p,
+.min p {
+  margin: 0;
+  font-family: 'Oswald', sans-serif;
+}
+
+@media (max-width: 768px) {
+  .trophy-widget-container :deep(.p-card-title) {
+    font-size: 1rem;
+    letter-spacing: 1px;
+    margin-bottom: 0.75rem;
+  }
+
+  .icons {
+    gap: 2rem;
+  }
+
+  .max,
+  .min {
+    font-size: 1.25rem;
+    min-width: 80px;
+  }
+
+  .max i,
+  .min i {
+    font-size: 2rem;
+    margin-bottom: 0.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .trophy-widget-container :deep(.p-card-title) {
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .trophy-widget-container :deep(.p-card-body),
+  .trophy-widget-container :deep(.p-card-content) {
+    padding: 0.75rem;
+  }
+
+  .icons {
+    gap: 1.5rem;
+    flex-direction: row;
+  }
+
+  .max,
+  .min {
+    font-size: 1.1rem;
+    min-width: 70px;
+  }
+
+  .max i,
+  .min i {
+    font-size: 1.75rem;
+    margin-bottom: 0.3rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .icons {
+    gap: 1rem;
+  }
+
+  .max,
+  .min {
+    font-size: 1rem;
+    min-width: 60px;
+  }
+
+  .max i,
+  .min i {
+    font-size: 1.5rem;
+  }
 }
 </style>

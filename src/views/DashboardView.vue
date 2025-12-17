@@ -5,9 +5,7 @@
       <main class="main-content">
         <!-- Edit Dashboard Button -->
 
-        <Message severity="info" :closable="false" style="margin-bottom: 24px">
-          <p>Placeholder for AI quotes or comments to be later implemented?</p>
-        </Message>
+        <NetResultQuotes></NetResultQuotes>
         <div class="dashboard-controls">
           <div class="filter-controls">
             <div class="filter-item">
@@ -84,6 +82,8 @@ import LogOutButton from '@/components/LogOutButton.vue'
 import RecentHistory from '@/components/widgets/RecentHistory.vue'
 import NavBar from './NavBar.vue'
 import { doc, getDoc, setDoc, collection} from 'firebase/firestore'
+import NetResultQuotes from '@/components/netResultQuotes.vue'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { db } from '@/firebase_conf'
 import { useCollection, useCurrentUser } from 'vuefire'
 import DatePicker  from 'primevue/datepicker'
@@ -240,6 +240,7 @@ const toggleEditMode = () => {
   min-height: 100vh;
   background: var(--surface-card);
   padding: 0;
+  overflow-x: hidden;
 }
 
 .dashboard-content {
@@ -247,6 +248,7 @@ const toggleEditMode = () => {
   margin: 0 auto;
   background: var(--surface-card);
   min-height: 100vh;
+  width: 100%;
 }
 
 .dashboard-controls {
@@ -273,6 +275,17 @@ const toggleEditMode = () => {
 
 .main-content {
   padding: 2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.dashboard-controls {
+  margin-bottom: 1.5rem;
+}
+
+.edit-dashboard-btn {
+  width: 100%;
+  max-width: 200px;
 }
 
 .chart-section {
@@ -493,6 +506,18 @@ const toggleEditMode = () => {
 }
 
 @media (max-width: 768px) {
+  .main-content {
+    padding: 1rem;
+  }
+
+  .dashboard-controls {
+    margin-bottom: 1rem;
+  }
+
+  .edit-dashboard-btn {
+    max-width: 100%;
+  }
+
   .grid-2col {
     grid-template-columns: 1fr;
   }
@@ -512,7 +537,6 @@ const toggleEditMode = () => {
   .header-right {
     width: 100%;
     justify-content: center;
-    /*flex-wrap: wrap;*/
   }
 
   .nav-tabs {
@@ -526,6 +550,32 @@ const toggleEditMode = () => {
     margin-top: 0.5rem;
     margin-left: 0;
     width: 100%;
+  }
+
+  .result-value {
+    font-size: 1.5rem;
+  }
+
+  .result-details {
+    gap: 0.5rem;
+  }
+
+  .detail-value {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 0.75rem;
+  }
+
+  .result-value {
+    font-size: 1.25rem;
+  }
+
+  .chart {
+    height: 150px;
   }
 }
 </style>
