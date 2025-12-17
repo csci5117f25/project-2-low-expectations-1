@@ -1,8 +1,7 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
-import Button  from 'primevue/button'
+import Button from 'primevue/button'
 
-// Props
 const props = defineProps({
   visits: {
     type: Array,
@@ -15,7 +14,6 @@ const isDarkMode = ref(false)
 const darkModeKey = ref(0)
 const profitMode = ref(false)
 
-//get the date and counts of the user's casino visits
 const processVisits = () => {
   if (!props.visits || props.visits.length === 0) {
     dates.value = []
@@ -29,7 +27,12 @@ const processVisits = () => {
     dateObj.setDate(dateObj.getDate() + 1)
     const month = dateObj.getMonth() + 1
     const day = dateObj.getDate()
-    const dateStr = dateObj.getFullYear() + '-' + (month < 10 ? '0' + month : month) + '-' + (day < 10 ? '0' + day : day)
+    const dateStr =
+      dateObj.getFullYear() +
+      '-' +
+      (month < 10 ? '0' + month : month) +
+      '-' +
+      (day < 10 ? '0' + day : day)
     let found = false
     for (let j = 0; j < newDates.length; j++) {
       if (newDates[j].date === dateStr) {
@@ -45,7 +48,6 @@ const processVisits = () => {
   dates.value = newDates
 }
 
-//get the date and netresult of the user's casino visits
 const profitVisits = () => {
   if (!props.visits || props.visits.length === 0) {
     dates.value = []
@@ -58,7 +60,12 @@ const profitVisits = () => {
     dateObj.setDate(dateObj.getDate() + 1)
     const month = dateObj.getMonth() + 1
     const day = dateObj.getDate()
-    const dateStr = dateObj.getFullYear() + '-' + (month < 10 ? '0' + month : month) + '-' + (day < 10 ? '0' + day : day)
+    const dateStr =
+      dateObj.getFullYear() +
+      '-' +
+      (month < 10 ? '0' + month : month) +
+      '-' +
+      (day < 10 ? '0' + day : day)
     let found = false
     for (let i = 0; i < newDates.length; i++) {
       if (newDates[i].date === dateStr) {
@@ -74,8 +81,19 @@ const profitVisits = () => {
   dates.value = newDates
 }
 
-//watch if the user toggles profit mode
-watch([() => props.visits, profitMode], () => {
+watch(
+  () => props.visits,
+  () => {
+    if (profitMode.value) {
+      profitVisits()
+    } else {
+      processVisits()
+    }
+  },
+  { immediate: true, deep: true }
+)
+
+watch(profitMode, () => {
   if (profitMode.value) {
     profitVisits()
   } else {
@@ -83,23 +101,25 @@ watch([() => props.visits, profitMode], () => {
   }
 })
 
-//get the latest date from the logged visits
-// possible end date wrong
 const endDate = computed(() => {
   if (!dates.value.length) return null
   return dates.value[dates.value.length - 1].date
 })
 
-//dealing with dark mode and light mode appearences
 function updateDarkMode() {
   isDarkMode.value = window.matchMedia('(prefers-color-scheme: dark)').matches
 }
 
 onMounted(() => {
   updateDarkMode()
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
     isDarkMode.value = e.matches
   })
+  
+  // Process visits on mount
+  if (props.visits && props.visits.length > 0) {
+    processVisits()
+  }
 })
 
 watch(isDarkMode, () => {
@@ -110,17 +130,17 @@ watch(isDarkMode, () => {
 <template>
   <div class="calendar-heatmap-widget">
     <div class="title-row">
-    <h3 class="widget-title" :class="{ 'dark-title': isDarkMode, 'light-title': !isDarkMode }">
-      Calendar Heatmap
-    </h3>
+      <h3 class="widget-title" :class="{ 'dark-title': isDarkMode, 'light-title': !isDarkMode }">
+        Calendar Heatmap
+      </h3>
       <Button
-      :label="profitMode ? 'Show Default Colors' : 'Show Profit/Loss'"
-      @click="profitMode = !profitMode"
-      size="small"
-      outlined
-    />
-  </div>
-    <div class="heatmap-wrapper" :class="{ 'dark-mode': isDarkMode, 'profit-mode': profitMode}">
+        :label="profitMode ? 'Show Default Colors' : 'Show Profit/Loss'"
+        @click="profitMode = !profitMode"
+        size="small"
+        outlined
+      />
+    </div>
+    <div class="heatmap-wrapper" :class="{ 'dark-mode': isDarkMode, 'profit-mode': profitMode }">
       <template v-if="dates.length">
         <CalendarHeatmap
           :values="dates"
@@ -129,17 +149,21 @@ watch(isDarkMode, () => {
           :round="2"
           :key="profitMode"
           :tooltip-unit="profitMode ? 'net result' : 'casino visits'"
-          :tooltip-formatter="profitMode
-            ? (val => `<strong>$${val.count}</strong> on ${new Date(val.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}`)
-            : undefined"
+          :tooltip-formatter="
+            profitMode
+              ? (val) =>
+                  `<strong>$${val.count}</strong> on ${new Date(val.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}`
+              : undefined
+          "
           :range-color="
             profitMode
-              ? (isDarkMode
-                  ? ['#222', '#F44336', '#2e8b57', '#2e8b57', '#2e8b57', '#2e8b57']
-                  : ['#eee', '#F44336', '#2e8b57', '#2e8b57', '#2e8b57', '#2e8b57'])
-              : (isDarkMode
-                  ? ['#222', '#2a4b6d', '#3f6baa', '#5088c8', '#609ae0', '#0b3c91']
-                  : ['#eee', '#d0ebff', '#a1d4ff', '#72baff', '#3490ff', '#0b3c91'])"
+              ? isDarkMode
+                ? ['#222', '#F44336', '#2e8b57', '#2e8b57', '#2e8b57', '#2e8b57']
+                : ['#eee', '#F44336', '#2e8b57', '#2e8b57', '#2e8b57', '#2e8b57']
+              : isDarkMode
+                ? ['#222', '#2a4b6d', '#3f6baa', '#5088c8', '#609ae0', '#0b3c91']
+                : ['#eee', '#d0ebff', '#a1d4ff', '#72baff', '#3490ff', '#0b3c91']
+          "
         />
       </template>
       <template v-else>
@@ -150,6 +174,7 @@ watch(isDarkMode, () => {
     </div>
   </div>
 </template>
+
 <style scoped>
 .calendar-heatmap-widget {
   width: 100%;
@@ -168,7 +193,15 @@ watch(isDarkMode, () => {
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--text-color-secondary, #ffffff);
-  margin: 0 0 1rem 0;
+  margin: 0;
+}
+
+.title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-shrink: 0;
 }
 
 .heatmap-wrapper {
@@ -180,6 +213,14 @@ watch(isDarkMode, () => {
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
   box-sizing: border-box;
+  flex: 1;
+}
+
+.empty-message {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-color-secondary);
+  font-style: italic;
 }
 
 .heatmap-wrapper :deep(svg.vch__wrapper) {
@@ -230,13 +271,6 @@ watch(isDarkMode, () => {
   display: none;
 }
 
-.widget-title {
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin: 0;
-  transition: color 0.3s ease;
-}
-
 .dark-title {
   color: #fff;
 }
@@ -245,27 +279,16 @@ watch(isDarkMode, () => {
   color: #333;
 }
 
-.toggle-btn {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  background-color: #7f5669;
-  color: #fff;
-}
-
-.title-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
 @media (max-width: 768px) {
   .widget-title {
     font-size: 1rem;
     letter-spacing: 1px;
+  }
+
+  .title-row {
     margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
 
   .heatmap-wrapper {
@@ -291,7 +314,12 @@ watch(isDarkMode, () => {
 @media (max-width: 480px) {
   .widget-title {
     font-size: 0.9rem;
-    text-align: center;
+  }
+
+  .title-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
   }
 
   .heatmap-wrapper {
