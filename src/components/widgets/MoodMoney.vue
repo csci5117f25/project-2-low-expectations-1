@@ -35,14 +35,28 @@ const chartOptions = ref({
       title: {
         display: true,
         text: 'Mood',
+        color: '#aaa',
+        font: {
+          weight: 'bold', 
+        },
       },
       grid: { display: false },
       border: { display: false },
+      ticks: {
+        color: '#aaa',
+        font: {
+          weight: 'bold', 
+        },
+      },
     },
     y: {
       ticks: {
         callback: function (value) {
           return '$' + value.toLocaleString()
+        },
+        color: '#aaa',
+        font: {
+          weight: 'bold', 
         },
       },
       grid: {
@@ -106,6 +120,11 @@ function loadData(logs) {
         backgroundColor: barColors,
         borderRadius: 8,
         borderColor: '#999',
+        datalabels: {
+          font: {
+            weight: 'bold',
+          },
+        },
       },
     ],
   }
@@ -159,9 +178,26 @@ watch(
 }
 
 .mood-money-chart-wrapper {
+  flex: 1;
+  position: relative;
+  width: 100%;
+  min-height: 0;
+}
+
+.widget-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.2rem;
+  text-align: left;
+  margin: 0 0 1rem 0;
+  color: var(--text-color-secondary);
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.mood-money-chart-wrapper {
   display: flex;
   width: 100%;
-  min-height: 200px; 
+  min-height: 200px;
 }
 
 .mood-money-chart-canvas {

@@ -7,21 +7,16 @@
       <div class="status-display" :class="statusClass">
         <div class="status-text">
           <p class="status-main">{{ statusMain }}</p>
-          <p class="status-sub">{{ statusSub }}</p>
         </div>
       </div>
       <div v-if="currentLoss > 0 && sessionsNeeded > 0" class="recovery-info">
         <div class="recovery-item">
-          <div>
-            <p class="recovery-label">Sessions Needed</p>
-            <p class="recovery-value">{{ abbreviateNumber(sessionsNeeded) }}</p>
-          </div>
+          <p class="recovery-label">Sessions Needed</p>
+          <p class="recovery-value">{{ abbreviateNumber(sessionsNeeded) }}</p>
         </div>
         <div class="recovery-item">
-          <div>
-            <p class="recovery-label">Avg. Win Required</p>
-            <p class="recovery-value">${{ abbreviateNumber(averageNeeded) }}</p>
-          </div>
+          <p class="recovery-label">Avg. Win Required</p>
+          <p class="recovery-value">${{ abbreviateNumber(averageNeeded) }}</p>
         </div>
       </div>
       <div v-if="averageWin > 0" class="stats-info">
@@ -45,7 +40,6 @@
 <script setup>
 import { ref, watch, computed } from 'vue'
 
-// Props
 const props = defineProps({
   visits: {
     type: Array,
@@ -65,25 +59,12 @@ const statusClass = computed(() => {
   return 'profit'
 })
 
-const statusIcon = computed(() => {
-  if (currentLoss.value > 0) return 'pi pi-exclamation-triangle'
-  if (currentLoss.value === 0) return 'pi pi-balance-scale'
-  return 'pi pi-check-circle'
-})
-
 const statusMain = computed(() => {
   if (currentLoss.value > 0) return `Down $${abbreviateNumber(Math.abs(currentLoss.value))}`
   if (currentLoss.value === 0) return 'At Break-Even'
   return `Up $${abbreviateNumber(Math.abs(currentLoss.value))}`
 })
 
-const statusSub = computed(() => {
-  if (currentLoss.value > 0) return 'Need to recover losses'
-  if (currentLoss.value === 0) return 'Balanced position'
-  return 'Great performance!'
-})
-
-// Abbreviate numbers
 const abbreviateNumber = (num) => {
   if (num >= 1000000) {
     return (num / 1000000).toFixed(1) + 'M'
@@ -94,7 +75,6 @@ const abbreviateNumber = (num) => {
   }
 }
 
-// Calculate break-even stats from visits
 const calculateBreakEven = () => {
   if (!props.visits || props.visits.length === 0) {
     currentLoss.value = 0
@@ -119,11 +99,10 @@ const calculateBreakEven = () => {
     }
   })
 
-  currentLoss.value = -totalProfit // Negative total profit means we're in the red
+  currentLoss.value = -totalProfit
   winningSessionCount.value = winCount
   averageWin.value = winCount > 0 ? totalWins / winCount : 0
 
-  // Calculate sessions needed to break even
   if (currentLoss.value > 0 && averageWin.value > 0) {
     sessionsNeeded.value = Math.ceil(currentLoss.value / averageWin.value)
     averageNeeded.value = currentLoss.value / sessionsNeeded.value
@@ -139,38 +118,39 @@ watch(() => props.visits, calculateBreakEven, { immediate: true, deep: true })
 <style scoped>
 .breakeven-widget {
   width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
+  padding: 0.75rem;
   box-sizing: border-box;
 }
 
 .widget-header {
-  display: flex;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+  flex-shrink: 0;
 }
 
 .widget-title {
   font-family: 'Cinzel', serif;
-  font-weight: 700;
-  font-size: 1.25rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--text-color);
+  font-size: 1.1rem;
+  text-align: left;
   margin: 0;
+  color: var(--text-color-secondary);
+  font-weight: 700;
+  letter-spacing: 1px;
 }
 
 .breakeven-content {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  flex: 1;
+  gap: 0.75rem;
+  min-height: 0;
 }
 
 .status-display {
   text-align: center;
   border-radius: 12px;
   transition: all 0.3s ease;
+  flex-shrink: 0;
 }
 
 .status-display.loss {
@@ -190,127 +170,106 @@ watch(() => props.visits, calculateBreakEven, { immediate: true, deep: true })
 }
 
 .status-main {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 700;
   margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .status-sub {
-  font-size: 1rem;
-  margin: 0;
+  font-size: 0.95rem;
+  margin: 0.25rem 0 0 0;
   opacity: 0.8;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
-.recovery-info {
+.recovery-info,
+.stats-info {
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
+  flex-shrink: 0;
 }
 
-.recovery-item {
+.recovery-item,
+.stat-item {
   flex: 1;
   text-align: center;
-  padding: 0.75rem;
+  padding: 0.75rem 0.5rem;
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.05);
+  min-width: 0;
 }
 
-.recovery-label {
-  font-size: 0.75rem;
+.recovery-label,
+.stat-label {
+  font-size: 0.7rem;
   margin: 0 0 0.25rem 0;
   color: var(--text-color-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
-.recovery-value {
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin: 0;
-  color: var(--text-color);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.stats-info {
-  display: flex;
-  gap: 1rem;
-}
-
-.stat-item {
-  flex: 1;
-  text-align: center;
-  padding: 0.75rem;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.stat-label {
-  font-size: 0.75rem;
-  margin: 0 0 0 0;
-  color: var(--text-color-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
+.recovery-value,
 .stat-value {
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-weight: 700;
   margin: 0;
   color: var(--text-color);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .no-data {
   text-align: center;
   padding: 1rem;
+  flex-shrink: 0;
 }
 
 .no-data p {
   margin: 0;
   font-size: 0.875rem;
   color: var(--text-color-secondary);
+  line-height: 1.4;
 }
 
 @media (max-width: 768px) {
   .breakeven-widget {
-    padding: 0.75rem;
+    padding: 0.65rem;
+  }
+
+  .widget-header {
+    margin-bottom: 0.6rem;
   }
 
   .widget-title {
     font-size: 1rem;
+    letter-spacing: 0.5px;
+  }
+
+  .breakeven-content {
+    gap: 0.6rem;
   }
 
   .status-main {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
   }
 
   .status-sub {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
 
   .recovery-info,
   .stats-info {
-    gap: 0.5rem;
+    gap: 0.6rem;
   }
 
   .recovery-item,
   .stat-item {
-    padding: 0.5rem;
+    padding: 0.6rem 0.4rem;
   }
 
   .recovery-value,
@@ -324,12 +283,16 @@ watch(() => props.visits, calculateBreakEven, { immediate: true, deep: true })
     padding: 0.5rem;
   }
 
+  .widget-header {
+    margin-bottom: 0.5rem;
+  }
+
   .widget-title {
     font-size: 0.9rem;
   }
 
-  .status-display {
-    padding: 0.75rem;
+  .breakeven-content {
+    gap: 0.5rem;
   }
 
   .status-main {
@@ -342,22 +305,22 @@ watch(() => props.visits, calculateBreakEven, { immediate: true, deep: true })
 
   .recovery-info,
   .stats-info {
-    gap: 0.4rem;
+    gap: 0.5rem;
   }
 
   .recovery-item,
   .stat-item {
-    padding: 0.4rem;
+    padding: 0.5rem 0.3rem;
   }
 
   .recovery-label,
   .stat-label {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
   }
 
   .recovery-value,
   .stat-value {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
   }
 
   .no-data p {
