@@ -160,7 +160,14 @@ const logVisit = async () => {
 </script>
 
 <template>
-  <Dialog header="Log your Casino Visit" v-model:visible="dialogVisible" :modal="true" :closable="true">
+  <Dialog
+  header="Log your Casino Visit"
+  v-model:visible="dialogVisible"
+  :breakpoints="{ '960px': '75vw', '640px': '95vw' }"
+  :style="{ width: '50vw', maxWidth: '600px' }"
+  :modal="true"
+  :closable="true"
+  >
     <div class="logvisit-form-container">
       <div class="form-field">
         <label for="casino-name">Casino Name: </label>
@@ -174,6 +181,7 @@ const logVisit = async () => {
           @complete="searchCasinos"
           :dropdown="true"
           forceSelection
+          fluid
         />
       </div>
       <div class="form-field">
@@ -189,22 +197,22 @@ const logVisit = async () => {
       </div>
       <div class="form-field">
         <label for="buyIn">Initial Amount: </label>
-        <InputGroupAddon>$</InputGroupAddon>
         <InputText
           id="initlal_amt"
           v-model="initialAmount"
           type="number"
           placeholder="Enter only number."
+          fluid
         />
       </div>
       <div class="form-field">
         <label for="cashOut">Cash Out Amount: </label>
-        <InputGroupAddon>$</InputGroupAddon>
         <InputText
           id="cashout_amt"
           v-model="cashOutAmount"
           type="number"
           placeholder="Enter only number."
+          fluid
         />
       </div>
       <div class="form-field">
@@ -213,11 +221,9 @@ const logVisit = async () => {
       </div>
       <div class="form-field">
         <label for="notes">Notes: </label>
-        <!-- <Textarea id="notes" v-model="notes" rows="4" placeholder="Add notes about vist here..." /> -->
         <SpeechToText v-model="notes"></SpeechToText>
       </div>
       <div class="form-actions">
-        <!-- <Button label="Cancel" class="p-button-text" @click="visible = false" /> -->
         <Button label="Log Visit" @click="logVisit" />
       </div>
     </div>
@@ -230,15 +236,19 @@ const logVisit = async () => {
   flex-direction: column;
   gap: var(--gap-large);
   background: var(--surface-card);
-  padding: 1.5rem 18rem;
+  padding: 1.5rem;
   border-radius: var(--radius-large);
   border: 1px solid var(--form-border);
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .form-field {
   display: flex;
   flex-direction: column;
   gap: var(--gap-small);
+  width: 100%;
 }
 
 .form-actions {
@@ -246,10 +256,6 @@ const logVisit = async () => {
   justify-content: flex-end;
   gap: var(--gap-medium);
   margin-top: 0.75rem;
-}
-
-.p-InputGroupAddon {
-  margin-right: 0.25rem;
 }
 
 .p-inputtext,
@@ -262,6 +268,7 @@ const logVisit = async () => {
   color: var(--text-primary);
   font-size: 1rem;
   padding: 0.75rem 1rem;
+  box-sizing: border-box;
 }
 
 .p-rating {
@@ -284,7 +291,7 @@ const logVisit = async () => {
   text-transform: uppercase;
   letter-spacing: 2px;
 }
-.p-diaglog .p-dialog-content {
+.p-dialog .p-dialog-content {
   background: var(--surface-card);
 }
 
@@ -301,5 +308,44 @@ const logVisit = async () => {
 
 .p-button.p-button-text {
   color: var(--text-secondary);
+}
+
+@media screen and (max-width: 768px) {
+  .logvisit-form-container {
+    padding: 1.25rem;
+    gap: 0.875rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions .p-button {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .logvisit-form-container {
+    padding: 1rem;
+    gap: 0.75rem;
+    border-radius: 0;
+    border: none;
+  }
+
+  .p-inputtext,
+  .p-calendar,
+  .p-inputtextarea {
+    font-size: 16px;
+    padding: 0.625rem 0.75rem;
+  }
+
+  .p-rating {
+    justify-content: center;
+  }
+
+  .form-field label {
+    font-size: 0.85rem;
+  }
 }
 </style>
