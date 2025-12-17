@@ -153,7 +153,7 @@ onMounted(async () => {
 }
 
 .tag {
-  font-size: 0.75rem;
+  font-size: 1.35rem;
   padding: 0.25rem 0.5rem;
   border-radius: 999px;
 }
@@ -232,7 +232,7 @@ onMounted(async () => {
   .main-content {
     padding: 0.75rem;
   }
-  
+
   .dashboard-content {
     padding-top: 160px;
   }
