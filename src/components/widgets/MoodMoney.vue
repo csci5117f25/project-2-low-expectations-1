@@ -153,11 +153,18 @@ watch(
         :data="chartData"
         :options="chartOptions"
       />
+      <div v-else class="no-data-message">No data available. Start logging visits to see how it affects your mood!
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+
+.no-data-message {
+  text-align: center;
+}
+
 .mood-money-widget-container {
   width: 100%;
   height: 100%;
@@ -178,10 +185,10 @@ watch(
 }
 
 .mood-money-chart-wrapper {
-  flex: 1;
-  position: relative;
-  width: 100%;
-  min-height: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 
 .widget-title {
