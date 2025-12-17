@@ -22,12 +22,10 @@ const allColumns = [
       const date = row.createdAt.toDate
         ? row.createdAt.toDate()
         : new Date(row.createdAt.seconds * 1000)
-      return date.toLocaleString()
+      return date.toLocaleDateString()
     },
   },
   { field: 'casinoName', header: 'Casino' },
-  { field: 'initialAmount', header: 'Cash In' },
-  { field: 'cashOutAmount', header: 'Cash Out' },
   {
     field: 'profit',
     header: 'Profit',
@@ -39,7 +37,6 @@ const allColumns = [
     },
   },
   { field: 'mood', header: 'Mood' },
-  { field: 'notes', header: 'Notes' },
 ]
 </script>
 

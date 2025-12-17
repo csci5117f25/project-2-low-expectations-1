@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { db, auth } from '@/firebase_conf.js'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import { useCollection, useCurrentUser } from 'vuefire'
@@ -7,14 +7,14 @@ import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import InputGroupAddon from 'primevue/inputgroupaddon'
-import DatePicker from 'primevue/calendar'
+import DatePicker from 'primevue/datepicker'
+import InputNumber  from 'primevue/inputnumber'
 import Rating from 'primevue/rating'
 import { useToast } from 'primevue/usetoast'
 import SpeechToText from './SpeechToText.vue'
 import AutoComplete from 'primevue/autocomplete'
 
 const toast = useToast()
-const visible = ref(false)
 const selectedCasino = ref(null)
 const visitDate = ref(new Date()) //auto set to today
 const initialAmount = ref(null)
@@ -26,7 +26,19 @@ const filteredCasinos = ref([])
 const user = useCurrentUser()
 const userCasinos = useCollection(collection(db, 'users', user.value.uid, 'casinos'))
 
+const props = defineProps({
+  visible: {
+    type: Boolean,
+    default: false
+  }
+})
+
 const emit = defineEmits(['update:visible'])
+
+const dialogVisible = computed({
+  get: () => props.visible,
+  set: (value) => emit('update:visible', value)
+})
 
 // Search/filter casinos for autocomplete
 const searchCasinos = (event) => {
@@ -94,7 +106,7 @@ const logVisit = async () => {
 
   const initial = Number(initialAmount.value) || 0
   const cashout = Number(cashOutAmount.value) || 0
-  const profit = cashout - initial
+  const profit = Math.round((cashout - initial) * 100) / 100
   const user = auth.currentUser
 
   try {
@@ -139,7 +151,7 @@ const logVisit = async () => {
     cashOutAmount.value = 0
     mood.value = 0
     notes.value = ''
-    visible.value = false
+    dialogVisible.value = false
     emit('update:visible', false)
     toast.add({ severity: 'success', summary: 'Your visit is logged!', life: 3000 })
   } catch (e) {
@@ -149,7 +161,14 @@ const logVisit = async () => {
 </script>
 
 <template>
-  <Dialog header="Log your Casino Visit" v-model:visible="visible" :modal="true" :closable="true">
+  <Dialog
+  header="Log your Casino Visit"
+  v-model:visible="dialogVisible"
+  :breakpoints="{ '960px': '75vw', '640px': '95vw' }"
+  :style="{ width: '50vw', maxWidth: '600px' }"
+  :modal="true"
+  :closable="true"
+  >
     <div class="logvisit-form-container">
       <div class="form-field">
         <label for="casino-name">Casino Name: </label>
@@ -163,6 +182,7 @@ const logVisit = async () => {
           @complete="searchCasinos"
           :dropdown="true"
           forceSelection
+          fluid
         />
       </div>
       <div class="form-field">
@@ -178,22 +198,28 @@ const logVisit = async () => {
       </div>
       <div class="form-field">
         <label for="buyIn">Initial Amount: </label>
-        <InputGroupAddon>$</InputGroupAddon>
-        <InputText
-          id="initlal_amt"
-          v-model="initialAmount"
-          type="number"
-          placeholder="Enter only number."
+        <InputNumber
+        id="initlal_amt"
+        v-model="initialAmount"
+        fluid
+        :minFractionDigits="2"
+        :maxFractionDigits="2"
+        mode="currency"
+        currency="USD"
+        showButtons
         />
       </div>
       <div class="form-field">
         <label for="cashOut">Cash Out Amount: </label>
-        <InputGroupAddon>$</InputGroupAddon>
-        <InputText
+         <InputNumber
           id="cashout_amt"
           v-model="cashOutAmount"
-          type="number"
-          placeholder="Enter only number."
+          fluid
+          :minFractionDigits="2"
+          :maxFractionDigits="2"
+          mode="currency"
+          currency="USD"
+          showButtons
         />
       </div>
       <div class="form-field">
@@ -202,11 +228,9 @@ const logVisit = async () => {
       </div>
       <div class="form-field">
         <label for="notes">Notes: </label>
-        <!-- <Textarea id="notes" v-model="notes" rows="4" placeholder="Add notes about vist here..." /> -->
         <SpeechToText v-model="notes"></SpeechToText>
       </div>
       <div class="form-actions">
-        <!-- <Button label="Cancel" class="p-button-text" @click="visible = false" /> -->
         <Button label="Log Visit" @click="logVisit" />
       </div>
     </div>
@@ -219,15 +243,19 @@ const logVisit = async () => {
   flex-direction: column;
   gap: var(--gap-large);
   background: var(--surface-card);
-  padding: 1.5rem 18rem;
+  padding: 1.5rem;
   border-radius: var(--radius-large);
   border: 1px solid var(--form-border);
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .form-field {
   display: flex;
   flex-direction: column;
   gap: var(--gap-small);
+  width: 100%;
 }
 
 .form-actions {
@@ -235,10 +263,6 @@ const logVisit = async () => {
   justify-content: flex-end;
   gap: var(--gap-medium);
   margin-top: 0.75rem;
-}
-
-.p-InputGroupAddon {
-  margin-right: 0.25rem;
 }
 
 .p-inputtext,
@@ -251,6 +275,7 @@ const logVisit = async () => {
   color: var(--text-primary);
   font-size: 1rem;
   padding: 0.75rem 1rem;
+  box-sizing: border-box;
 }
 
 .p-rating {
@@ -273,7 +298,7 @@ const logVisit = async () => {
   text-transform: uppercase;
   letter-spacing: 2px;
 }
-.p-diaglog .p-dialog-content {
+.p-dialog .p-dialog-content {
   background: var(--surface-card);
 }
 
@@ -283,12 +308,51 @@ const logVisit = async () => {
   border-radius: var(--radius-medium);
 }
 
-.p-diaglog .p-footer {
+.p-dialog .p-footer {
   background: var(--surface-card);
   padding-top: 1.25rem;
 }
 
 .p-button.p-button-text {
   color: var(--text-secondary);
+}
+
+@media screen and (max-width: 768px) {
+  .logvisit-form-container {
+    padding: 1.25rem;
+    gap: 0.875rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions .p-button {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .logvisit-form-container {
+    padding: 1rem;
+    gap: 0.75rem;
+    border-radius: 0;
+    border: none;
+  }
+
+  .p-inputtext,
+  .p-calendar,
+  .p-inputtextarea {
+    font-size: 16px;
+    padding: 0.625rem 0.75rem;
+  }
+
+  .p-rating {
+    justify-content: center;
+  }
+
+  .form-field label {
+    font-size: 0.85rem;
+  }
 }
 </style>
