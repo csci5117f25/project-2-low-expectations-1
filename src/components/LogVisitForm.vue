@@ -5,8 +5,7 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import { useCollection, useCurrentUser } from 'vuefire'
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
-import InputGroupAddon from 'primevue/inputgroupaddon'
+import InputNumber  from 'primevue/inputnumber'
 import DatePicker from 'primevue/calendar'
 import Rating from 'primevue/rating'
 import { useToast } from 'primevue/usetoast'
@@ -197,22 +196,28 @@ const logVisit = async () => {
       </div>
       <div class="form-field">
         <label for="buyIn">Initial Amount: </label>
-        <InputText
-          id="initlal_amt"
-          v-model="initialAmount"
-          type="number"
-          placeholder="Enter only number."
-          fluid
+        <InputNumber
+        id="initlal_amt"
+        v-model="initialAmount"
+        fluid
+        :minFractionDigits="2"
+        :maxFractionDigits="2"
+        mode="currency"
+        currency="USD"
+        showButtons
         />
       </div>
       <div class="form-field">
         <label for="cashOut">Cash Out Amount: </label>
-        <InputText
+         <InputNumber
           id="cashout_amt"
           v-model="cashOutAmount"
-          type="number"
-          placeholder="Enter only number."
           fluid
+          :minFractionDigits="2"
+          :maxFractionDigits="2"
+          mode="currency"
+          currency="USD"
+          showButtons
         />
       </div>
       <div class="form-field">
