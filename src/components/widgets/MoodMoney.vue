@@ -99,7 +99,7 @@ function loadData(logs) {
   chartOptions.value.scales.y.max = max
   chartOptions.value.scales.y.min = min
   chartData.value = {
-    labels: ['😖', '🙁', '🙂', '😄', '🤩'],
+    labels: ['1', '2', '3', '4', '5'],
     datasets: [
       {
         label: 'Avg. Net Result',
@@ -135,18 +135,50 @@ watch(
     />
   </div>
 </template>
-<style>
-.mood-money-chart-container {
-  width: 100% !important;
-  height: 100% !important;
+
+<style scoped>
+.mood-money-chart {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  min-height: 200px;
   display: flex;
   flex-direction: column;
-  min-height: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  position: relative;
 }
 
 .mood-money-chart-canvas {
   width: 100% !important;
   height: 100% !important;
+  max-width: 100% !important;
   display: block;
+}
+
+.mood-money-chart :deep(canvas) {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+@media (max-width: 768px) {
+  .mood-money-chart {
+    min-height: 180px;
+  }
+
+  .mood-money-chart :deep(.chartjs-tooltip) {
+    font-size: 0.875rem;
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .mood-money-chart {
+    min-height: 150px;
+  }
+
+  .mood-money-chart :deep(canvas) {
+    font-size: 10px;
+  }
 }
 </style>

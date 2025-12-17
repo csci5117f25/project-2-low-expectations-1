@@ -103,9 +103,12 @@ watch(() => props.visits, calculateBreakEven, { immediate: true, deep: true })
 <style scoped>
 .breakeven-widget {
   width: 100%;
+  max-width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .widget-title {
@@ -119,10 +122,12 @@ watch(() => props.visits, calculateBreakEven, { immediate: true, deep: true })
   text-transform: uppercase;
   color: var(--text-color-secondary, #ffffff);
   margin: 0 0 1rem 0;
+  flex-wrap: wrap;
 }
 
 .title-icon {
   font-size: 1.125rem;
+  flex-shrink: 0;
 }
 
 .breakeven-content {
@@ -130,24 +135,131 @@ watch(() => props.visits, calculateBreakEven, { immediate: true, deep: true })
   flex-direction: column;
   gap: 0.75rem;
   flex: 1;
-  overflow: hidden;
+  overflow: auto;
+  width: 100%;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
+.breakeven-content :deep(.p-message) {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.breakeven-content :deep(.p-message-wrapper) {
+  padding: 0.75rem;
+}
+
+.breakeven-content :deep(.p-message p) {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.875rem;
+  word-wrap: break-word;
+}
+
+.breakeven-content :deep(.p-message p:last-child) {
+  margin-bottom: 0;
 }
 
 .breakeven-sessions {
   font-size: 1.1rem;
   font-weight: bold;
   margin: 0.5rem 0 0 0;
+  color: var(--text-color);
 }
 
 .breakeven-details {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  width: 100%;
 }
 
 .breakeven-details p {
   margin: 0;
   font-size: 0.875rem;
   color: var(--text-color);
+  word-wrap: break-word;
+}
+
+.breakeven-details strong {
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .widget-title {
+    font-size: 1rem;
+    letter-spacing: 1px;
+    margin-bottom: 0.75rem;
+  }
+
+  .title-icon {
+    font-size: 1rem;
+  }
+
+  .breakeven-content {
+    gap: 0.5rem;
+  }
+
+  .breakeven-content :deep(.p-message-wrapper) {
+    padding: 0.6rem;
+  }
+
+  .breakeven-content :deep(.p-message p) {
+    font-size: 0.8rem;
+  }
+
+  .breakeven-sessions {
+    font-size: 1rem;
+    margin: 0.4rem 0 0 0;
+  }
+
+  .breakeven-details p {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .widget-title {
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .title-icon {
+    font-size: 0.9rem;
+  }
+
+  .breakeven-content {
+    gap: 0.4rem;
+  }
+
+  .breakeven-content :deep(.p-message-wrapper) {
+    padding: 0.5rem;
+  }
+
+  .breakeven-content :deep(.p-message p) {
+    font-size: 0.75rem;
+  }
+
+  .breakeven-sessions {
+    font-size: 0.95rem;
+    margin: 0.3rem 0 0 0;
+  }
+
+  .breakeven-details {
+    gap: 0.4rem;
+  }
+
+  .breakeven-details p {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .breakeven-content :deep(.p-message-icon) {
+    font-size: 1rem;
+  }
 }
 </style>

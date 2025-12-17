@@ -81,7 +81,7 @@ const sendToBackend = async (base64String) => {
 </script>
 
 <template>
-  <Textarea v-model="text"></Textarea>
+  <Textarea fluid v-model="text"></Textarea>
   <Button
     v-if="!isRecording && !isProcessing"
     icon="pi pi-microphone"

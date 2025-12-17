@@ -49,7 +49,7 @@
               </div>
               <component
                 :is="getComponent(widget.component)"
-                :visits="widget.component === 'RecentHistory' ? recentVisits : casinoVisits"
+                :visits="widget.component === 'RecentHistory' ? recentVisits : visits"
               />
             </template>
           </Card>
@@ -123,49 +123,20 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  visits: {
+    type: Array,
+    default: () => [],
+  },
 })
 
 const emit = defineEmits(['update:widgets', 'update:editMode'])
 
 // State
-const user = useCurrentUser()
 const showWidgetSelector = ref(false)
-const casinoVisits = ref([])
-const loading = ref(true)
-
-// Fetch casino visits
-onMounted(() => {
-  if (!user.value) {
-    loading.value = false
-    return
-  }
-
-  const visitsRef = collection(db, 'users', user.value.uid, 'casinoVisits')
-  const query_ = query(visitsRef, orderBy('visitDate', 'asc'))
-
-  // get updated data
-  onSnapshot(
-    query_,
-    (snapshot) => {
-      casinoVisits.value = []
-      snapshot.forEach((doc) => {
-        casinoVisits.value.push({
-          id: doc.id,
-          ...doc.data(),
-        })
-      })
-      loading.value = false
-    },
-    (err) => {
-      console.error('couldn;t fetch casino visits', err)
-      loading.value = false
-    },
-  )
-})
 
 //obtain the latest five logged visits, order by latest first
 const recentVisits = computed(() => {
-  const sorted = casinoVisits.value.slice()
+  const sorted = [...props.visits]
   sorted.sort((a, b) => {
     const aTime = a.visitDate?.seconds ?? 0
     const bTime = b.visitDate?.seconds ?? 0
@@ -281,6 +252,9 @@ watch(
 <style scoped>
 .draggable-dashboard {
   width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .edit-controls {
@@ -301,11 +275,18 @@ watch(
   grid-auto-rows: 300px;
   gap: 1.5rem;
   margin-bottom: 1.5rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .widget-wrapper {
   position: relative;
   transition: all 0.3s ease;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .widget-wrapper.half {
@@ -322,8 +303,20 @@ watch(
 
 .widget-card {
   height: 100%;
+  width: 100%;
+  max-width: 100%;
   transition: all 0.3s ease;
   position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.widget-card :deep(.p-card-body),
+.widget-card :deep(.p-card-content) {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .widget-wrapper.edit-mode .widget-card {
@@ -425,6 +418,8 @@ watch(
 @media (max-width: 768px) {
   .widgets-grid {
     grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+    gap: 1rem;
   }
 
   .widget-wrapper.half,
@@ -434,14 +429,72 @@ watch(
 
   .edit-message {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .edit-message span {
+    text-align: center;
+  }
+
+  .edit-message button {
+    width: 100%;
   }
 
   .widget-controls {
-    position: static;
-    justify-content: space-between;
-    width: 100%;
-    margin-bottom: 0.5rem;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.25rem;
+  }
+
+  .widget-card :deep(svg),
+  .widget-card :deep(canvas),
+  .widget-card :deep(.chart),
+  .widget-card :deep(.chart-container) {
+    max-width: 100%;
+    width: 100% !important;
+  }
+
+  .widget-card :deep(table) {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .widgets-grid {
+    gap: 0.75rem;
+  }
+
+  .widget-card :deep(.p-card-body),
+  .widget-card :deep(.p-card-content) {
+    padding: 0.75rem;
+  }
+
+  .widget-card :deep(.widget-title),
+  .widget-card :deep(h2),
+  .widget-card :deep(h3) {
+    font-size: 1rem !important;
+  }
+
+  .widget-controls {
+    top: 0.25rem;
+    right: 0.25rem;
+  }
+
+  .widget-option {
+    padding: 0.75rem;
+  }
+
+  .widget-option-icon {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .widget-option-info h4 {
+    font-size: 1rem;
   }
 }
 </style>

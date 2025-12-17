@@ -90,7 +90,7 @@ const updateChart = () => {
       day: 'numeric',
       year: date.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined,
     })
-
+    
     labels.push(dateLabel)
 
     if (showCumulative.value) {
