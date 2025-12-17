@@ -63,8 +63,16 @@ along with a very brief caption:**
 ![](https://media.giphy.com/media/o0vwzuFwCGAFO/giphy.gif)
 
 <img width="1500" height="851" alt="Screenshot 2025-12-17 at 3 01 57 AM" src="https://github.com/user-attachments/assets/40553738-4000-4d29-961f-b718a0d1428b" />
+Splash Page
 
+<img width="1460" height="849" alt="Screenshot 2025-12-17 at 3 03 30 AM" src="https://github.com/user-attachments/assets/f5e7b176-a515-4a98-84f4-cafd748a8efd" />
+Dashboard View
 
+<img width="1464" height="836" alt="Screenshot 2025-12-17 at 3 04 03 AM" src="https://github.com/user-attachments/assets/8b5f99ae-6826-43d5-b322-8f3fcbba0fe2" />
+My Visits View
+
+<img width="1482" height="841" alt="Screenshot 2025-12-17 at 3 04 35 AM" src="https://github.com/user-attachments/assets/d17f2b2f-232b-4838-85f7-f5a0a3dc42b2" />
+Practice View
 
 ## External Dependencies
 
