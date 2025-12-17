@@ -20,13 +20,16 @@
       v-model="localWidgets"
       class="widgets-grid"
       :disabled="!editMode"
-      item-key="id"
-      ghost-class="ghost"
-      animation="200"
+      :item-key="id"
+      :ghost-class="ghost"
+      :animation="150"
       :delay="200"
       :delay-on-touch-only="true"
       :touch-start-threshold="10"
-      :force-fallback="true"
+      :swap-threshold="0.65"
+      :force-fallback="5"
+
+      :fallback-tolerance="5"
       :scroll="true"
       :scroll-sensitivity="100"
       :scroll-speed="17"
@@ -57,7 +60,7 @@
       </template>
     </draggable>
 
-    <!-- Widget Selector Dialog -->
+    <!-- Widget Selector -->
     <Dialog
       v-model:visible="showWidgetSelector"
       modal
@@ -84,7 +87,7 @@
           <i class="pi pi-plus-circle"></i>
         </div>
         <div v-if="unusedWidgets.length === 0" class="no-widgets">
-          <p>All available widgets are already on your dashboard! 🎉</p>
+          <p>All available widgets are already on your dashboard!</p>
         </div>
       </div>
     </Dialog>
@@ -222,8 +225,8 @@ const getComponent = (componentName) => {
     TrophyWidget,
     RecentHistory,
   }
-  return components[componentName]
-}
+  return components[componentName];
+};
 
 // Watch for changes and emit to parent
 watch(
@@ -232,7 +235,7 @@ watch(
     emit('update:widgets', newValue)
   },
   { deep: true },
-)
+);
 
 // Watch for prop changes from parent (only update if different)
 watch(
@@ -246,7 +249,7 @@ watch(
       localWidgets.value = [...newValue]
     }
   },
-)
+);
 </script>
 
 <style scoped>
