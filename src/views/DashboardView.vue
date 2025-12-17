@@ -1,7 +1,8 @@
 <template>
   <div class="dashboard-container">
+    <Header />
     <div class="dashboard-content">
-      <NavBar />
+      <NavTabs />
       <main class="main-content">
         <!-- Edit Dashboard Button -->
 
@@ -40,7 +41,8 @@ import LogVisitForm from '@/components/LogVisitForm.vue'
 import { useRouter } from 'vue-router'
 import LogOutButton from '@/components/LogOutButton.vue'
 import RecentHistory from '@/components/widgets/RecentHistory.vue'
-import NavBar from './NavBar.vue'
+import Header from './Header.vue'
+import NavTabs from './NavTabs.vue'
 import NetResultQuotes from '@/components/netResultQuotes.vue'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { db } from '@/firebase_conf'
@@ -143,7 +145,6 @@ const toggleEditMode = () => {
   min-height: 100vh;
   background: var(--surface-card);
   padding: 0;
-  overflow-x: hidden;
 }
 
 .dashboard-content {
@@ -152,6 +153,7 @@ const toggleEditMode = () => {
   background: var(--surface-card);
   min-height: 100vh;
   width: 100%;
+  padding-top: 160px;
 }
 
 .main-content {
