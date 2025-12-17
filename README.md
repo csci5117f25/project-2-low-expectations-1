@@ -83,8 +83,9 @@ Practice View
 Please do not document required libraries (e.g., VUE, Firebase, vuefire).**
 
 
-Sortable / Vue Draggable [https://github.com/SortableJS/Vue.Draggable]
-iconify [https://iconify.design/]
+Sortable / Vue Draggable - Used for widget system [https://github.com/SortableJS/Vue.Draggable]
+
+iconify - used for additional icons [https://iconify.design/]
 
 Three.js - 3d Scene
 
