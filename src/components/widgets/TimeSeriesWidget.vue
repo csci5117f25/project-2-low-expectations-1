@@ -279,6 +279,8 @@ watch(showCumulative, () => {
   height: 100%;
   display: flex;
   flex-direction: column;
+  padding: 0.5rem;
+  box-sizing: border-box;
 }
 
 .widget-header {
@@ -286,18 +288,16 @@ watch(showCumulative, () => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
-  flex-wrap: wrap;
-  gap: 0.75rem;
 }
 
 .widget-title {
   font-family: 'Cinzel', serif;
-  font-weight: 700;
-  font-size: 1.25rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--text-color-secondary, #ffffff);
+  font-size: 1.2rem;
+  text-align: left;
   margin: 0;
+  color: var(--text-color-secondary);
+  font-weight: 700;
+  letter-spacing: 1px;
 }
 
 .widget-controls {
