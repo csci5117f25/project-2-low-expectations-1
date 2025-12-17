@@ -1,19 +1,19 @@
 <template>
   <header class="header">
     <div class="header-container">
-        <div class="header-left">
+      <div class="header-left">
         <img src="/playing-cards.png" class="logo" alt="Playing cards logo" />
         <div class="header-title">
-            <h1>GAMBLR</h1>
-            <p>Track your gambling habits responsibly</p>
+          <h1>GAMBLR</h1>
+          <p>Track your gambling habits responsibly</p>
         </div>
-        </div>
+      </div>
 
-        <div class="header-right">
+      <div class="header-right">
         <Button label="+ Log Visit" severity="secondary" @click="logVisitFormVisible = true" />
         <LogOutButton />
         <LogVisitForm v-model:visible="logVisitFormVisible" />
-        </div>
+      </div>
     </div>
   </header>
 </template>
@@ -61,7 +61,6 @@ const logVisitFormVisible = ref(false)
   width: 65px;
   height: 65px;
   padding: 2px;
-  border: 1px solid white;
   border-radius: 8px;
 }
 
