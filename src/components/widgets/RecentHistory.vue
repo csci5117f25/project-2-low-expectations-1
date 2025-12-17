@@ -49,7 +49,6 @@ const allColumns = [
         scrollable
         :scrollHeight="visits.length > 3 ? '200px' : 'auto'"
         class="full-table"
-        emptyMessage="No visits logged yet."
       >
         <Column v-for="col in allColumns" :key="col.field" :field="col.field" :header="col.header">
           <template #body="props">
@@ -58,12 +57,21 @@ const allColumns = [
             <span v-else>{{ props.data[col.field] }}</span>
           </template>
         </Column>
+        <template #empty>
+          <div class="no-data-message">
+            Start logging visits to track your recent history
+          </div>
+        </template>
       </DataTable>
     </div>
   </div>
 </template>
 
 <style>
+.no-data-message {
+  text-align: center;
+}
+
 .full-table td {
   white-space: normal;
   word-break: break-word;
