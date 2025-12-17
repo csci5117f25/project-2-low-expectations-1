@@ -1,6 +1,6 @@
 <template>
   <div class="alternative-spending-widget">
-    <h3 class="widget-title">What You Could've Had Instead</h3>
+    <h3 class="widget-title">Alternative Spending</h3>
     <p class="couldve-intro">
       <span v-if="totalLoss > 0">
         Your net loss of <strong class="negative">${{ totalLoss.toFixed(2) }}</strong> could've
@@ -10,7 +10,7 @@
         You're up <strong class="positive">${{ totalProfit.toFixed(2) }}</strong> You can now buy
       </span>
       <span v-else>
-        Start tracking your visits to see what you could've spent your money on instead.
+        Start tracking your visits to see what you could have spent your money on instead.
       </span>
     </p>
     <div v-if="totalLoss > 0 || totalProfit > 0">

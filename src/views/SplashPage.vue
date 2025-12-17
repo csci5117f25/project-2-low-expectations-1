@@ -207,7 +207,7 @@ function handleResize() {
         />
         <FeatureCard
           icon="pi pi-shopping-cart"
-          title="What You Could've Had Instead"
+          title="Alternative Spending"
           description="See alternative purchases you could have made with your gambling spend."
         />
         <FeatureCard

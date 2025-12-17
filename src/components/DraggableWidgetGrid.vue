@@ -4,7 +4,7 @@
     <div v-if="editMode" class="edit-controls">
       <Message :closable="false">
         <div class="edit-message">
-          <span>Edit Mode: Drag widgets to rearrange</span>
+          <span>Edit Mode</span>
           <Button
             label="Add Widget"
             icon="pi pi-plus"
