@@ -187,33 +187,48 @@ function handleResize() {
       <section class="card-grid">
         <FeatureCard
           icon="pi pi-chart-line"
-          title="Net Results"
-          description="Track wins/losses and cumulative totals."
+          title="Net Results Over Time"
+          description="Track your wins, losses, and cumulative totals with detailed time-series analysis."
         />
         <FeatureCard
-          icon="pi pi-chart-scatter"
-          title="Time-Series Charts"
-          description="See your performance over time."
+          icon="pi pi-filter"
+          title="Casino Visit Logging and Filtering"
+          description="Log visits, filter by date, casino, and other criteria for detailed tracking."
         />
         <FeatureCard
-          icon="pi pi-map"
-          title="Casino Mapping"
-          description="Pin and view casinos you've visited."
+          icon="pi pi-cog"
+          title="Customizable Dashboard"
+          description="Personalize your dashboard with widgets that matter most to you."
         />
         <FeatureCard
-          icon="pi pi-list-check"
-          title="Casino Wishlist"
-          description="Track casinos you want to visit."
+          icon="pi pi-trophy"
+          title="Win/Loss Highlights"
+          description="Highlight your most significant wins and losses for better insight."
         />
         <FeatureCard
-          icon="pi pi-face-smile"
-          title="Mood Tracking"
-          description="Log your mood during sessions."
+          icon="pi pi-shopping-cart"
+          title="What You Could've Had Instead"
+          description="See alternative purchases you could have made with your gambling spend."
         />
         <FeatureCard
-          icon="pi pi-clipboard"
-          title="Journal Entries"
-          description="Write down any thoughts or notes about your visit."
+          icon="pi pi-calendar"
+          title="Calendar Heatmap"
+          description="Visualize your gambling activity with a calendar heatmap."
+        />
+        <FeatureCard
+          icon="pi pi-clock"
+          title="Recent History"
+          description="View your most recent gambling visits and outcomes."
+        />
+        <FeatureCard
+          icon="pi pi-percentage"
+          title="Break-Even Probability"
+          description="Calculate the probability of breaking even on your bets."
+        />
+        <FeatureCard
+          icon="pi pi-play-circle"
+          title="Practice Mode"
+          description="Practice spinning in a risk-free environment to hone your skills."
         />
       </section>
     </div>

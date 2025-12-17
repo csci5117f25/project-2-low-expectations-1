@@ -9,14 +9,9 @@ defineProps({
 
 <template>
   <Card class="card">
-    <template #header>
-      <div class="icon">
-        <i :class="icon"></i>
-      </div>
-    </template>
     <template #title>
       <p class="title">
-        {{ title }}
+        <i :class="icon" class="inline-icon"></i> {{ title }}
       </p>
     </template>
     <template #content>
@@ -29,19 +24,24 @@ defineProps({
 
 <style scoped>
 .card {
-  height: 100%;
-  background: white;
-  padding: 24px;
+  height: auto;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 16px;
-  color: var(--primary-color);
+  color: white;
 }
-.icon {
+
+.inline-icon {
+  margin-right: 10px;
   font-size: 20px;
 }
 .title {
   font-family: 'Oswald', sans-serif;
   margin-bottom: -10px;
   font-size: 600;
+  display: flex;
+  align-items: center;
 }
 .content {
   font-family: 'Oswald', sans-serif;
