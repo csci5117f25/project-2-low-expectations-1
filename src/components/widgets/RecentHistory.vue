@@ -2,7 +2,6 @@
 import { useCurrentUser } from 'vuefire'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import Card from 'primevue/card'
 
 const user = useCurrentUser()
 const props = defineProps({
@@ -41,9 +40,9 @@ const allColumns = [
 </script>
 
 <template>
-  <Card class="full-width">
-    <template #title> Recent History </template>
-    <template #content>
+  <div class="recent-history-widget">
+    <div class="widget-title"> Recent History </div>
+    <div class="history-wrapper">
       <DataTable
         :value="visits"
         responsiveLayout="scroll"
@@ -60,8 +59,8 @@ const allColumns = [
           </template>
         </Column>
       </DataTable>
-    </template>
-  </Card>
+    </div>
+  </div>
 </template>
 
 <style>
@@ -69,5 +68,35 @@ const allColumns = [
   white-space: normal;
   word-break: break-word;
   padding: 0.5rem;
+}
+.recent-history-widget {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.widget-title {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-color-secondary, #ffffff);
+  margin: 0 0 1rem 0;
+}
+
+.history-wrapper {
+  position: relative;
+  padding-top: 20px;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
 }
 </style>

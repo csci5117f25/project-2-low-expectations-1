@@ -44,7 +44,7 @@ const route = useRoute()
 
 const tabs = [
   { name: 'Dashboard', icon: 'chart-arc', routeName: 'dashboard' },
-  { name: 'All My Visits', icon: 'clock', routeName: 'visits' },
+  { name: 'My Visits', icon: 'clock', routeName: 'visits' },
 ]
 
 const activeTab = ref('Dashboard')
