@@ -58,8 +58,11 @@ const logVisitFormVisible = ref(false)
 }
 
 .logo {
-  width: 45px;
-  height: 45px;
+  width: 65px;
+  height: 65px;
+  padding: 2px;
+  border: 1px solid white;
+  border-radius: 8px;
 }
 
 .header-title h1 {
