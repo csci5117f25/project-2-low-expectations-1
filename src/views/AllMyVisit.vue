@@ -4,29 +4,26 @@
     <div class="dashboard-content">
       <NavTabs />
       <main class="main-content">
-        <h2 class="section-title">All My Visits</h2>
+        <h2 class="section-title">My Visits</h2>
         <div v-for="visit in visits" :key="visit.id" class="visit-card">
           <div class="visit-header">
             <div>
               {{ visit.casinoName?.toUpperCase()}}
-              <span v-if="visit.mood>= 5"> 🤩</span>
+              <!-- <span v-if="visit.mood>= 5"> 🤩</span>
               <span v-else-if="visit.mood===4"> 😄</span>
               <span v-else-if="visit.mood===3"> 🙂</span>
               <span v-else-if="visit.mood===2"> 🙁</span>
-              <span v-else> 😖</span>
+              <span v-else> 😖</span> -->
             </div>
             <div class="profit" :class="visit.profit >= 0 ? 'positive' : 'negative'">
-              {{ visit.profit >= 0 ? '+':'' }} ${{ visit.profit }}
+              {{ visit.profit >= 0 ? '+' : '' }} ${{ visit.profit }}
               <div class="date">
                 {{ visit.visitDate?.toLocaleDateString() }}
               </div>
             </div>
           </div>
-          <p class="notes">Notes: {{ visit.notes }}</p>
+          <p class="notes">Notes: {{ visit.notes || 'No notes recorded.'}}</p>
           <div class="visit-actions">
-            <span class="tag" :class="visit.profit >= 0 ? 'positive' : 'negative'">
-              {{ visit.profit >= 0 ? 'W':'L' }} Day
-            </span>
             <Button
               icon="pi pi-pencil"
               severity="secondary"
@@ -138,7 +135,8 @@ onMounted(async () => {
 
 .date {
   font-size: 0.8rem;
-  color: var(--text-secondary);
+  color: var(--text-gray, #b5acac);
+  margin-top: 0.25rem;
 }
 
 .notes {
@@ -150,22 +148,6 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   gap: 1rem;
-}
-
-.tag {
-  font-size: 1.35rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: 999px;
-}
-
-.tag.positive {
-  background: rgba(76,175,80,0.15);
-  color: var(--green-500);
-}
-
-.tag.negative {
-  background: rgba(244,67,54,0.15);
-  color: var(--red-500);
 }
 
 @media (max-width: 768px) {
