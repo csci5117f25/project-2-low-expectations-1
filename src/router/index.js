@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import SplashPage from '@/views/SplashPage.vue'
 import DashboardView from '@/views/DashboardView.vue'
-/* import WishList from '@/views/WishList.vue' */
-/* import AllMyVisit from '@/components/AllMyVisit.vue' */
+import AllMyVisit from '@/views/AllMyVisit.vue'
 import PracticePage from '@/views/PracticePage.vue'
+import EditMyVisit from '@/views/EditMyVisit.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,7 +20,6 @@ const router = createRouter({
       component: DashboardView,
       meta: { requiresAuth: true },
     },
-    /** add this back later after merging with the other 2 branches
     {
       path: '/visits',
       name: 'visits',
@@ -28,11 +27,11 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
-      path: '/wishlist',
-      name: 'wishlist',
-      component: WishList,
+      path: '/visits/:id',
+      name: 'visitedit',
+      component: EditMyVisit,
       meta: { requiresAuth: true }
-    }, */
+    },
     {
       path: '/practice',
       name: 'practice',
