@@ -182,7 +182,7 @@ const casinos = useCollection(collection(db,'users', user.uid, 'casinos'))
 
 const deleteVisit = (visitId) => {
   confirm.require({
-    message: 'Are you sure you want to delete this log?',
+    message: 'Are you sure you want to delete this visit?',
     header: 'Delete Confirmation',
     icon: 'pi pi-info-circle',
     rejectLabel: 'Cancel',
@@ -201,7 +201,7 @@ const deleteVisit = (visitId) => {
 
         await deleteDoc(doc(db, 'users', user.uid, 'casinoVisits', visitId))
 
-        toast.add({ severity: 'error', summary: 'Deleted', detail: 'Log deleted successfully', life: 3000 })
+        toast.add({ severity: 'error', summary: 'Deleted', detail: 'Visit deleted successfully', life: 3000 })
       } catch (e) {
         console.error('Failed to delete visit:', e)
       }
