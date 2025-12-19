@@ -6,7 +6,7 @@ CSCI 5117, Fall 2025, [assignment description](https://canvas.umn.edu/courses/51
 
 * Team Name: HIGH expectations
 * App Name: Gamblr
-* App Link: gamblr-16a50.web.app
+* App Link: https://gamblr-16a50.web.app
 
 ### Students
 
